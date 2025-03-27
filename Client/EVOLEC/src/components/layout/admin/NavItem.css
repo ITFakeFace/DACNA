@@ -1,0 +1,23 @@
+.border-left-only{
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+
+.btn-item{
+  /* background-color: transparent !important; */
+  color: black !important;
+}
+
+.btn-item-focus,
+.btn-item:hover{
+  background-color: #228be6 !important;
+  color: white !important;
+}
+
+.btn-align-left{
+  justify-items: start;
+}
+
+.title-content:not(:empty){
+  margin-left: 10px;
+}

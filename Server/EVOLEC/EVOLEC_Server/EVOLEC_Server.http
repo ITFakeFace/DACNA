@@ -1,4 +1,4 @@
-@EVOLEC_Server_HostAddress = http://localhost:5011
+@EVOLEC_Server_HostAddress = http://localhost:5208
 
 GET {{EVOLEC_Server_HostAddress}}/weatherforecast/
 Accept: application/json

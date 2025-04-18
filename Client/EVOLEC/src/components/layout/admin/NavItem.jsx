@@ -1,7 +1,9 @@
 import { Button } from '@mantine/core';
 import './NavItem.css';
+import { useNavigate } from 'react-router-dom';
 
 const NavItem = ({ icon, title, isOpened, url }) => {
+  const navigate = useNavigate();
   const urlPage = () => {
     const path = window.location.pathname;
     const parts = path.split("/").filter(Boolean); // Loại bỏ phần tử rỗng
@@ -10,7 +12,7 @@ const NavItem = ({ icon, title, isOpened, url }) => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full" onClick={() => navigate(url)}>
       <Button
         fullWidth
         className={["w-full", "btn-item", isOpened ? "border-left-only btn-align-left" : "", urlPage().toUpperCase() == title.toUpperCase() ? "btn-item-focus" : ""]}

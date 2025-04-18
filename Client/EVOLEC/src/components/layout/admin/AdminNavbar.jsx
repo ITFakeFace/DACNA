@@ -21,11 +21,13 @@ const AdminNavbar = ({ isOpened, setOpened }) => {
           icon={<FontAwesomeIcon icon={faHome} />}
           title="Dashboard"
           isOpened={isOpened}
+          url="/admin/dashboard"
         ></NavItem>
         <NavItem
           icon={<FontAwesomeIcon icon={faUser} />}
           title="Accounts"
           isOpened={isOpened}
+          url="/admin/accounts"
         ></NavItem>
       </div>
       <div className='nav-row-bottom'>

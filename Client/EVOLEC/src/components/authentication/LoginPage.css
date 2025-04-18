@@ -1,0 +1,26 @@
+.form-container{
+  width: 60%;
+  margin: 0 auto;
+  border: solid #24303e 3px;
+  border-radius: 30px;
+  overflow: hidden;
+  align-self: center;
+  box-shadow: 1px 2px 2px #24303e;
+  display: flex;
+}
+
+.form-left{
+  padding: 30px;
+}
+
+.form-right{
+ 
+}
+
+.form-heading{
+  font-size: 10px !important;
+}
+
+.error{
+  display: none;
+}

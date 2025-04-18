@@ -1,0 +1,8 @@
+.nav-desktop{
+  display: flex;
+  gap: 20px;
+}
+
+.header{
+  font-size: 24px !important;
+}

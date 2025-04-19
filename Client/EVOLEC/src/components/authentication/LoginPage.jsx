@@ -38,7 +38,8 @@ const LoginPage = () => {
 
       const token = response.data.data;
       localStorage.setItem("token", token);
-      navigate("/dashboard");
+      navigate("/");
+      window.location.reload();
     } catch (error) {
       // Có thể tùy chỉnh thông báo lỗi chi tiết hơn nếu API trả về
       setEmailError(" ");

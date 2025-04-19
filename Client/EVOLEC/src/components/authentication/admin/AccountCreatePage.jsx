@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import './AccountListPage.css';
+import './AccountCreatePage.css';
 import { postRequest } from '../../../services/APIService';
 
 const AccountCreatePage = () => {

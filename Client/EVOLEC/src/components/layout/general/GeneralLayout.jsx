@@ -27,6 +27,11 @@ const GeneralLayout = () => {
       setLogged(true);
     }
   }, []);
+
+  const logout = () => {
+    localStorage.removeItem('token')
+    setLogged(false);
+  };
   return (
     <AppShell
       header={{ height: 60 }}
@@ -46,8 +51,11 @@ const GeneralLayout = () => {
               </Group>
             </Group>
             <Group gap={15} visibleFrom="sm">
-              {logged
-                ? <UnstyledButton type='button' onClick={() => navigate(role == "ADMIN" || role == "STAFF" ? "/admin" : "/student")}>{username}</UnstyledButton>
+              {logged ?
+                <>
+                  <UnstyledButton type='button' onClick={() => navigate(role == "ADMIN" || role == "STAFF" ? "/admin" : "/student")}>{username}</UnstyledButton> /
+                  <UnstyledButton type='button' onClick={() => logout()}> Đăng xuất</UnstyledButton>
+                </>
                 : <UnstyledButton type='button' onClick={() => navigate('/login')}>Đăng nhập</UnstyledButton>}
             </Group>
           </Group>
@@ -58,7 +66,13 @@ const GeneralLayout = () => {
         <UnstyledButton>Trang chủ</UnstyledButton>
         <UnstyledButton>Thông tin đào tạo</UnstyledButton>
         <UnstyledButton>Về chúng tôi</UnstyledButton>
-        <UnstyledButton type='button' onClick={() => navigate('/login')}>Đăng nhập</UnstyledButton>
+        {logged ?
+          <>
+            <UnstyledButton type='button' onClick={() => navigate(role == "ADMIN" || role == "STAFF" ? "/admin" : "/student")}>{username}</UnstyledButton> /
+            <UnstyledButton type='button' onClick={() => logout}> Đăng xuất</UnstyledButton>
+          </>
+          : <UnstyledButton type='button' onClick={() => navigate('/login')}>Đăng nhập</UnstyledButton>}
+
       </AppShell.Navbar>
 
       <AppShell.Main className='flex'>

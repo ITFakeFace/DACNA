@@ -4,6 +4,7 @@ using EVOLEC_Server.Models;
 using EVOLEC_Server.Repositories;
 using EVOLEC_Server.Securities.Jwt;
 using EVOLEC_Server.Services;
+using EVOLEC_Server.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -149,10 +150,14 @@ internal class Program
                 }
             });
         });
+        // Add AutoMapper
+        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         // Add Services and Repositories to the container
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+        builder.Services.AddScoped<ICourseService, CourseService>();
         builder.Services.AddScoped<JwtHelper>();
         // Add services to the container.
         builder.Services.AddScoped<JwtTokenGenerator>();

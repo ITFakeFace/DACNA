@@ -42,7 +42,7 @@ namespace EVOLEC_Server.Services
         }
 
         // Cập nhật thông tin người dùng
-        public async Task<bool> Update(string userId, UserCreateDto model)
+        public async Task<bool> Update(string userId, UserUpdateDto model)
         {
             return await _userRepository.Update(userId, model);
         }
@@ -53,7 +53,6 @@ namespace EVOLEC_Server.Services
             // Kiểm tra xem người dùng có phải là admin không, không thể ban admin
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return false;
-
             var roles = await _userManager.GetRolesAsync(user);
             if (roles.Contains("ADMIN"))
             {

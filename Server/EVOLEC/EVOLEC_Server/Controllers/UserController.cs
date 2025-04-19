@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using System.Security.Claims;
 
 namespace EVOLEC_Server.Controllers
 {
@@ -46,6 +47,7 @@ namespace EVOLEC_Server.Controllers
                 var roles = await _userManager.GetRolesAsync(user);
                 results.Add(new UserDto
                 {
+                    Id = user.Id,
                     UserName = user.UserName,
                     Email = user.Email,
                     PhoneNumber = user.PhoneNumber,
@@ -86,6 +88,7 @@ namespace EVOLEC_Server.Controllers
             var roles = await _userManager.GetRolesAsync(user);
             var result = new UserDto
             {
+                Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
@@ -133,10 +136,31 @@ namespace EVOLEC_Server.Controllers
         }
 
         // Cập nhật thông tin người dùng
-        [HttpPut("{id}")]
         [Authorize] // Cả admin và user có thể cập nhật, nhưng user chỉ có thể cập nhật chính mình
-        public async Task<IActionResult> UpdateUser(string id, [FromBody] UserCreateDto model)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(string id, [FromBody] UserUpdateDto model)
         {
+            Console.WriteLine("\nUpdating User\n");
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // hoặc Id / sub tùy theo bạn set claim
+
+            // Nếu không tìm thấy user từ token
+            if (string.IsNullOrEmpty(currentUserId))
+            {
+                return Unauthorized(new ResponseEntity<string>
+                {
+                    Status = false,
+                    ResponseCode = 401,
+                    StatusMessage = "Không xác thực được người dùng",
+                    Data = "Không có quyền cập nhật"
+                });
+            }
+
+            // Nếu không phải admin và đang cập nhật user khác => không cho phép
+            if (!User.IsInRole("ADMIN") && currentUserId != id)
+            {
+                return Forbid();
+            }
+
             var result = await _userService.Update(id, model);
             if (!result)
             {
@@ -148,6 +172,7 @@ namespace EVOLEC_Server.Controllers
                     Data = "Cập nhật tài khoản thất bại"
                 });
             }
+
             return Ok(new ResponseEntity<string>
             {
                 Status = true,

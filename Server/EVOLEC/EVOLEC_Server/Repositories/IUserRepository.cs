@@ -8,7 +8,7 @@ namespace EVOLEC_Server.Repositories
         Task<List<ApplicationUser>> FindAll();
         Task<ApplicationUser?> FindById(string id);
         Task<bool> Create(UserCreateDto model);
-        Task<bool> Update(string userId, UserCreateDto model);
+        Task<bool> Update(string userId, UserUpdateDto model);
         Task<bool> Delete(string userId);
         Task<bool> ToggleStatus(string userId, bool status);
 

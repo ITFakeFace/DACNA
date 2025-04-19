@@ -1,7 +1,7 @@
 
 import { Button } from '@mantine/core';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCompress, faHome, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCompress, faHome, faSchool, faUser } from "@fortawesome/free-solid-svg-icons";
 import './AdminNavbar.css';
 import NavItem from './NavItem';
 
@@ -28,6 +28,12 @@ const AdminNavbar = ({ isOpened, setOpened }) => {
           title="Accounts"
           isOpened={isOpened}
           url="/admin/accounts"
+        ></NavItem>
+        <NavItem
+          icon={<FontAwesomeIcon icon={faSchool} />}
+          title="Courses"
+          isOpened={isOpened}
+          url="/admin/courses"
         ></NavItem>
       </div>
       <div className='nav-row-bottom'>

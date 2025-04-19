@@ -11,13 +11,11 @@ namespace EVOLEC_Server.Repositories
         private readonly EVOLECDbContext _ctx;
         private readonly IWebHostEnvironment _env;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationUser> _roleManager;
-        public UserRepository(EVOLECDbContext ctx, IWebHostEnvironment env, UserManager<ApplicationUser> userManager, RoleManager<ApplicationUser> roleManager)
+        public UserRepository(EVOLECDbContext ctx, IWebHostEnvironment env, UserManager<ApplicationUser> userManager)
         {
             _ctx = ctx;
             _env = env;
             _userManager = userManager;
-            _roleManager = roleManager;
         }
         public async Task<List<ApplicationUser>> FindAll()
         {
@@ -26,6 +24,7 @@ namespace EVOLEC_Server.Repositories
 
         public Task<ApplicationUser?> FindById(string id)
         {
+            Console.WriteLine("\nFindUserId\n");
             return _ctx.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
         }
         public async Task<bool> Create(UserCreateDto model)
@@ -91,10 +90,25 @@ namespace EVOLEC_Server.Repositories
                 user.Gender = model.Gender;
                 user.PID = model.PID;
                 user.UpdatedAt = DateTime.Now;
+
+                // Quản lý password
+                if (model.Password != string.Empty && model.Password.Equals(model.ConfirmPassword))
+                {
+                    Console.WriteLine("Changing password");
+                    var result = await _userManager.RemovePasswordAsync(user);
+                    if (result.Succeeded)
+                        result = await _userManager.AddPasswordAsync(user, model.Password);
+                }
+
+                // Quản lý role
                 if (!await _userManager.IsInRoleAsync(user, model.Role))
                 {
-                    var role = await _userManager.GetRolesAsync(user);
-                    await _userManager.RemoveFromRoleAsync(user, role.First());
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (roles.Count > 0)
+                    {
+                        var role = await _userManager.GetRolesAsync(user);
+                        await _userManager.RemoveFromRoleAsync(user, role.First());
+                    }
                     var result = await _userManager.AddToRoleAsync(user, model.Role);
                 }
                 _ctx.Users.Update(user);

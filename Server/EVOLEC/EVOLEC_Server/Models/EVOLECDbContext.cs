@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace EVOLEC_Server.Models
 {
@@ -11,13 +12,19 @@ namespace EVOLEC_Server.Models
         {
         }
 
+        public DbSet<OffDates> OffDates { get; set; }
         public DbSet<Course> Courses { get; set; }
+        public DbSet<ClassRoom> ClassRooms { get; set; }
+        public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<LessonDate> LessonDates { get; set; }
+        public DbSet<Enrollment> Enrollments { get; set; }
+        public DbSet<StudentAttendance> studentAttendances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            // Đổi tên bảng mặc định của Identity
+            // Default Identity Table
             builder.Entity<ApplicationUser>().ToTable("tblUsers");
             builder.Entity<IdentityRole>().ToTable("tblRoles");
             builder.Entity<IdentityUserRole<string>>().ToTable("tblUserRoles");
@@ -25,8 +32,78 @@ namespace EVOLEC_Server.Models
             builder.Entity<IdentityUserLogin<string>>().ToTable("tblUserLogins");
             builder.Entity<IdentityUserToken<string>>().ToTable("tblUserTokens");
             builder.Entity<IdentityRoleClaim<string>>().ToTable("tblRoleClaims");
-
+            // Additional Table
+            builder.Entity<OffDates>().ToTable("tblOffDates");
             builder.Entity<Course>().ToTable("tblCourses");
+            builder.Entity<ClassRoom>().ToTable("tblClassRooms");
+            builder.Entity<Lesson>().ToTable("tblLessons");
+            builder.Entity<LessonDate>().ToTable("tblLessonDates");
+            builder.Entity<Enrollment>().ToTable("tblEnrollments");
+            builder.Entity<StudentAttendance>().ToTable("tblStudentAttendances");
+
+            builder.Entity<StudentAttendance>()
+                .HasKey(sa => new { sa.StudentId, sa.LessonDateId });
+
+            // 
+            builder.Entity<ClassRoom>()
+                .HasOne(c => c.Teacher1)
+                .WithMany(u => u.Teacher1ClassRooms)
+                .HasForeignKey(c => c.Teacher1Id)
+                .OnDelete(DeleteBehavior.Restrict); // 👈 Tránh lỗi vòng lặp khi xóa
+
+            builder.Entity<ClassRoom>()
+                .HasOne(c => c.Teacher2)
+                .WithMany(u => u.Teacher2ClassRooms)
+                .HasForeignKey(c => c.Teacher2Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ClassRoom>()
+                .HasOne(c => c.Creator)
+                .WithMany() // 👈 Nếu bạn không cần navigation ngược
+                .HasForeignKey(c => c.CreatorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            // 1. Mối quan hệ Student
+            builder.Entity<Enrollment>()
+                .HasOne(e => e.Student)
+                .WithMany(u => u.StudentEnrollments) // 👈 bạn cần thêm navigation này ở ApplicationUser
+                .HasForeignKey(e => e.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // 2. Mối quan hệ Creator
+            builder.Entity<Enrollment>()
+                .HasOne(e => e.Creator)
+                .WithMany(u => u.CreatedEnrollments) // 👈 bạn cũng cần thêm navigation này ở ApplicationUser
+                .HasForeignKey(e => e.CreatorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Enrollment>()
+                .HasOne(e => e.ClassRoom)                  // navigation ngược về ClassRoom
+                .WithMany(c => c.CreatorEnrollments)       // navigation từ ClassRoom đến danh sách Enrollment
+                .HasForeignKey(e => e.ClassRoomId)         // tên khóa ngoại trong Enrollment
+                .OnDelete(DeleteBehavior.Restrict);         // hoặc Restrict nếu bạn muốn
+
+            // Thiết lập Cascade cho tất cả quan hệ còn lại (ngoại trừ ApplicationUser, Enrollment, ClassRoom, Course)
+            foreach (var entity in builder.Model.GetEntityTypes())
+            {
+                foreach (var fk in entity.GetForeignKeys())
+                {
+                    var principalName = fk.PrincipalEntityType.ClrType.Name;
+
+                    if (principalName == nameof(ApplicationUser) ||
+                        principalName == nameof(Enrollment) ||
+                        principalName == nameof(ClassRoom) ||
+                        principalName == nameof(Course))
+                    {
+                        fk.DeleteBehavior = DeleteBehavior.Restrict;
+                    }
+                    else
+                    {
+                        fk.DeleteBehavior = DeleteBehavior.Cascade;
+                    }
+                }
+            }
         }
 
         // Nếu dùng async

@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import {
   Button, TextInput, PasswordInput, Select, Group, Box,
-  Title, Textarea, Notification
+  Textarea, Notification
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { IconCheck, IconX } from '@tabler/icons-react';
-import { getRequest, putRequest } from '../../../services/APIService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import './AccountUpdatePage.css';
+import { IconCheck, IconX } from '@tabler/icons-react';
+import { postRequest, getRequest, putRequest } from '../../../services/APIService';
+import './AccountFormPage.css'; // Bạn có thể đổi tên file css
 
-const AccountUpdatePage = () => {
+const AccountFormPage = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams(); // Nếu có id thì là update, không thì create
   const [feedback, setFeedback] = useState(null);
 
   const form = useForm({
@@ -32,40 +32,44 @@ const AccountUpdatePage = () => {
       address: '',
       role: '',
     },
+    validate: {
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Email không hợp lệ'),
+      confirmPassword: (value, values) =>
+        value !== values.password ? 'Mật khẩu không khớp' : null,
+    },
   });
 
-  // Lấy dữ liệu user khi mount
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await getRequest(`/user/${id}`);
-        console.log("sended request");
-        if (res && res.status && res.data) {
-          console.log(res.data);
-          const user = res.data;
-          form.setValues({
-            id: user.id,
-            userName: user.userName,
-            email: user.email,
-            phone: user.phoneNumber,
-            pid: user.pid,
-            password: '',
-            confirmPassword: '',
-            fullname: user.fullname,
-            dob: new Date(user.dob),
-            gender: user.gender.toString(),
-            address: user.address || '',
-            role: user.role,
-          });
-        } else {
-          setFeedback({ type: 'error', message: 'Không tìm thấy người dùng' });
+    if (id) {
+      // Nếu có id thì load user
+      const fetchUser = async () => {
+        try {
+          const res = await getRequest(`/user/${id}`);
+          if (res && res.status && res.data) {
+            const user = res.data;
+            form.setValues({
+              id: user.id,
+              userName: user.userName,
+              email: user.email,
+              phone: user.phoneNumber,
+              pid: user.pid,
+              password: '',
+              confirmPassword: '',
+              fullname: user.fullname,
+              dob: user.dob ? new Date(user.dob) : null,
+              gender: user.gender?.toString() || '',
+              address: user.address || '',
+              role: user.role,
+            });
+          } else {
+            setFeedback({ type: 'error', message: 'Không tìm thấy người dùng' });
+          }
+        } catch (err) {
+          setFeedback({ type: 'error', message: 'Lỗi khi tải thông tin người dùng' });
         }
-      } catch (err) {
-        setFeedback({ type: 'error', message: 'Lỗi khi tải thông tin người dùng' });
-      }
-    };
-
-    fetchUser();
+      };
+      fetchUser();
+    }
   }, [id]);
 
   const handleSubmit = async (values) => {
@@ -78,15 +82,22 @@ const AccountUpdatePage = () => {
       password: values.password,
       confirmPassword: values.confirmPassword,
       fullname: values.fullname,
-      dob: values.dob.toISOString().split('T')[0],
+      dob: values.dob ? values.dob.toISOString().split('T')[0] : null,
       gender: parseInt(values.gender),
       address: values.address,
       role: values.role,
     };
 
     try {
-      console.log(JSON.stringify(payload));
-      const result = await putRequest(`/user/${id}`, payload);
+      let result;
+      if (id) {
+        // Update
+        result = await putRequest(`/user/${id}`, payload);
+      } else {
+        // Create
+        result = await postRequest('/user', payload);
+      }
+
       if (result.status) {
         setFeedback({ type: 'success', message: result.statusMessage });
         setTimeout(() => {
@@ -94,10 +105,10 @@ const AccountUpdatePage = () => {
           window.location.reload();
         }, 1500);
       } else {
-        setFeedback({ type: 'error', message: result.statusMessage || 'Cập nhật thất bại' });
+        setFeedback({ type: 'error', message: result.statusMessage || (id ? 'Cập nhật thất bại' : 'Tạo user thất bại') });
       }
     } catch (err) {
-      setFeedback({ type: 'error', message: 'Lỗi khi gửi yêu cầu cập nhật' });
+      setFeedback({ type: 'error', message: id ? 'Lỗi khi gửi yêu cầu cập nhật' : 'Lỗi khi gửi yêu cầu tạo user' });
     }
   };
 
@@ -108,11 +119,15 @@ const AccountUpdatePage = () => {
           className='!bg-transparent !text-black'
           size='xl'
           p='xs'
-          onClick={() => navigate("/admin/accounts")}
+          onClick={() => {
+            window.location.replace("/admin/accounts");
+          }}
         >
           <FontAwesomeIcon icon={faArrowLeft} />
         </Button>
-        <span className='font-bold text-2xl'>Cập nhật tài khoản</span>
+        <span className='font-bold text-2xl'>
+          {id ? 'Cập nhật tài khoản' : 'Tạo tài khoản mới'}
+        </span>
       </div>
 
       <Box maw={600} mx="auto">
@@ -129,7 +144,7 @@ const AccountUpdatePage = () => {
         )}
 
         <form onSubmit={form.onSubmit(handleSubmit)}>
-          <TextInput label="Tên đăng nhập" {...form.getInputProps('userName')} required disabled />
+          <TextInput label="Tên đăng nhập" {...form.getInputProps('userName')} required disabled={!!id} />
           <TextInput label="Email" {...form.getInputProps('email')} required mt="sm" />
           <TextInput label="Số điện thoại" {...form.getInputProps('phone')} required mt="sm" />
           <TextInput label="CMND/CCCD" {...form.getInputProps('pid')} required mt="sm" />
@@ -147,8 +162,18 @@ const AccountUpdatePage = () => {
             mt="sm"
           />
           <Textarea label="Địa chỉ" {...form.getInputProps('address')} mt="sm" />
-          <PasswordInput label="Mật khẩu mới (nếu đổi)" {...form.getInputProps('password')} mt="sm" />
-          <PasswordInput label="Nhập lại mật khẩu mới" {...form.getInputProps('confirmPassword')} mt="sm" />
+          <PasswordInput
+            label={id ? "Mật khẩu mới (nếu đổi)" : "Mật khẩu"}
+            {...form.getInputProps('password')}
+            required={!id}
+            mt="sm"
+          />
+          <PasswordInput
+            label={id ? "Nhập lại mật khẩu mới" : "Nhập lại mật khẩu"}
+            {...form.getInputProps('confirmPassword')}
+            required={!id}
+            mt="sm"
+          />
           <Select
             label="Vai trò"
             placeholder="Chọn quyền hạn"
@@ -163,7 +188,7 @@ const AccountUpdatePage = () => {
             mt="sm"
           />
           <Group position="right" mt="md">
-            <Button type="submit">Cập nhật tài khoản</Button>
+            <Button type="submit">{id ? 'Cập nhật' : 'Tạo tài khoản'}</Button>
           </Group>
         </form>
       </Box>
@@ -171,4 +196,4 @@ const AccountUpdatePage = () => {
   );
 };
 
-export default AccountUpdatePage;
+export default AccountFormPage;

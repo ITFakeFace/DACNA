@@ -346,7 +346,7 @@ namespace EVOLEC_Server.Migrations
                     b.ToTable("tblLessonDates", (string)null);
                 });
 
-            modelBuilder.Entity("EVOLEC_Server.Models.OffDates", b =>
+            modelBuilder.Entity("EVOLEC_Server.Models.OffDate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -655,7 +655,7 @@ namespace EVOLEC_Server.Migrations
             modelBuilder.Entity("EVOLEC_Server.Models.StudentAttendance", b =>
                 {
                     b.HasOne("EVOLEC_Server.Models.LessonDate", "LessonDate")
-                        .WithMany("studentAttendances")
+                        .WithMany("StudentAttendances")
                         .HasForeignKey("LessonDateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -679,7 +679,7 @@ namespace EVOLEC_Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EVOLEC_Server.Models.OffDates", null)
+                    b.HasOne("EVOLEC_Server.Models.OffDate", null)
                         .WithMany()
                         .HasForeignKey("OffDatesId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -775,7 +775,7 @@ namespace EVOLEC_Server.Migrations
 
             modelBuilder.Entity("EVOLEC_Server.Models.LessonDate", b =>
                 {
-                    b.Navigation("studentAttendances");
+                    b.Navigation("StudentAttendances");
                 });
 #pragma warning restore 612, 618
         }

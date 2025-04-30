@@ -154,10 +154,16 @@ internal class Program
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         // Add Services and Repositories to the container
+        // User Repository & Service
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
+        // Course Repository & Service
         builder.Services.AddScoped<ICourseRepository, CourseRepository>();
         builder.Services.AddScoped<ICourseService, CourseService>();
+        // Lesson Repository & Service
+        builder.Services.AddScoped<ILessonRepository, LessonRepository>();
+        builder.Services.AddScoped<ILessonService, LessonService>();
+        // Jwt Service
         builder.Services.AddScoped<JwtHelper>();
         // Add services to the container.
         builder.Services.AddScoped<JwtTokenGenerator>();

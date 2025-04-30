@@ -28,7 +28,7 @@ namespace EVOLEC_Server.Models
         public TimeOnly? StartTime { get; set; }
         public TimeOnly? EndTime { get; set; }
 
-        public ICollection<OffDates> OffDates { get; set; } = new List<OffDates>();
+        public ICollection<OffDate> OffDates { get; set; } = new List<OffDate>();
         public ICollection<StudentAttendance> studentAttendances { get; set; } = new List<StudentAttendance>();
 
 

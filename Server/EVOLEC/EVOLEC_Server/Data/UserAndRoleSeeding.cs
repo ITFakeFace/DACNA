@@ -10,7 +10,7 @@ namespace EVOLEC_Server.Data
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            string[] roles = { "ADMIN", "STAFF", "TEACHER", "STUDENT" };
+            string[] roles = { "ADMIN", "ENROLLMENT_STAFF", "TRAINING_STAFF", "TEACHER", "STUDENT" };
 
             foreach (var role in roles)
             {
@@ -31,13 +31,25 @@ namespace EVOLEC_Server.Data
                 UpdatedAt = DateTime.Now,
                 CreatedAt = DateTime.Now,
             };
-            var staff = new ApplicationUser
+            var enrollment_staff = new ApplicationUser
             {
-                Email = "staff@example.com",
+                Email = "enrollment_staff@example.com",
                 PhoneNumber = "0900000002",
-                Fullname = "Staff",
+                Fullname = "Enrollment Staff",
                 Dob = DateOnly.Parse("2000/01/01"),
-                UserName = "Staff",
+                UserName = "EnrollmentStaff",
+                Gender = 1,
+                PID = "079200000002",
+                UpdatedAt = DateTime.Now,
+                CreatedAt = DateTime.Now,
+            };
+            var training_staff = new ApplicationUser
+            {
+                Email = "training_staff@example.com",
+                PhoneNumber = "0900000002",
+                Fullname = "Training Staff",
+                Dob = DateOnly.Parse("2000/01/01"),
+                UserName = "TrainingStaff",
                 Gender = 1,
                 PID = "079200000002",
                 UpdatedAt = DateTime.Now,
@@ -68,7 +80,8 @@ namespace EVOLEC_Server.Data
                 CreatedAt = DateTime.Now,
             };
             await CreateUser(userManager, admin, "123456", "ADMIN");
-            await CreateUser(userManager, staff, "123456", "STAFF");
+            await CreateUser(userManager, enrollment_staff, "123456", "ENROLLMENT_STAFF");
+            await CreateUser(userManager, training_staff, "123456", "TRAINING_STAFF");
             await CreateUser(userManager, teacher, "123456", "TEACHER");
             await CreateUser(userManager, student, "123456", "STUDENT");
         }

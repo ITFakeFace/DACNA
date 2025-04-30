@@ -1,7 +1,19 @@
 import { AppShell, Text } from "@mantine/core";
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export default function StudentLayout() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token == null || token == "") {
+      navigate('/login');
+    }
+    if (getRoleFromToken(token) != "STUDENT") {
+      alert("Yêu cầu quyền truy cập")
+      navigate('/');
+    }
+  })
   return (
     <AppShell>
       <AppShell.Header height={60} p="md" withBorder>

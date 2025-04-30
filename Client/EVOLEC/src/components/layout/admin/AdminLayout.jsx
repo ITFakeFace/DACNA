@@ -1,11 +1,24 @@
 import { AppShell, Burger, Button, Group, Skeleton, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { MantineLogo } from '@mantinex/mantine-logo';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import AdminNavbar from './AdminNavbar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getRoleFromToken } from '../../../services/authService';
 
 const AdminLayout = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token == null || token == "") {
+      navigate('/login');
+    }
+    if (getRoleFromToken(token) != "ADMIN") {
+      alert("Yêu cầu quyền truy cập")
+      navigate('/');
+    }
+  })
+
   const [opened, { toggle }] = useDisclosure();
   const [navOpened, setNavOpened] = useState(true);
   return (

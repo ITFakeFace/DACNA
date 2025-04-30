@@ -2,7 +2,7 @@
 
 namespace EVOLEC_Server.Models
 {
-    public class OffDates
+    public class OffDate
     {
         [Key]
         public int Id { get; set; }
@@ -15,6 +15,6 @@ namespace EVOLEC_Server.Models
         [Required]
         public DateTime ToDate { get; set; }
 
-        public ICollection<LessonDate> LessonDates { get; set; }
+        public ICollection<LessonDate> LessonDates { get; set; } = new List<LessonDate>();
     }
 }

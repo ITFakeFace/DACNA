@@ -21,27 +21,20 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    // Reset error
     setEmailError("");
     setPasswordError("");
 
     try {
       const response = await axios.post(
         "http://localhost:5208/api/authentication/login",
-        {
-          email,
-          password,
-          rememberMe,
-        }
+        { email, password, rememberMe }
       );
 
       const token = response.data.data;
       localStorage.setItem("token", token);
-      navigate("/");
-      window.location.reload();
+
+      window.location.replace("/");  // Thay navigate + reload bằng replace
     } catch (error) {
-      // Có thể tùy chỉnh thông báo lỗi chi tiết hơn nếu API trả về
       setEmailError(" ");
       setPasswordError("Email hoặc mật khẩu không chính xác");
       console.error(error);

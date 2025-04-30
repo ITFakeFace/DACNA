@@ -4,14 +4,12 @@ namespace EVOLEC_Server.Dtos
 {
     public class CourseCreateDto
     {
-        [Required]
-        public string CourseName { get; set; }
-        public string? CourseDescription { get; set; }
-        [Required]
-        public float BandScore { get; set; }
-        [Required]
+        public string Name { get; set; }
+        public string? Description { get; set; }
+        public float FullScore { get; set; }
         public float PassScore { get; set; }
-        [Required]
+        public float BandScore { get; set; }
+        public string CreatorId { get; set; }
         public int Status { get; set; }
     }
 }

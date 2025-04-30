@@ -112,7 +112,7 @@ const AccountListPage = () => {
         <Button onClick={() => navigate("/admin/accounts/create")}>Tạo tài khoản mới</Button>
       </div>
       {
-        loading ? <LoadingOverlay /> : <DataTable
+        loading ? <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} /> : <DataTable
           className='w-full data-table'
           columns={columns}   // Cập nhật lại cách khai báo cột
           data={users}        // Dữ liệu sẽ là `users`

@@ -12,13 +12,13 @@ namespace EVOLEC_Server.Models
         {
         }
 
-        public DbSet<OffDates> OffDates { get; set; }
+        public DbSet<OffDate> OffDates { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<ClassRoom> ClassRooms { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<LessonDate> LessonDates { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
-        public DbSet<StudentAttendance> studentAttendances { get; set; }
+        public DbSet<StudentAttendance> StudentAttendances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -33,7 +33,7 @@ namespace EVOLEC_Server.Models
             builder.Entity<IdentityUserToken<string>>().ToTable("tblUserTokens");
             builder.Entity<IdentityRoleClaim<string>>().ToTable("tblRoleClaims");
             // Additional Table
-            builder.Entity<OffDates>().ToTable("tblOffDates");
+            builder.Entity<OffDate>().ToTable("tblOffDates");
             builder.Entity<Course>().ToTable("tblCourses");
             builder.Entity<ClassRoom>().ToTable("tblClassRooms");
             builder.Entity<Lesson>().ToTable("tblLessons");

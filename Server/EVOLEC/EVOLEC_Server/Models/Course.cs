@@ -27,8 +27,8 @@ namespace EVOLEC_Server.Models
         [ForeignKey(nameof(Creator))]
         public string CreatorId { get; set; }
 
-        public ICollection<ClassRoom> ClassRooms { get; set; }
-        public ICollection<Lesson> Lessons { get; set; }
+        public ICollection<ClassRoom> ClassRooms { get; set; } = new List<ClassRoom>();
+        public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
 
     }
 }

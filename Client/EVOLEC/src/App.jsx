@@ -1,14 +1,15 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import AdminLayout from "./components/layout/admin/AdminLayout";
 import StudentLayout from "./components/layout/student/StudentLayout";
 import GeneralLayout from "./components/layout/general/GeneralLayout";
 import LoginPage from "./components/authentication/LoginPage";
 import AccountListPage from "./components/authentication/admin/AccountListPage";
-import AccountCreatePage from "./components/authentication/admin/AccountCreatePage";
-import AccountUpdatePage from "./components/authentication/admin/AccountUpdatePage";
 import CourseListPage from "./components/admin/course/CourseListPage";
-import CourseCreatePage from "./components/admin/course/CourseCreatePage";
-import CourseUpdatePage from "./components/admin/course/CourseUpdatePage";
+import { useEffect } from "react";
+import { getRoleFromToken, isTokenValid } from "./services/authService";
+import AccountFormPage from "./components/authentication/admin/AccountFormPage";
+import CourseFormPage from "./components/admin/course/CourseFormPage";
+import CourseDetailsPage from "./components/admin/course/CourseDetailsPage";
 
 function Dashboard() {
   return <h2>Admin Dashboard</h2>;
@@ -23,7 +24,37 @@ function StudentHome() {
 }
 
 export default function App() {
-  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const pathname = window.location.pathname;
+
+    const isProtectedRoute = pathname.startsWith("/admin") ||
+      pathname.startsWith("/student") ||
+      pathname.startsWith("/staff");
+    if (token && !isTokenValid(token)) {
+      localStorage.removeItem("token")
+      if (isProtectedRoute) {
+        window.location.href = "/";
+      }
+    }
+
+    if (getRoleFromToken(token) != "STUDENT" && pathname.startsWith("/student")) {
+      console.log("Yêu cầu quyền truy cập (STD)");
+      window.location.href = "/";
+    }
+    if (getRoleFromToken(token) != "ADMIN" && pathname.startsWith("/admin")) {
+      console.log("Yêu cầu quyền truy cập (ADM)")
+      window.location.href = "/";
+    }
+    if (getRoleFromToken(token) != "STAFF" && pathname.startsWith("/staff")) {
+      console.log("Yêu cầu quyền truy cập (STF)")
+      window.location.href = "/";
+    }
+    if (getRoleFromToken(token) != "TEACHER" && pathname.startsWith("/teacher")) {
+      console.log("Yêu cầu quyền truy cập (TCH)")
+      window.location.href = "/";
+    }
+  }, []);
   return (
     <Router>
       <Routes>
@@ -36,11 +67,12 @@ export default function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="settings" element={<Settings />} />
           <Route path="accounts" element={<AccountListPage />} />
-          <Route path="accounts/create" element={<AccountCreatePage />} />
-          <Route path="accounts/update/:id" element={<AccountUpdatePage />} />
+          <Route path="accounts/create" element={<AccountFormPage />} />
+          <Route path="accounts/update/:id" element={<AccountFormPage />} />
           <Route path="courses" element={<CourseListPage />} />
-          <Route path="courses/create" element={<CourseCreatePage />} />
-          <Route path="courses/update/:id" element={<CourseUpdatePage />} />
+          <Route path="courses/:id" element={<CourseDetailsPage />} />
+          <Route path="courses/create" element={<CourseFormPage />} />
+          <Route path="courses/update/:id" element={<CourseFormPage />} />
         </Route>
 
         {/* Student */}

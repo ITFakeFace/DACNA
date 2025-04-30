@@ -16,14 +16,15 @@ namespace EVOLEC_Server.Models
         [ForeignKey(nameof(Teacher2Id))]
         public ApplicationUser? Teacher2 { get; set; }
 
+        public int CourseId { get; set; }
         [Required]
         public Course Course { get; set; }
-        public int CourseId { get; set; }
 
         [Required]
-        public ApplicationUser Creator { get; set; }
-        [Required]
         public string CreatorId { get; set; }
+        [Required]
+        [ForeignKey(nameof(CreatorId))]
+        public ApplicationUser Creator { get; set; }
 
         public DateOnly? StartDate { get; set; }
         public DateOnly? EndDate { get; set; }

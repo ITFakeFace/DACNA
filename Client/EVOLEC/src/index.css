@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+@theme {
+  --color-male: #347DC1;
+  --color-female: #CC6594;
+  --color-status-active:#56F000;
+  --color-status-inactive:#FF3838;
+  --color-status-update:#FFB302;
+}

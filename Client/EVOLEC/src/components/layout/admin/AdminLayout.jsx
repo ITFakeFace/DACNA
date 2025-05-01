@@ -8,19 +8,19 @@ import { getRoleFromToken } from '../../../services/authService';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token == null || token == "") {
-      navigate('/login');
-    }
-    if (getRoleFromToken(token) != "ADMIN") {
-      alert("Yêu cầu quyền truy cập")
-      navigate('/');
-    }
-  })
-
   const [opened, { toggle }] = useDisclosure();
   const [navOpened, setNavOpened] = useState(true);
+  useEffect(() => {
+    // const token = localStorage.getItem('token');
+    // if (token == null || token == "") {
+    //   navigate('/login');
+    // }
+    // if (getRoleFromToken(token) != "ADMIN") {
+    //   alert("Yêu cầu quyền truy cập")
+    //   navigate('/');
+    // }
+  })
+
   return (
     <AppShell
       layout="alt"

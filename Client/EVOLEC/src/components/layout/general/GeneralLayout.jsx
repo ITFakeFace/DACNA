@@ -11,6 +11,11 @@ const GeneralLayout = () => {
   const [role, setRole] = useState(null);
   const [username, setUsername] = useState(null);
   const [logged, setLogged] = useState(false);
+
+  const go = (path) => {
+    window.location.href = path; // điều hướng và reload trang
+  }
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -32,6 +37,24 @@ const GeneralLayout = () => {
     localStorage.removeItem('token')
     setLogged(false);
   };
+
+  const UserButton = () => {
+    switch (role) {
+      case "ADMIN":
+        return <UnstyledButton type='button' onClick={() => go("/admin")}>{username}</UnstyledButton>
+      case "ACADEMIC_ADMIN":
+        return <UnstyledButton type='button' onClick={() => go("/academic-admin")}>{username}</UnstyledButton>
+      case "ENROLLMENT_STAFF":
+        return <UnstyledButton type='button' onClick={() => go("/enrollment-staff")}>{username}</UnstyledButton>
+      case "TEACHER":
+        return <UnstyledButton type='button' onClick={() => go("/teacher")}>{username}</UnstyledButton>
+      case "STUDENT":
+        return <UnstyledButton type='button' onClick={() => go("/student")}>{username}</UnstyledButton>
+      default:
+        return <UnstyledButton type='button' onClick={() => go("/login")}>{username}</UnstyledButton>
+    }
+  }
+
   return (
     <AppShell
       header={{ height: 60 }}
@@ -53,7 +76,7 @@ const GeneralLayout = () => {
             <Group gap={15} visibleFrom="sm">
               {logged ?
                 <>
-                  <UnstyledButton type='button' onClick={() => navigate(role == "ADMIN" || role == "STAFF" ? "/admin" : "/student")}>{username}</UnstyledButton> /
+                  <UserButton /> /
                   <UnstyledButton type='button' onClick={() => logout()}> Đăng xuất</UnstyledButton>
                 </>
                 : <UnstyledButton type='button' onClick={() => navigate('/login')}>Đăng nhập</UnstyledButton>}
@@ -68,7 +91,7 @@ const GeneralLayout = () => {
         <UnstyledButton>Về chúng tôi</UnstyledButton>
         {logged ?
           <>
-            <UnstyledButton type='button' onClick={() => navigate(role == "ADMIN" || role == "STAFF" ? "/admin" : "/student")}>{username}</UnstyledButton> /
+            <UserButton /> /
             <UnstyledButton type='button' onClick={() => logout}> Đăng xuất</UnstyledButton>
           </>
           : <UnstyledButton type='button' onClick={() => navigate('/login')}>Đăng nhập</UnstyledButton>}

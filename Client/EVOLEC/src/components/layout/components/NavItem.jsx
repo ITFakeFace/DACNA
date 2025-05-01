@@ -6,9 +6,9 @@ const NavItem = ({ icon, title, isOpened, url }) => {
   const navigate = useNavigate();
   const urlPage = () => {
     const path = window.location.pathname;
-    const parts = path.split("/").filter(Boolean); // Loại bỏ phần tử rỗng
+    const parts = path.split("/").filter(Boolean); // Remove empty elements
 
-    return parts[1] ?? "Dashboard"; // Bây giờ "admin" ở vị trí [1]
+    return parts[1] ?? "Dashboard"; // Now "admin" is in index [1]
   };
 
   return (

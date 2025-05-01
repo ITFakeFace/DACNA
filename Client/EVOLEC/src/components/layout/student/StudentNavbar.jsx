@@ -1,13 +1,11 @@
-
-import { Button } from '@mantine/core';
+import { faCompress, faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCompress, faHome, faSchool, faUser } from "@fortawesome/free-solid-svg-icons";
-import './AdminNavbar.css';
-import NavItem from '../components/NavItem';
+import NavItem from "../components/NavItem";
+import { Button } from "@mantine/core";
+import './StudentNavbar.css'
 
-
-const AdminNavbar = ({ isOpened, setOpened }) => {
-
+const StudentNavbar = ({ isOpened, setOpened }) => {
+  const pathRoot = "/student"
   return (
     <div
       className="nav-container"
@@ -21,19 +19,7 @@ const AdminNavbar = ({ isOpened, setOpened }) => {
           icon={<FontAwesomeIcon icon={faHome} />}
           title="Dashboard"
           isOpened={isOpened}
-          url="/admin/dashboard"
-        ></NavItem>
-        <NavItem
-          icon={<FontAwesomeIcon icon={faUser} />}
-          title="Accounts"
-          isOpened={isOpened}
-          url="/admin/accounts"
-        ></NavItem>
-        <NavItem
-          icon={<FontAwesomeIcon icon={faSchool} />}
-          title="Courses"
-          isOpened={isOpened}
-          url="/admin/courses"
+          url={`${pathRoot}/dashboard`}
         ></NavItem>
       </div>
       <div className='nav-row-bottom'>
@@ -45,4 +31,4 @@ const AdminNavbar = ({ isOpened, setOpened }) => {
   )
 };
 
-export default AdminNavbar;
+export default StudentNavbar;

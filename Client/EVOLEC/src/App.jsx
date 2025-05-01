@@ -10,13 +10,16 @@ import { getRoleFromToken, isTokenValid } from "./services/authService";
 import AccountFormPage from "./components/authentication/admin/AccountFormPage";
 import CourseFormPage from "./components/admin/course/CourseFormPage";
 import CourseDetailsPage from "./components/admin/course/CourseDetailsPage";
+import EnrollmentStaffLayout from "./components/layout/enrollment-staff/EnrollmentStaffLayout";
+import TeacherLayout from "./components/layout/teacher/TeacherLayout";
+import AcademicAdminLayout from "./components/layout/academic-admin/AcademicAdminLayout";
 
 function Dashboard() {
-  return <h2>Admin Dashboard</h2>;
+  return <h2>Dashboard Page</h2>;
 }
 
 function Settings() {
-  return <h2>Admin Settings</h2>;
+  return <h2>Settings Page</h2>;
 }
 
 function StudentHome() {
@@ -37,22 +40,29 @@ export default function App() {
         window.location.href = "/";
       }
     }
-
-    if (getRoleFromToken(token) != "STUDENT" && pathname.startsWith("/student")) {
-      console.log("Yêu cầu quyền truy cập (STD)");
-      window.location.href = "/";
+    const rawRole = getRoleFromToken(token);
+    const role = rawRole ? rawRole.toString().toUpperCase() : null;
+    if (!role)
+      return;
+    if (role != "ADMIN" && pathname.startsWith("/admin")) {
+      console.log("Required Specific Permission to Access (ADM)")
+      window.location.href = "/login";
     }
-    if (getRoleFromToken(token) != "ADMIN" && pathname.startsWith("/admin")) {
-      console.log("Yêu cầu quyền truy cập (ADM)")
-      window.location.href = "/";
+    if (role != "ACADEMIC_ADMIN" && pathname.startsWith("/academic-admin")) {
+      console.log("Required Specific Permission to Access (ACA_ADM)")
+      window.location.href = "/login";
     }
-    if (getRoleFromToken(token) != "STAFF" && pathname.startsWith("/staff")) {
-      console.log("Yêu cầu quyền truy cập (STF)")
-      window.location.href = "/";
+    if (role != "ENROLLMENT_STAFF" && pathname.startsWith("/enrollment-staff")) {
+      console.log("Required Specific Permission to Access (STF)")
+      window.location.href = "/login";
     }
-    if (getRoleFromToken(token) != "TEACHER" && pathname.startsWith("/teacher")) {
-      console.log("Yêu cầu quyền truy cập (TCH)")
-      window.location.href = "/";
+    if (role != "TEACHER" && pathname.startsWith("/teacher")) {
+      console.log("Required Specific Permission to Access (TCH)")
+      window.location.href = "/login";
+    }
+    if (role != "STUDENT" && pathname.startsWith("/student")) {
+      console.log("Required Specific Permission to Access (STD)");
+      window.location.href = "/login";
     }
   }, []);
   return (
@@ -73,6 +83,15 @@ export default function App() {
           <Route path="courses/:id" element={<CourseDetailsPage />} />
           <Route path="courses/create" element={<CourseFormPage />} />
           <Route path="courses/update/:id" element={<CourseFormPage />} />
+        </Route>
+        <Route path="/academic-admin/*" element={<AcademicAdminLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+        </Route>
+        <Route path="/enrollment-staff/*" element={<EnrollmentStaffLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+        </Route>
+        <Route path="/teacher/*" element={<TeacherLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
         </Route>
 
         {/* Student */}

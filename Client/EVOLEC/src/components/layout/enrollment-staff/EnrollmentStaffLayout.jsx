@@ -1,11 +1,12 @@
-import { AppShell, Burger, Group, Text } from "@mantine/core";
+import { AppShell, Burger, Group } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { MantineLogo } from "@mantinex/mantine-logo";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import StudentNavbar from "./StudentNavbar";
-import { MantineLogo } from "@mantinex/mantine-logo";
-import { useDisclosure } from "@mantine/hooks";
+import EnrollmentStaffNavbar from "./EnrollmentStaffNavbar";
 
-const StudentLayout = () => {
+const EnrollmentStaffLayout = () => {
+  const navigate = useNavigate();
   const [opened, { toggle }] = useDisclosure();
   const [navOpened, setNavOpened] = useState(true);
   return (
@@ -24,7 +25,7 @@ const StudentLayout = () => {
         </Group>
       </AppShell.Header>
       <AppShell.Navbar>
-        <StudentNavbar isOpened={navOpened} setOpened={setNavOpened} />
+        <EnrollmentStaffNavbar isOpened={navOpened} setOpened={setNavOpened} />
       </AppShell.Navbar>
       <AppShell.Main>
         <Outlet />
@@ -32,7 +33,7 @@ const StudentLayout = () => {
       {/* <AppShell.Aside p="md">Aside</AppShell.Aside> */}
       <AppShell.Footer p="md">Footer</AppShell.Footer>
     </AppShell>
-  )
-};
+  );
+}
 
-export default StudentLayout;
+export default EnrollmentStaffLayout;

@@ -1,0 +1,19 @@
+.nav-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Đẩy nội dung xuống dưới */
+  height: 100vh;
+  background-color: #ffffff;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  transition: padding-left 0.25s ease, padding-right 0.25s ease;
+}
+
+.nav-row {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 5px;
+
+}

@@ -17,11 +17,13 @@
   gap: 5px;
 }
 
-.nav-row-bottom{
+.nav-row-bottom {
   width: 100%;
+  display: flex;
+  gap: 5px;
 }
 
-.logo{
+.logo {
   width: 100%;
   /* hoặc cố định: eg. 400px */
   height: 150px;
@@ -34,11 +36,11 @@
   justify-content: center;
 }
 
-.logo-container{
+.logo-container {
   width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* cover để stretch lấp đầy */
+  height: 100%;
+  object-fit: cover;
+  /* cover để stretch lấp đầy */
 }
 
 .logo-img {

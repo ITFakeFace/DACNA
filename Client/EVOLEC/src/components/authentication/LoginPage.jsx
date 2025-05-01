@@ -6,7 +6,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import "./LoginPage.css";
-import EVOLEC_Logo from "../../assets/web_logo/EVOLEC_Logo.jpg";
+import EVOLEC_LogoSquare from "../../assets/web_logo/EVOLEC_LogoSquare.jpg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -33,7 +33,7 @@ const LoginPage = () => {
       const token = response.data.data;
       localStorage.setItem("token", token);
 
-      window.location.replace("/");  // Thay navigate + reload bằng replace
+      window.location.replace("/");  // replacing navigate + reload by replace
     } catch (error) {
       setEmailError(" ");
       setPasswordError("Email hoặc mật khẩu không chính xác");
@@ -48,13 +48,13 @@ const LoginPage = () => {
     >
       <div className="form-left md:basis-1/2 ">
         <Group gap={30} align="center" justify="center">
-          <div className="font-bold text-5xl text-center">Đăng Nhập</div>
+          <div className="font-bold text-5xl text-center">Sign In</div>
 
           <TextInput
             id="inp-email"
             size="lg"
             label="Email"
-            description="Nhập email của bạn"
+            description="Enter your email"
             placeholder="example@abc.com"
             required
             value={email}
@@ -67,8 +67,8 @@ const LoginPage = () => {
             id="inp-password"
             size="lg"
             label="Mật khẩu"
-            description="Nhập mật khẩu của bạn"
-            placeholder="Nhập mật khẩu"
+            description="Enter your password"
+            placeholder="Enter password"
             type="password"
             required
             value={password}
@@ -80,25 +80,25 @@ const LoginPage = () => {
           <div className="w-full text-md justify-between flex">
             <Checkbox
               variant="outline"
-              label="Ghi nhớ đăng nhập"
+              label="Remember Me"
               size="md"
               radius="md"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.currentTarget.checked)}
             />
-            <a href="/forgot-password">Quên mật khẩu?</a>
+            <a href="/forgot-password">Forgot Password?</a>
           </div>
 
           <div>
             <Button type="submit" size="lg" radius="md">
-              Đăng nhập
+              Sign In
             </Button>
           </div>
         </Group>
       </div>
 
       <div className="form-right md:basis-1/2">
-        <img src={EVOLEC_Logo} alt="" className="form-img h-full" />
+        <img src={EVOLEC_LogoSquare} alt="" className="form-img h-full" />
       </div>
     </form>
   );

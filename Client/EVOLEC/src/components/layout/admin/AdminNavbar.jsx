@@ -3,45 +3,38 @@ import { Button } from '@mantine/core';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCompress, faHome, faSchool, faUser } from "@fortawesome/free-solid-svg-icons";
 import './AdminNavbar.css';
-import NavItem from './NavItem';
-
+import NavItem from '../components/NavItem';
+import EVOLEC_LogoRectangle from '../../../assets/web_logo/EVOLEC_LogoRectangle.png';
+import EVOLEC_LogoSquare from '../../../assets/web_logo/EVOLEC_LogoSquare.jpg';
+import EVOLEC_LogoRectangle_Portrait from '../../../assets/web_logo/EVOLEC_LogoRectangle_Portrait.png';
+import NavbarTemplate from '../components/NavbarTemplate';
 
 const AdminNavbar = ({ isOpened, setOpened }) => {
-
+  const pathRoot = "/admin";
   return (
-    <div
-      className="nav-container"
-      style={{ width: "100%", height: "100vh", paddingLeft: isOpened ? 5 : 10, paddingRight: isOpened ? 0 : 10 }}
+    <NavbarTemplate
+      isOpened={isOpened}
+      setOpened={setOpened}
     >
-      <div className='nav-row'>
-        <div className='logo'>
-          <img src="" alt="" style={{ width: "100%", height: 100 }} />
-        </div>
-        <NavItem
-          icon={<FontAwesomeIcon icon={faHome} />}
-          title="Dashboard"
-          isOpened={isOpened}
-          url="/admin/dashboard"
-        ></NavItem>
-        <NavItem
-          icon={<FontAwesomeIcon icon={faUser} />}
-          title="Accounts"
-          isOpened={isOpened}
-          url="/admin/accounts"
-        ></NavItem>
-        <NavItem
-          icon={<FontAwesomeIcon icon={faSchool} />}
-          title="Courses"
-          isOpened={isOpened}
-          url="/admin/courses"
-        ></NavItem>
-      </div>
-      <div className='nav-row-bottom'>
-        <Button onClick={() => setOpened((o) => !o)}>
-          <FontAwesomeIcon icon={faCompress} />
-        </Button>
-      </div>
-    </div>
+      <NavItem
+        icon={<FontAwesomeIcon icon={faHome} />}
+        title="Dashboard"
+        isOpened={isOpened}
+        url={`${pathRoot}/dashboard`}
+      ></NavItem>
+      <NavItem
+        icon={<FontAwesomeIcon icon={faUser} />}
+        title="Accounts"
+        isOpened={isOpened}
+        url={`${pathRoot}/accounts`}
+      ></NavItem>
+      <NavItem
+        icon={<FontAwesomeIcon icon={faSchool} />}
+        title="Courses"
+        isOpened={isOpened}
+        url={`${pathRoot}/courses`}
+      ></NavItem>
+    </NavbarTemplate>
   )
 };
 

@@ -14,6 +14,7 @@ import { Dialog } from "primereact/dialog";
 import { InputTextarea } from "primereact/inputtextarea";
 import { RadioButton } from "primereact/radiobutton";
 import { classNames } from "primereact/utils";
+import { getUserIdFromToken } from "../../../services/authService";
 
 const LessonListComponent = ({ courseId, loading }) => {
   let emptyLesson = {
@@ -24,6 +25,10 @@ const LessonListComponent = ({ courseId, loading }) => {
     contentBeforeClass: '',
     contentDuringClass: '',
     contentAfterClass: '',
+    creatorId: getUserIdFromToken(localStorage.getItem('token')),
+    creator: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     status: 1,
   };
   const status = [
@@ -148,6 +153,7 @@ const LessonListComponent = ({ courseId, loading }) => {
           console.log("Saving Lesson");
           var res = await createLesson();
           if (res) {
+            fetchLessons();
             _lessons.push(_res.data);
           }
         }
@@ -216,7 +222,7 @@ const LessonListComponent = ({ courseId, loading }) => {
 
   const header = (
     <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-      <h4 className="m-0">Manage Lessons</h4>
+
       <IconField iconPosition="left">
         <InputIcon className="pi pi-search" />
         <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />

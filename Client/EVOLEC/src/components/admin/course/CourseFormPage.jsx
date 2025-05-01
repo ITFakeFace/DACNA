@@ -51,11 +51,11 @@ const CourseFormPage = () => {
               status: data.status.toString()
             });
           } else {
-            alert('Không tìm thấy khóa học!');
+            alert('Cannot find course!');
             navigate('/admin/courses');
           }
         } catch (error) {
-          console.error('Lỗi khi tải khóa học:', error);
+          console.error('Error fetching course:', error);
         } finally {
           setLoading(false);
         }
@@ -88,11 +88,11 @@ const CourseFormPage = () => {
       if (res.status) {
         navigate('/admin/courses');
       } else {
-        setFeedback({ type: 'error', message: isEditMode ? 'Cập nhật thất bại' : 'Tạo thất bại' });
+        setFeedback({ type: 'error', message: isEditMode ? 'Failed to Update Course' : 'Failed to Create new Course' });
       }
     } catch (error) {
       console.error('Lỗi khi submit:', error);
-      setFeedback({ type: 'error', message: isEditMode ? 'Cập nhật thất bại' : 'Tạo thất bại' });
+      setFeedback({ type: 'error', message: isEditMode ? 'Failed to Update Course' : 'Failed to Create new Course' });
     }
   };
 
@@ -112,7 +112,7 @@ const CourseFormPage = () => {
           <FontAwesomeIcon icon={faArrowLeft} />
         </Button>
         <span className='font-bold text-2xl'>
-          {isEditMode ? 'Cập nhật khóa học' : 'Tạo khóa học mới'}
+          {isEditMode ? 'Update' : 'Create New'}
         </span>
       </div>
 
@@ -121,7 +121,7 @@ const CourseFormPage = () => {
           <Notification
             icon={feedback.type === 'success' ? <IconCheck size={18} /> : <IconX size={18} />}
             color={feedback.type === 'success' ? 'teal' : 'red'}
-            title={feedback.type === 'success' ? 'Thành công' : 'Thất bại'}
+            title={feedback.type === 'success' ? 'Success' : 'Failed'}
             onClose={() => setFeedback(null)}
             mb="md"
           >
@@ -130,23 +130,23 @@ const CourseFormPage = () => {
         )}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-xl">
           <TextInput
-            label="Tên khóa học"
-            placeholder="Nhập tên khóa học"
+            label="Course Name"
+            placeholder="Enter course name"
             required
             value={course.name}
             onChange={(e) => handleChange('name', e.target.value)}
           />
 
           <Textarea
-            label="Mô tả khóa học"
-            placeholder="Nhập mô tả"
+            label="Course Description"
+            placeholder="Enter course description"
             value={course.description}
             onChange={(e) => handleChange('description', e.target.value)}
           />
 
           <NumberInput
             label="Full Score"
-            placeholder="Nhập điểm tối đa"
+            placeholder="Enter full score"
             required
             value={course.fullScore}
             onChange={(val) => handleChange('fullScore', val)}
@@ -156,7 +156,7 @@ const CourseFormPage = () => {
 
           <NumberInput
             label="Pass Score"
-            placeholder="Nhập điểm đạt"
+            placeholder="enter pass score"
             required
             value={course.passScore}
             onChange={(val) => handleChange('passScore', val)}
@@ -166,7 +166,7 @@ const CourseFormPage = () => {
 
           <NumberInput
             label="Band Score"
-            placeholder="Nhập điểm band"
+            placeholder="Enter band score"
             required
             value={course.bandScore}
             onChange={(val) => handleChange('bandScore', val)}
@@ -175,19 +175,19 @@ const CourseFormPage = () => {
           />
 
           <Select
-            label="Trạng thái"
-            placeholder="Chọn trạng thái"
+            label="Status"
+            placeholder="Select Status"
             required
             value={course.status}
             onChange={(val) => handleChange('status', val)}
             data={[
-              { value: '1', label: 'Hoạt động' },
-              { value: '0', label: 'Không hoạt động' },
+              { value: '1', label: 'Active' },
+              { value: '0', label: 'Inactive' },
             ]}
           />
 
           <Group position="right" mt="md">
-            <Button type="submit">{isEditMode ? 'Cập nhật' : 'Tạo mới'}</Button>
+            <Button type="submit">{isEditMode ? 'Update' : 'Creat New'}</Button>
             <Button variant="default" onClick={() => navigate('/admin/courses')}>
               Hủy
             </Button>

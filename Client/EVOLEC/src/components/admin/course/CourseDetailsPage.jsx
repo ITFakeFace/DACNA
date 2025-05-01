@@ -34,57 +34,6 @@ const CourseDetailsPage = () => {
     status: '1'
   });
 
-  const lessonColumns = [
-    { name: 'Tên tiết', selector: row => row.name, sortable: true },
-    { name: 'Mô tả`', selector: row => row.bandScore, sortable: true, center: true },
-    {
-      name: 'Trạng thái',
-      selector: row => {
-        return row.status === 1
-          ? <Button color='green'>Hoạt động</Button>
-          : <Button color='red'>Không hoạt động</Button>;
-      },
-      sortable: true,
-      center: true,
-    },
-    {
-      name: '',
-      selector: (row) => {
-        return (
-          <div className="flex gap-2 justify-center">
-            <Button size="xs"
-              onClick={() => navigate(`/admin/lessons/${row.id}`)}
-            >
-              Chi tiết
-            </Button>
-            <Button size="xs" className="!bg-cyan-500"
-              onClick={() => navigate(`/admin/lessons/update/${row.id}`)}
-            >
-              Cập nhật
-            </Button>
-            <Button size="xs" color="red"
-              onClick={() => handleDelete(row.id)}
-            >
-              Xóa
-            </Button>
-          </div>
-        );
-      },
-      sortable: false,
-      center: true,
-      minWidth: '280px',
-    },
-  ];
-  const tableCustomStyles = {
-    headCells: {
-      style: {
-        fontSize: '16px',
-        fontWeight: 'bold',
-        padding: '0 8px',
-        justifyContent: 'center',
-      },
-    },
-  };
   useEffect(() => {
     const fetchCourse = async () => {
       try {
@@ -103,11 +52,11 @@ const CourseDetailsPage = () => {
             status: data.status.toString()
           });
         } else {
-          alert('Không tìm thấy khóa học!');
+          alert('Cannot find course!');
           navigate('/admin/courses');
         }
       } catch (error) {
-        console.error('Lỗi khi tải khóa học:', error);
+        console.error('Error fetching course:', error);
       }
     };
 
@@ -122,10 +71,6 @@ const CourseDetailsPage = () => {
     }
   }, [])
 
-
-
-
-
   if (loading)
     return <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
   return (
@@ -139,78 +84,79 @@ const CourseDetailsPage = () => {
         >
           <FontAwesomeIcon icon={faArrowLeft} />
           <span className='font-bold text-2xl ml-3'>
-            Quay lại
+            Back
           </span>
         </Button>
 
       </div>
       <div className="row">
-        <Title size='xl' mt={30}>Thông tin khóa học</Title>
+        <Title size='xl' mt={30}>Course's Inforation</Title>
         <Group className="m-3">
           <div className="row flex w-full">
-            <div className="w-1/4 font-semibold">Username :</div>
+            <div className="w-1/4 font-semibold">Course Name :</div>
             <div className="w-3/4">{course.name}</div>
           </div>
           <div className="row flex w-full">
-            <div className="w-1/4 font-semibold">Descirption :</div>
+            <div className="w-1/4 font-semibold">Course Descirption :</div>
             <div className="w-3/4 text-wrap">{course.description}</div>
           </div>
           <div className="row flex w-full">
-            <div className="w-1/4 font-semibold">Band điểm :</div>
+            <div className="w-1/4 font-semibold">Band Score :</div>
             <div className="w-3/4">{course.bandScore}</div>
           </div>
           <div className="row flex w-full">
-            <div className="w-1/4 font-semibold">Điểm tối đa :</div>
+            <div className="w-1/4 font-semibold">Full Score :</div>
             <div className="w-3/4">{course.fullScore}</div>
           </div>
           <div className="row flex w-full">
-            <div className="w-1/4 font-semibold">Điểm vượt qua :</div>
+            <div className="w-1/4 font-semibold">Pass Score :</div>
             <div className="w-3/4">{course.passScore}</div>
           </div>
           <div className="row flex w-full">
-            <div className="w-1/4 font-semibold">Tạo lúc :</div>
+            <div className="w-1/4 font-semibold">Created At :</div>
             <div className="w-3/4">{course.createdAt}</div>
           </div>
           <div className="row flex w-full">
-            <div className="w-1/4 font-semibold">Cập nhật lúc :</div>
+            <div className="w-1/4 font-semibold">Updated At :</div>
             <div className="w-3/4">{course.updatedAt}</div>
           </div>
           <div className="row flex w-full">
-            <div className="w-1/4 font-semibold">Tình trạng :</div>
-            <div className="w-3/4">{course.passScore}</div>
-          </div>
-        </Group>
-      </div>
-      <div className="row">
-        <Title size='xl' mt={50}>Thông tin người tạo</Title>
-        <Group className="m-3">
-          <div className="row flex w-full">
-            <div className="w-1/4 font-semibold">Họ và tên :</div>
-            <div className="w-3/4">{course.creator.fullname ?? "(Không xác định)"}</div>
-          </div>
-          <div className="row flex w-full">
-            <div className="w-1/4 font-semibold">Email :</div>
-            <div className="w-3/4">{course.creator.email ?? "(Không xác định)"}</div>
-          </div>
-          <div className="row flex w-full">
-            <div className="w-1/4 font-semibold">Số điện thoại :</div>
-            <div className="w-3/4">{course.creator.phone ?? "(Không xác định)"}</div>
-          </div>
-          <div className="row flex w-full">
-            <div className="w-1/4 font-semibold">Giới tính :</div>
-            <div className="w-3/4">
-              {course.creator.gender === 1 ? <span className="text-male">Nam </span> : <span className="text-female">Nữ </span>}
+            <div className="w-1/4 font-semibold">Status :</div>
+            <div className="w-3/4">{course.status == 1
+              ? <Button color='green'>Active</Button>
+              : <Button color='red'>Inactive</Button>}
             </div>
           </div>
         </Group>
       </div>
       <div className="row">
-        <Title size='xl' mt={50}>Chi tiết khóa học</Title>
-        <Group m={30}>
-          <Button color="blue">Tạo tiết học</Button>
+        <Title size='xl' mt={50}>Creator's Information</Title>
+        <Group className="m-3">
+          <div className="row flex w-full">
+            <div className="w-1/4 font-semibold">Fullname :</div>
+            <div className="w-3/4">{course.creator.fullname ?? "(Undefined)"}</div>
+          </div>
+          <div className="row flex w-full">
+            <div className="w-1/4 font-semibold">Email :</div>
+            <div className="w-3/4">{course.creator.email ?? "(Undefined)"}</div>
+          </div>
+          <div className="row flex w-full">
+            <div className="w-1/4 font-semibold">Phone Number :</div>
+            <div className="w-3/4">{course.creator.phone ?? "(Undefined)"}</div>
+          </div>
+          <div className="row flex w-full">
+            <div className="w-1/4 font-semibold">Gender :</div>
+            <div className="w-3/4">
+              {course.creator.gender === 1
+                ? <span className="text-male">Nam </span>
+                : <span className="text-female">Nữ </span>}
+            </div>
+          </div>
         </Group>
+      </div>
+      <div className="row">
+        <Title size='xl' mt={50}>Course's Details</Title>
         <Group>
-
           {lessonLoading ? (
             <LoadingOverlay visible={lessonLoading} overlayProps={{ blur: 2 }} />
           ) : (

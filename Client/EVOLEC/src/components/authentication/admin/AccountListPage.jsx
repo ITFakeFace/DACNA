@@ -27,43 +27,45 @@ const AccountListPage = () => {
   }, []);
 
   const columns = [
-    { name: 'Họ tên', selector: row => row.fullname, sortable: true },
+    { name: 'Fullname', selector: row => row.fullname, sortable: true },
     {
-      name: 'Giới tính',
-      selector: row => row.gender == 1 ? <button className='bg-blue-500 text-white pl-5 pr-5 pt-2 pb-2 rounded-md'>Nam</button> : <button className='bg-pink-400 text-white pl-5 pr-5 pt-2 pb-2 rounded-md'>Nữ</button>,
+      name: 'Gender',
+      selector: row => row.gender == 1 ? <button className='bg-blue-500 text-white pl-5 pr-5 pt-2 pb-2 rounded-md'>Male</button> : <button className='bg-pink-400 text-white pl-5 pr-5 pt-2 pb-2 rounded-md'>Female</button>,
       sortable: true,
       center: true,
       sortFunction: (a, b) => {
-        const genderA = a.gender === 1 ? 'Nam' : 'Nữ';
-        const genderB = b.gender === 1 ? 'Nam' : 'Nữ';
+        const genderA = a.gender === 1 ? 'Male' : 'Female';
+        const genderB = b.gender === 1 ? 'Male' : 'Female';
         return genderA.localeCompare(genderB);
       },
     },
-    { name: 'Ngày sinh', selector: row => row.dob, sortable: true, center: true },
+    { name: 'Date of Birth', selector: row => row.dob, sortable: true, center: true },
     { name: 'Email', selector: row => row.email, sortable: true, center: true },
-    { name: 'SĐT', selector: row => row.phoneNumber, sortable: true, center: true },
+    { name: 'Phone', selector: row => row.phoneNumber, sortable: true, center: true },
     {
-      name: 'Vị trí',
+      name: 'Role',
       selector: row => {
         switch (row.role) {
           case 'ADMIN':
-            return <Button color='red'>Quản trị</Button>;
-          case 'STAFF':
-            return <Button color='blue'>Nhân viên</Button>;
+            return <Button color='red'>Admin</Button>;
+          case 'ACADEMIC_ADMIN':
+            return <Button color='blue'>Academic</Button>;
+          case 'ENROLLMENT_STAFF':
+            return <Button color='cyan'>Enrollment</Button>;
           case 'TEACHER':
-            return <Button color='green'>Giáo viên</Button>;
+            return <Button color='green'>Teacher</Button>;
           case 'STUDENT':
-            return <Button color='gray'>Học viên</Button>;
+            return <Button color='grape'>Student</Button>;
           default:
-            return <Button color='dark'>Không rõ</Button>;
+            return <Button color='dark'>Undefined</Button>;
         }
       }, sortable: true, center: true, sortFunction: (a, b) => a.role.localeCompare(b.role),
     },
     {
-      name: 'Tình trạng', selector: row => {
+      name: 'Status', selector: row => {
         return (row.lockout == null
-          ? <Button color='green'>Hoạt động</Button>
-          : <Button color='red'>Khóa</Button>
+          ? <Button color='green'>Active</Button>
+          : <Button color='red'>Inactive</Button>
         );
       }, sortable: true, center: true,
     },
@@ -73,18 +75,18 @@ const AccountListPage = () => {
         return (
           <div className="flex gap-2 justify-center">
             <Button size="xs"
-              onClick={() => console.log('Xem chi tiết:', row.id)}
+              onClick={() => console.log('Details:', row.id)}
             >
-              Chi tiết
+              Details
             </Button>
             <Button size="xs" className="!bg-cyan-500"
               onClick={() => navigate(`/admin/accounts/update/${row.id}`)}
             >
-              Cập nhật
+              Edit
             </Button>
             <Button size="xs" color="red"
               onClick={() => handleDelete(row.id)}
-            >Xóa</Button>
+            >Delete</Button>
           </div>
         );
       },
@@ -107,9 +109,9 @@ const AccountListPage = () => {
 
   return (
     <div className="container">
-      <Title mb={20}>Danh sách tài khoản</Title>
+      <Title mb={20}>List of Accounts</Title>
       <div>
-        <Button onClick={() => navigate("/admin/accounts/create")}>Tạo tài khoản mới</Button>
+        <Button onClick={() => navigate("/admin/accounts/create")}>Create new Account</Button>
       </div>
       {
         loading ? <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} /> : <DataTable

@@ -95,7 +95,6 @@ const GeneralLayout = () => {
             <UnstyledButton type='button' onClick={() => logout}> Đăng xuất</UnstyledButton>
           </>
           : <UnstyledButton type='button' onClick={() => navigate('/login')}>Đăng nhập</UnstyledButton>}
-
       </AppShell.Navbar>
 
       <AppShell.Main className='flex'>

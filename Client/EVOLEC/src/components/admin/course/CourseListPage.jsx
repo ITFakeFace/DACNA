@@ -17,7 +17,7 @@ const CourseListPage = () => {
         setCourses(data.data);
       }
     } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu khóa học:", error);
+      console.error("Error fetching courses:", error);
     }
   };
   // Fetch courses data when component mounts
@@ -37,15 +37,16 @@ const CourseListPage = () => {
 
 
   const columns = [
-    { name: 'Tên khóa', selector: row => row.name, sortable: true },
-    { name: 'Điểm band', selector: row => row.bandScore, sortable: true, center: true },
-    { name: 'Điểm pass', selector: row => row.passScore, sortable: true, center: true },
+    { name: 'Course Name', selector: row => row.name, sortable: true },
+    { name: 'Band Score', selector: row => row.bandScore, sortable: true, center: true },
+    { name: 'Pass Score', selector: row => row.passScore, sortable: true, center: true },
+    { name: 'Full Score', selector: row => row.fullScore, sortable: true, center: true },
     {
-      name: 'Trạng thái',
+      name: 'Status',
       selector: row => {
         return row.status === 1
-          ? <Button color='green'>Hoạt động</Button>
-          : <Button color='red'>Không hoạt động</Button>;
+          ? <Button color='green'>Active</Button>
+          : <Button color='red'>Inactive</Button>;
       },
       sortable: true,
       center: true,
@@ -56,19 +57,19 @@ const CourseListPage = () => {
         return (
           <div className="flex gap-2 justify-center">
             <Button size="xs"
-              onClick={() => navigate(`/admin/courses/${row.id}`)}
+              onClick={() => navigate(`${row.id}`)}
             >
-              Chi tiết
+              Details
             </Button>
             <Button size="xs" className="!bg-cyan-500"
-              onClick={() => navigate(`/admin/courses/update/${row.id}`)}
+              onClick={() => navigate(`update/${row.id}`)}
             >
-              Cập nhật
+              Edit
             </Button>
             <Button size="xs" color="red"
               onClick={() => handleDelete(row.id)}
             >
-              Xóa
+              Delete
             </Button>
           </div>
         );
@@ -92,9 +93,9 @@ const CourseListPage = () => {
 
   return (
     <div className="container">
-      <Title mb={20}>Danh sách khóa học</Title>
+      <Title mb={20}>List of Courses</Title>
       <div>
-        <Button onClick={() => navigate("/admin/courses/create")}>Tạo khóa học mới</Button>
+        <Button onClick={() => navigate("/admin/courses/create")}>Create new Course</Button>
       </div>
       {loading ? <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} /> :
         <DataTable

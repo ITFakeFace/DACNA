@@ -5,6 +5,10 @@ import './GeneralLayout.css';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getRoleFromToken, getUsernameFromToken } from '../../../services/authService';
+import EVOLEC_LogoRectangleLandscape from '../../../assets/web_logo/EVOLEC_LogoRectangle.png';
+import EVOLEC_LogoSquare from '../../../assets/web_logo/EVOLEC_LogoSquare.jpg';
+import EVOLEC_LogoNoBackground_Landscape from '../../../assets/web_logo/EVOLEC_LogoNoBackground_Landscape.png';
+
 const GeneralLayout = () => {
   const [opened, { toggle }] = useDisclosure();
   const navigate = useNavigate();
@@ -66,7 +70,11 @@ const GeneralLayout = () => {
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="lg" />
           <Group justify="space-between" style={{ flex: 1 }}>
             <Group>
-              <MantineLogo size={30} />
+              <div className='flex justify-between'>
+                <a href='/'>
+                  <img src={EVOLEC_LogoNoBackground_Landscape} alt="" width={150} />
+                </a>
+              </div>
               <Group ml="sm" gap={15} visibleFrom="sm">
                 <UnstyledButton size="md">Trang chủ</UnstyledButton>
                 <UnstyledButton size="md">Thông tin đào tạo</UnstyledButton>

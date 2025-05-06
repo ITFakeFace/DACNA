@@ -8,7 +8,10 @@ import NavbarTemplate from '../components/NavbarTemplate';
 const EnrollmentStaffNavbar = ({ isOpened, setOpened }) => {
   const pathRoot = "/enrollment-staff"
   return (
-    <NavbarTemplate>
+    <NavbarTemplate
+      isOpened={isOpened}
+      setOpened={setOpened}
+    >
       <NavItem
         icon={<FontAwesomeIcon icon={faHome} />}
         title="Dashboard"

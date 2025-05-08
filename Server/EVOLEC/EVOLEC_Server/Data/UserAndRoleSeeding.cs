@@ -67,6 +67,18 @@ namespace EVOLEC_Server.Data
                 UpdatedAt = DateTime.Now,
                 CreatedAt = DateTime.Now,
             };
+            var teacher1 = new ApplicationUser
+            {
+                Email = "teacher1@example.com",
+                PhoneNumber = "0900000005",
+                Fullname = "TeacherA",
+                Dob = DateOnly.Parse("2000/02/01"),
+                UserName = "TeacherA",
+                Gender = 1,
+                PID = "079200000005",
+                UpdatedAt = DateTime.Now,
+                CreatedAt = DateTime.Now,
+            };
             var student = new ApplicationUser
             {
                 Email = "student@example.com",
@@ -83,6 +95,7 @@ namespace EVOLEC_Server.Data
             await CreateUser(userManager, enrollment_staff, "123456", "ENROLLMENT_STAFF");
             await CreateUser(userManager, academic_admin, "123456", "ACADEMIC_ADMIN");
             await CreateUser(userManager, teacher, "123456", "TEACHER");
+            await CreateUser(userManager, teacher1, "123456", "TEACHER");
             await CreateUser(userManager, student, "123456", "STUDENT");
         }
 

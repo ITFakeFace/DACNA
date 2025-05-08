@@ -12,22 +12,45 @@ namespace EVOLEC_Server.Repositories
             _ctx = context;
         }
 
-        public async Task<ClassRoom> GetClassRoomByIdAsync(int id)
+        public async Task<ClassRoom?> GetClassRoomByIdAsync(int id)
         {
-            return await _ctx.ClassRooms.FindAsync(id);
+            return await _ctx.ClassRooms
+                             .Where(x => x.Id == id) // Lọc lớp học với ID tương ứng
+                             .Include(x => x.Teacher1) // Nạp Teacher1
+                             .Include(x => x.Teacher2) // Nạp Teacher2
+                             .Include(x => x.LessonDates)
+                             .Include(x => x.Course)
+                             .FirstOrDefaultAsync(); // Lấy kết quả đầu tiên (hoặc null nếu không tìm thấy)
+
         }
 
         public async Task<IEnumerable<ClassRoom>> GetAllClassRoomsAsync()
         {
-            return await _ctx.ClassRooms.ToListAsync();
+            return await _ctx.ClassRooms
+                             .Include(x=>x.Teacher1)
+                             .Include(x=>x.Teacher2)
+                             .Include(x=>x.Creator)
+                             .Include(x=>x.Course)
+                             .ToListAsync();
         }
 
-        public async Task<ClassRoom> AddClassRoomAsync(ClassRoom classRoom)
+
+        public async Task<int> AddClassRoomAsync(ClassRoom classRoom)
         {
-            _ctx.ClassRooms.Add(classRoom);
-            await _ctx.SaveChangesAsync();
-            return classRoom;
+            try
+            {
+                _ctx.ClassRooms.Add(classRoom);
+                await _ctx.SaveChangesAsync();
+                return classRoom.Id; 
+            }
+            catch
+            {
+                return -1; 
+            }
         }
+
+
+
 
         public async Task<bool> UpdateClassRoomAsync(ClassRoom classRoom)
         {
@@ -35,13 +58,9 @@ namespace EVOLEC_Server.Repositories
             return await _ctx.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> DeleteClassRoomAsync(int id)
+        public Task<bool> DeleteClassRoomAsync(int id)
         {
-            var classRoom = await GetClassRoomByIdAsync(id);
-            if (classRoom == null) return false;
-
-            _ctx.ClassRooms.Remove(classRoom);
-            return await _ctx.SaveChangesAsync() > 0;
+            throw new NotImplementedException();
         }
     }
 }

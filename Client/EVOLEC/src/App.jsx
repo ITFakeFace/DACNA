@@ -1,12 +1,12 @@
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AdminLayout from "./components/layout/admin/AdminLayout";
 import StudentLayout from "./components/layout/student/StudentLayout";
 import GeneralLayout from "./components/layout/general/GeneralLayout";
 import LoginPage from "./components/authentication/LoginPage";
 import AccountListPage from "./components/authentication/admin/AccountListPage";
 import CourseListPage from "./components/admin/course/CourseListPage";
-import { useEffect } from "react";
-import { getRoleFromToken, isTokenValid } from "./services/authService";
+// import { useEffect } from "react";
+// import { getRoleFromToken, isTokenValid } from "./services/authService";
 import AccountFormPage from "./components/authentication/admin/AccountFormPage";
 import CourseFormPage from "./components/admin/course/CourseFormPage";
 import CourseDetailsPage from "./components/admin/course/CourseDetailsPage";
@@ -14,6 +14,9 @@ import EnrollmentStaffLayout from "./components/layout/enrollment-staff/Enrollme
 import TeacherLayout from "./components/layout/teacher/TeacherLayout";
 import AcademicAdminLayout from "./components/layout/academic-admin/AcademicAdminLayout";
 import ProtectedRoute from "./components/layout/components/ProtectedRoute";
+import ClassroomListPage from "./components/admin/classroom/ClassroomListPage";
+import ClassroomFormPage from "./components/admin/classroom/ClassroomFormPage";
+
 
 function Dashboard() {
   return <h2>Dashboard Page</h2>;
@@ -48,6 +51,10 @@ export default function App() {
             <Route path="courses/:id" element={<CourseDetailsPage />} />
             <Route path="courses/create" element={<CourseFormPage />} />
             <Route path="courses/update/:id" element={<CourseFormPage />} />
+            <Route path="class" element={<ClassroomListPage />} />
+            <Route path="class/create" element={<ClassroomFormPage />} />
+            
+            
           </Route>
         </Route>
 
@@ -55,6 +62,7 @@ export default function App() {
         <Route element={<ProtectedRoute requiredRole="ACADEMIC_ADMIN" />}>
           <Route path="/academic-admin" element={<AcademicAdminLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="courses" element={<CourseListPage />} />
           </Route>
         </Route>
 

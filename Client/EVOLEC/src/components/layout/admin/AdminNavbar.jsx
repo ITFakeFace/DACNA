@@ -34,6 +34,15 @@ const AdminNavbar = ({ isOpened, setOpened }) => {
         isOpened={isOpened}
         url={`${pathRoot}/courses`}
       ></NavItem>
+
+      <NavItem
+        icon={<FontAwesomeIcon icon={faSchool} />}
+        title="class"
+        isOpened={isOpened}
+        url={`${pathRoot}/class`}
+      ></NavItem>
+
+
     </NavbarTemplate>
   )
 };

@@ -14,6 +14,8 @@ import EnrollmentStaffLayout from "./components/layout/enrollment-staff/Enrollme
 import TeacherLayout from "./components/layout/teacher/TeacherLayout";
 import AcademicAdminLayout from "./components/layout/academic-admin/AcademicAdminLayout";
 import ProtectedRoute from "./components/layout/components/ProtectedRoute";
+import HomePage from "./components/homepage/HomePage";
+import EducationalInformationPage from "./components/EducationalInformationPage/EducationalInformationPage";
 
 function Dashboard() {
   return <h2>Dashboard Page</h2>;
@@ -33,6 +35,8 @@ export default function App() {
       <Routes>
         {/* General route */}
         <Route path="/" element={<GeneralLayout />}>
+          <Route path="" index element={<HomePage />} />
+          <Route path="educational-information" index element={<EducationalInformationPage />} />
           <Route path="login" element={<LoginPage />} />
         </Route>
 

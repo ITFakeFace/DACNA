@@ -1,0 +1,12 @@
+
+.container{
+  display: block;
+  margin: 0 auto;
+}
+
+.line-divider{
+  margin-top: 45px !important ;
+  margin-bottom: 45px !important ;
+  margin-left: 300px !important;
+  margin-right: 300px !important;
+}

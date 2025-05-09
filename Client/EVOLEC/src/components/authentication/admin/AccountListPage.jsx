@@ -1,14 +1,73 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Loader, LoadingOverlay, Title, UnstyledButton } from '@mantine/core';
-import DataTable from 'react-data-table-component';  // Import react-data-table-component
+import { Loader, LoadingOverlay, Title, UnstyledButton } from '@mantine/core';
 import { getRequest } from '../../../services/APIService';
 import './AccountListPage.css';
 import { useNavigate } from 'react-router-dom';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Dialog } from 'primereact/dialog';
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { Button } from 'primereact/button';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
+import { InputText } from 'primereact/inputtext';
+import { Tag } from 'primereact/tag';
+import { Dropdown } from 'primereact/dropdown';
+import { Calendar } from 'primereact/calendar';
+import { MultiSelect } from 'primereact/multiselect';
 
 const AccountListPage = () => {
+  const emptyUser = {
+    id: null,
+    userName: null,
+    email: null,
+    phoneNumber: null,
+    pid: null,
+    fullname: null,
+    dob: null,
+    gender: null,
+    address: null,
+    role: null,
+    lockout: null
+  }
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
+  const [user, setUser] = useState(emptyUser);
   const [loading, setLoading] = useState(true);
+  const [deleteUserDialog, setDeleteUserDialog] = useState(false);
+  const [filters, setFilters] = useState(null);
+  const [globalFilterValue, setGlobalFilterValue] = useState('');
+  const [status] = useState([
+    { name: 'Inactive', value: 0 },
+    { name: 'Active', value: 1 },
+  ]);
+  const [statuses] = useState(['Inactive', 'Active', 'Undefined']);
+  const [genders] = useState([
+    { name: 'Female', value: 0, color: '!bg-female' },
+    { name: 'Male', value: 1, color: '!bg-male' },
+  ]);
+  const [roles] = useState([
+    { name: 'Admin', value: 'ADMIN', severity: 'danger' },
+    { name: 'Academic', value: 'ACADEMIC_ADMIN', severity: 'warning' },
+    { name: 'Enrollment', value: 'ENROLLMENT_STAFF', severity: 'success' },
+    { name: 'Teacher', value: 'TEACHER', severity: 'info' },
+    { name: 'Student', value: 'STUDENT', severity: null },
+  ]);
+  const getLockoutSeverity = (status) => {
+    if (status == null || status == false) return 'success';
+    if (status == true) return 'danger';
+    return 'secondary';
+  };
+  const getStatusSeverity = (status) => {
+    if (status == "Active") return 'success';
+    if (status == "Inactive") return 'danger';
+    return 'secondary';
+  };
+  const getStatusName = (lockout) => {
+    if (lockout == null || lockout == false) return 'Active';
+    if (lockout == true) return 'Inactive';
+    return 'Undefined';
+  };
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -24,87 +83,188 @@ const AccountListPage = () => {
       }
     };
     fetchUsers();
+    initFilters();
   }, []);
 
-  const columns = [
-    { name: 'Fullname', selector: row => row.fullname, sortable: true },
-    {
-      name: 'Gender',
-      selector: row => row.gender == 1 ? <button className='bg-blue-500 text-white pl-5 pr-5 pt-2 pb-2 rounded-md'>Male</button> : <button className='bg-pink-400 text-white pl-5 pr-5 pt-2 pb-2 rounded-md'>Female</button>,
-      sortable: true,
-      center: true,
-      sortFunction: (a, b) => {
-        const genderA = a.gender === 1 ? 'Male' : 'Female';
-        const genderB = b.gender === 1 ? 'Male' : 'Female';
-        return genderA.localeCompare(genderB);
-      },
-    },
-    { name: 'Date of Birth', selector: row => row.dob, sortable: true, center: true },
-    { name: 'Email', selector: row => row.email, sortable: true, center: true },
-    { name: 'Phone', selector: row => row.phoneNumber, sortable: true, center: true },
-    {
-      name: 'Role',
-      selector: row => {
-        switch (row.role) {
-          case 'ADMIN':
-            return <Button color='red'>Admin</Button>;
-          case 'ACADEMIC_ADMIN':
-            return <Button color='blue'>Academic</Button>;
-          case 'ENROLLMENT_STAFF':
-            return <Button color='cyan'>Enrollment</Button>;
-          case 'TEACHER':
-            return <Button color='green'>Teacher</Button>;
-          case 'STUDENT':
-            return <Button color='grape'>Student</Button>;
-          default:
-            return <Button color='dark'>Undefined</Button>;
-        }
-      }, sortable: true, center: true, sortFunction: (a, b) => a.role.localeCompare(b.role),
-    },
-    {
-      name: 'Status', selector: row => {
-        return (row.lockout == null
-          ? <Button color='green'>Active</Button>
-          : <Button color='red'>Inactive</Button>
-        );
-      }, sortable: true, center: true,
-    },
-    {
-      name: '',
-      selector: (row) => {
-        return (
-          <div className="flex gap-2 justify-center">
-            <Button size="xs"
-              onClick={() => console.log('Details:', row.id)}
-            >
-              Details
-            </Button>
-            <Button size="xs" className="!bg-cyan-500"
-              onClick={() => navigate(`/admin/accounts/update/${row.id}`)}
-            >
-              Edit
-            </Button>
-            <Button size="xs" color="red"
-              onClick={() => handleDelete(row.id)}
-            >Delete</Button>
-          </div>
-        );
-      },
-      sortable: false,
-      center: true,
-      minWidth: '280px',
-    },
-  ];
+  // Fullname, Gender, Dob, Email, Phone, Role, Status, Action
+  const initFilters = () => {
+    setFilters({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+      fullname: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+      gender: { value: null, matchMode: FilterMatchMode.IN },
+      dob: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+      email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+      phoneNumber: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+      role: { value: null, matchMode: FilterMatchMode.IN },
+      status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+    });
+    setGlobalFilterValue('');
+  };
+  const formatDate = (value) => {
+    return value.toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+  const clearFilter = () => {
+    initFilters();
+  };
+  const onGlobalFilterChange = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
 
-  const tableCustomStyles = {
-    headCells: {
-      style: {
-        fontSize: '16px',
-        fontWeight: 'bold',
-        paddingLeft: '0 8px',
-        justifyContent: 'center',
-      },
-    },
+    _filters['global'].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+  const renderTableHeader = () => {
+    return (
+      <div className="flex justify-content-between">
+        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined onClick={clearFilter} />
+        <IconField iconPosition="left">
+          <InputIcon className="pi pi-search" />
+          <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
+        </IconField>
+      </div>
+    );
+  };
+  const tableHeader = renderTableHeader();
+
+  // Gender Render & Event
+  const genderBodyTemplate = (rowData) => {
+    const gender = rowData.gender;
+
+    switch (gender) {
+      case 0:
+        return <Button className="!bg-female">Female</Button>
+      case 1:
+        return <Button className="!bg-male">Male</Button>
+      default:
+        return <Button severity='secondary'>Undefined</Button>
+    }
+  };
+  const genderFilterTemplate = (options) => {
+    return <MultiSelect value={options.value} options={genders} itemTemplate={gendersItemTemplate} onChange={(e) => options.filterCallback(e.value)} optionLabel="name" placeholder="Any" className="p-column-filter" />;
+  };
+  const gendersItemTemplate = (option) => {
+    return (
+      <div className="flex align-items-center gap-2">
+        <Tag className={option.color}>{option.name}</Tag>
+      </div>
+    );
+  };
+  // Date of Birth Render & Event
+  const dobBodyTemplate = (rowData) => {
+    return rowData.dob;
+  };
+
+  const dobFilterTemplate = (options) => {
+    return <Calendar value={options.value} onChange={(e) => options.filterCallback(e.value, options.index)} dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" mask="99/99/9999" />;
+  };
+
+  // Role Render & Event
+  const roleBodyTemplate = (rowData) => {
+    const role = rowData.role;
+
+    switch (role.toUpperCase()) {
+      case 'ADMIN':
+        return <Button severity='danger'>Admin</Button>
+      case 'ACADEMIC_ADMIN':
+        return <Button severity='warning'>Academic</Button>
+      case 'ENROLLMENT_STAFF':
+        return <Button severity='success'>Enrollment</Button>
+      case 'TEACHER':
+        return <Button severity='info'>Teacher</Button>
+      case 'STUDENT':
+        return <Button >Student</Button>
+      default:
+        return <Button severity='secondary'>Undefined</Button>
+    }
+  };
+  const roleFilterTemplate = (options) => {
+    return <MultiSelect value={options.value} options={roles} itemTemplate={rolesItemTemplate} onChange={(e) => options.filterCallback(e.value)} optionLabel="name" placeholder="Any" className="p-column-filter" />;
+  };
+  const rolesItemTemplate = (option) => {
+    return (
+      <div className="flex align-items-center gap-2">
+        {option.severity ? <Tag severity={option.severity}>{option.name}</Tag> : <Tag >{option.name}</Tag>}
+      </div>
+    );
+  };
+
+  // Status Render & Event
+  const statusBodyTemplate = (rowData) => {
+    return <Button severity={getLockoutSeverity(rowData.lockout)}>{rowData.lockout == null ? 'Active' : 'Inactive'}</Button>;
+  };
+
+  const statusFilterTemplate = (options) => {
+    return <Dropdown value={options.value} options={statuses} onChange={(e) => options.filterCallback(e.value, options.index)} itemTemplate={statusItemTemplate} placeholder="Select One" className="p-column-filter" showClear />;
+  };
+
+  const statusItemTemplate = (option) => {
+    return <Button severity={getStatusSeverity(option)}>{option}</Button>;
+  };
+  const deleteUserClick = () => {
+    let _users = users.filter((val) => val.id !== user.id);
+    var res = deleteUser();
+    if (res.status == true) {
+      setUsers(_users);
+      setDeleteUserDialog(false);
+      setUser(emptyUser);
+    }
+  };
+  const confirmDeleteUser = (user) => {
+    setUser(user);
+    setDeleteUserDialog(true);
+  };
+  const hideDeleteUserDialog = () => {
+    setDeleteUserDialog(false);
+  };
+  const deleteUserDialogFooter = (
+    <React.Fragment>
+      <Button
+        label="No"
+        icon="pi pi-times"
+        outlined
+        onClick={hideDeleteUserDialog}
+      />
+      <Button
+        label="Yes"
+        icon="pi pi-check"
+        severity="danger"
+        onClick={deleteUserClick}
+      />
+    </React.Fragment>
+  );
+  const actionBody = (rowData) => {
+    return (
+      <React.Fragment>
+        <Button
+          icon="pi pi-info-circle"
+          rounded
+          outlined
+          className="mr-2"
+          onClick={() => navigate(`/admin/accounts/${rowData.id}`)}
+        />
+        <Button
+          icon="pi pi-pencil"
+          rounded
+          outlined
+          className="mr-2"
+          severity="success"
+          onClick={() => navigate(`/admin/accounts/update/${rowData.id}`)}
+        />
+        <Button
+          icon="pi pi-trash"
+          rounded
+          outlined
+          severity="danger"
+          onClick={() => confirmDeleteUser(rowData)}
+        />
+      </React.Fragment>
+    );
   }
 
   return (
@@ -114,19 +274,54 @@ const AccountListPage = () => {
         <Button onClick={() => navigate("/admin/accounts/create")}>Create new Account</Button>
       </div>
       {
-        loading ? <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} /> : <DataTable
-          className='w-full data-table'
-          columns={columns}   // Cập nhật lại cách khai báo cột
-          data={users}        // Dữ liệu sẽ là `users`
-          pagination           // Bật phân trang
-          highlightOnHover     // Hiển thị hiệu ứng hover
-          responsive           // Đảm bảo responsive cho màn hình nhỏ
-          fixedHeader          // Đảm bảo header cố định
-          customStyles={tableCustomStyles}
-        />
+        loading
+          ? <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
+          : <DataTable className='w-full' value={users} paginator showGridlines rows={10} loading={loading} dataKey="id"
+            filters={filters} globalFilterFields={['fullname', 'gender', 'dob', 'email', 'phone', 'role', 'status']} header={tableHeader}
+            emptyMessage="No customers found." onFilter={(e) => setFilters(e.filters)}>
+            <Column header="Fullname" field="fullname" filter sortable filterPlaceholder="Search by fullname" style={{ minWidth: '12rem' }} />
+            {/* Same with Agent Example */}
+            <Column header="Gender" field='gender' filterField="gender" sortable showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '5rem' }}
+              body={genderBodyTemplate} filter filterElement={genderFilterTemplate} />
+            <Column header="Date of Birth" filterField="dob" dataType="date" sortable style={{ minWidth: '10rem' }} body={dobBodyTemplate} filter filterElement={dobFilterTemplate} />
+            {/* Same with fullname */}
+            <Column header="Email" field="email" filter sortable filterPlaceholder="Search by email" style={{ minWidth: '12rem' }} />
+            {/* Same with fullname */}
+            <Column header="Phone" field="phoneNumber" filter sortable filterPlaceholder="Search by phone" style={{ minWidth: '12rem' }} />
+            {/* Same with Agent Example */}
+            <Column header="Role" filterField="role" sortable showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '14rem' }}
+              body={roleBodyTemplate} filter filterElement={roleFilterTemplate} />
+            <Column field="status" sortable header="Status" filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} />
+            <Column
+              body={actionBody}
+              exportable={false}
+              style={{ minWidth: '12rem' }}
+            ></Column>
+          </DataTable>
       }
-
+      <Dialog
+        visible={deleteUserDialog}
+        style={{ width: '32rem' }}
+        breakpoints={{ '960px': '75vw', '641px': '90vw' }}
+        header="Confirm"
+        modal
+        footer={deleteUserDialogFooter}
+        onHide={hideDeleteUserDialog}
+      >
+        <div className="confirmation-content">
+          <i
+            className="pi pi-exclamation-triangle mr-3"
+            style={{ fontSize: '2rem' }}
+          />
+          {user.id && (
+            <span>
+              Are you sure you want to delete <b>{user.name}</b>?
+            </span>
+          )}
+        </div>
+      </Dialog>
     </div>
+
   );
 };
 

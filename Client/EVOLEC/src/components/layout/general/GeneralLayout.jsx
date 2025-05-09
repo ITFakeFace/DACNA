@@ -5,6 +5,11 @@ import './GeneralLayout.css';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getRoleFromToken, getUsernameFromToken } from '../../../services/authService';
+import EVOLEC_LogoRectangleLandscape from '../../../assets/web_logo/EVOLEC_LogoRectangle.png';
+import EVOLEC_LogoSquare from '../../../assets/web_logo/EVOLEC_LogoSquare.jpg';
+import EVOLEC_LogoNoBackground_Landscape from '../../../assets/web_logo/EVOLEC_LogoNoBackground_Landscape.png';
+import GeneralFooter from './GeneralFooter';
+
 const GeneralLayout = () => {
   const [opened, { toggle }] = useDisclosure();
   const navigate = useNavigate();
@@ -56,51 +61,60 @@ const GeneralLayout = () => {
   }
 
   return (
-    <AppShell
-      header={{ height: 60 }}
-      navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
-      padding="md"
-    >
-      <AppShell.Header className='header'>
-        <Group h="100%" px="md">
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="lg" />
-          <Group justify="space-between" style={{ flex: 1 }}>
-            <Group>
-              <MantineLogo size={30} />
-              <Group ml="sm" gap={15} visibleFrom="sm">
-                <UnstyledButton size="md">Trang chủ</UnstyledButton>
-                <UnstyledButton size="md">Thông tin đào tạo</UnstyledButton>
-                <UnstyledButton size="md">Về chúng tôi</UnstyledButton>
+    <>
+      <AppShell
+        header={{ height: 60 }}
+        navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
+        padding="md"
+      >
+        <AppShell.Header className='header'>
+          <Group h="100%" px="md">
+            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="lg" />
+            <Group justify="space-between" style={{ flex: 1 }}>
+              <Group>
+                <div className='flex justify-between'>
+                  <UnstyledButton onClick={() => navigate('/')}>
+                    <img src={EVOLEC_LogoNoBackground_Landscape} alt="" width={150} />
+                  </UnstyledButton>
+                </div>
+                <Group ml="sm" gap={15} visibleFrom="sm">
+                  <UnstyledButton size="md" onClick={() => navigate('/')}>Homepage</UnstyledButton>
+                  <UnstyledButton size="md" onClick={() => navigate('/educational-information')} >Educational Information</UnstyledButton>
+                  <UnstyledButton size="md">About Us</UnstyledButton>
+                </Group>
+              </Group>
+              <Group gap={15} visibleFrom="sm">
+                {logged ?
+                  <>
+                    <UserButton /> /
+                    <UnstyledButton type='button' onClick={() => logout()}> Đăng xuất</UnstyledButton>
+                  </>
+                  : <UnstyledButton type='button' onClick={() => navigate('/login')}>Đăng nhập</UnstyledButton>}
               </Group>
             </Group>
-            <Group gap={15} visibleFrom="sm">
-              {logged ?
-                <>
-                  <UserButton /> /
-                  <UnstyledButton type='button' onClick={() => logout()}> Đăng xuất</UnstyledButton>
-                </>
-                : <UnstyledButton type='button' onClick={() => navigate('/login')}>Đăng nhập</UnstyledButton>}
-            </Group>
           </Group>
-        </Group>
-      </AppShell.Header>
+        </AppShell.Header>
 
-      <AppShell.Navbar py="md" px={4}>
-        <UnstyledButton>Trang chủ</UnstyledButton>
-        <UnstyledButton>Thông tin đào tạo</UnstyledButton>
-        <UnstyledButton>Về chúng tôi</UnstyledButton>
-        {logged ?
-          <>
-            <UserButton /> /
-            <UnstyledButton type='button' onClick={() => logout}> Đăng xuất</UnstyledButton>
-          </>
-          : <UnstyledButton type='button' onClick={() => navigate('/login')}>Đăng nhập</UnstyledButton>}
-      </AppShell.Navbar>
+        <AppShell.Navbar py="md" px={4}>
+          <UnstyledButton>Trang chủ</UnstyledButton>
+          <UnstyledButton>Thông tin đào tạo</UnstyledButton>
+          <UnstyledButton>Về chúng tôi</UnstyledButton>
+          {logged ?
+            <>
+              <UserButton /> /
+              <UnstyledButton type='button' onClick={() => logout}> Đăng xuất</UnstyledButton>
+            </>
+            : <UnstyledButton type='button' onClick={() => navigate('/login')}>Đăng nhập</UnstyledButton>}
+        </AppShell.Navbar>
 
-      <AppShell.Main className='flex'>
-        <Outlet></Outlet>
-      </AppShell.Main>
-    </AppShell>
+        <AppShell.Main className='flex'>
+          <Outlet></Outlet>
+        </AppShell.Main>
+
+
+      </AppShell >
+      <GeneralFooter />
+    </>
   );
 }
 

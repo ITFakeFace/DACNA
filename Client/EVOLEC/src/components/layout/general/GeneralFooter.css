@@ -1,0 +1,14 @@
+.footer {
+  color: white;
+  height: 300px;
+  width: 100%;
+  background-color: #1d2937;
+}
+
+.anchor-style{
+  color:white;
+}
+
+.footer-info {
+  font-size: 1.5rem;
+}

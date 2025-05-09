@@ -149,7 +149,7 @@ const AccountFormPage = () => {
           <TextInput label="Phone Number" {...form.getInputProps('phone')} required mt="sm" />
           <TextInput label="Personal Identified Number" {...form.getInputProps('pid')} required mt="sm" />
           <TextInput label="Fullname" {...form.getInputProps('fullname')} required mt="sm" />
-          <DateInput label="Date of Birth" placeholder="Chọn ngày" {...form.getInputProps('dob')} required mt="sm" />
+          <DateInput label="Date of Birth" placeholder="Select date" {...form.getInputProps('dob')} required mt="sm" />
           <Select
             label="Gender"
             placeholder="Choose Gender"

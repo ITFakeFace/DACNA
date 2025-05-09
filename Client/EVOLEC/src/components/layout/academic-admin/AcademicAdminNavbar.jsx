@@ -7,7 +7,10 @@ import NavItem from '../components/NavItem';
 const AcademicAdminNavbar = ({ isOpened, setOpened }) => {
   const pathRoot = "/academic-admin"
   return (
-    <NavbarTemplate>
+    <NavbarTemplate
+      isOpened={isOpened}
+      setOpened={setOpened}
+    >
       <NavItem
         icon={<FontAwesomeIcon icon={faHome} />}
         title="Dashboard"

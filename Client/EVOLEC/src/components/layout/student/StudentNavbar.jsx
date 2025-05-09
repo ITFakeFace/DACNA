@@ -7,7 +7,10 @@ import './StudentNavbar.css'
 const StudentNavbar = ({ isOpened, setOpened }) => {
   const pathRoot = "/student"
   return (
-    <NavbarTemplate>
+    <NavbarTemplate
+      isOpened={isOpened}
+      setOpened={setOpened}
+    >
       <NavItem
         icon={<FontAwesomeIcon icon={faHome} />}
         title="Dashboard"

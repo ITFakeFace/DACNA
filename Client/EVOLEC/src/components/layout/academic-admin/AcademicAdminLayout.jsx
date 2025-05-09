@@ -31,6 +31,7 @@ const AcademicAdminLayout = () => {
       </AppShell.Main>
       {/* <AppShell.Aside p="md">Aside</AppShell.Aside> */}
       <AppShell.Footer p="md">Footer</AppShell.Footer>
+
     </AppShell>
   )
 };

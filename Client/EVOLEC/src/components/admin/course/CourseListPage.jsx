@@ -67,7 +67,6 @@ const CourseListPage = () => {
               Edit
             </Button>
             <Button size="xs" color="red"
-              onClick={() => handleDelete(row.id)}
             >
               Delete
             </Button>

@@ -18,6 +18,11 @@ namespace EVOLEC_Server.Utils
             CreateMap<Lesson, LessonDto>();
             CreateMap<LessonCreateDto, Lesson>();
             CreateMap<LessonUpdateDto, Lesson>();
+
+            CreateMap<ClassRoomDTO, ClassRoom>();
+            CreateMap<ClassRoom, ClassRoomDTO>();
+            CreateMap<ClassRoom, ClassRoomCreateDTO>();
+            CreateMap<ApplicationUser, ShortInformationTeacher>();
         }
     }
 }

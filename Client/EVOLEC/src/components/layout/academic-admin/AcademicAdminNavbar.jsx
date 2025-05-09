@@ -1,8 +1,9 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCompress, faHome } from '@fortawesome/free-solid-svg-icons';
+import {  faHome, faSchool} from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@mantine/core';
 import './AcademicAdminNavbar.css'
 import NavItem from '../components/NavItem';
+import NavbarTemplate from '../components/NavbarTemplate';
 
 const AcademicAdminNavbar = ({ isOpened, setOpened }) => {
   const pathRoot = "/academic-admin"
@@ -16,6 +17,12 @@ const AcademicAdminNavbar = ({ isOpened, setOpened }) => {
         title="Dashboard"
         isOpened={isOpened}
         url={`${pathRoot}/dashboard`}
+      ></NavItem>
+       <NavItem
+        icon={<FontAwesomeIcon icon={faSchool} />}
+        title="Courses"
+        isOpened={isOpened}
+        url={`${pathRoot}/courses`}
       ></NavItem>
     </NavbarTemplate>
   )

@@ -1,0 +1,79 @@
+﻿using AutoMapper;
+using EVOLEC_Server.Dtos;
+using EVOLEC_Server.Models;
+using EVOLEC_Server.Repositories;
+
+namespace EVOLEC_Server.Services
+{
+    public class LessonDateService : ILessonDateService
+    {
+        private readonly ILessonDateRepository _lessonDateRepository;
+        private readonly IMapper _mapper;
+
+        public LessonDateService(ILessonDateRepository lessonDateRepository, IMapper mapper)
+        {
+            _lessonDateRepository = lessonDateRepository;
+            _mapper = mapper;
+        }
+
+        public async Task<LessonDateDto> GetLessonDateByIdAsync(int id)
+        {
+            var lessonDate = await _lessonDateRepository.GetLessonDateByIdAsync(id);
+            if (lessonDate == null) return null;
+
+            var lessonDateDto = new LessonDateDto
+            {
+                Id = id,
+                Teacher = _mapper.Map<ShortInformationTeacher>(lessonDate.Teacher),
+                ClassRoom = _mapper.Map<ClassRoomDTO>(lessonDate.ClassRoom),
+                Lesson = _mapper.Map<LessonDto>(lessonDate.Lesson),
+                Date = lessonDate.Date,
+                StartTime = lessonDate.StartTime,
+                EndTime = lessonDate.EndTime,
+            };
+
+            return lessonDateDto;
+        }
+
+        public async Task<LessonDateDto> CreateLessonDateAsync(LessonDateCreateDto lessonDateCreateDto)
+        {
+            var lessonDate = _mapper.Map<LessonDate>(lessonDateCreateDto);
+            var createdLessonDate = await _lessonDateRepository.AddLessonDateAsync(lessonDate);
+            return _mapper.Map<LessonDateDto>(createdLessonDate);
+        }
+
+        public async Task<bool> UpdateLessonDateAsync(int id, LessonDateUpdateDto lessonDateUpdateDto)
+        {
+            var lessonDate = await _lessonDateRepository.GetLessonDateByIdAsync(id);
+            if (lessonDate == null) return false;
+
+            _mapper.Map(lessonDateUpdateDto, lessonDate);
+            return await _lessonDateRepository.UpdateLessonDateAsync(lessonDate);
+        }
+
+        public async Task<bool> DeleteLessonDateAsync(int id)
+        {
+            return await _lessonDateRepository.DeleteLessonDateAsync(id);
+        }
+
+        public async Task<IEnumerable<LessonDateDto>> GetLessonDatesByClassIdAsync(int classId)
+        {
+            var lessonDates = await _lessonDateRepository.GetLessonDatesAsyncByClassId(classId);
+
+            var lessonDateDtos = lessonDates.Select(lessonDate => new LessonDateDto
+            {
+                Id = lessonDate.Id,
+                Teacher = _mapper.Map<ShortInformationTeacher>(lessonDate.Teacher),
+                ClassRoom = _mapper.Map<ClassRoomDTO>(lessonDate.ClassRoom),
+                Lesson = _mapper.Map<LessonDto>(lessonDate.Lesson),
+                Date = lessonDate.Date,
+                StartTime = lessonDate.StartTime,
+                EndTime = lessonDate.EndTime
+            }).ToList();
+
+            return lessonDateDtos;
+        }
+
+
+    }
+}

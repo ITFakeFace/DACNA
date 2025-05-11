@@ -1,4 +1,4 @@
-﻿using EVOLEC_Server.Data;
+using EVOLEC_Server.Data;
 using EVOLEC_Server.Middlewares;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Repositories;
@@ -166,6 +166,12 @@ internal class Program
         // Lesson Off Dates Repository & Service
         builder.Services.AddScoped<ILessonOffDateRepository, LessonOffDateRepository>();
         builder.Services.AddScoped<ILessonOffDateService, LessonOffDateService>();
+        // ClassRoom Repository & Service
+        builder.Services.AddScoped<IClassRoomRepository, ClassRoomRepository>();
+        builder.Services.AddScoped<IClassRoomService, ClassRoomService>();
+        // LessonDate Repository & Service
+        builder.Services.AddScoped<ILessonDateRepository, LessonDateRepository>();
+        builder.Services.AddScoped<ILessonDateService, LessonDateService>();
         // Jwt Service
         builder.Services.AddScoped<JwtHelper>();
         // Add services to the container.

@@ -6,6 +6,7 @@ namespace EVOLEC_Server.Dtos
 {
         public class ClassRoomDTO
         {
+            public int Id { get; set; }
             public ShortInformationTeacher? Teacher1 { get; set; }
             public ShortInformationTeacher Teacher2 { get; set; }
             public ShortInformationTeacher Creator { get; set; } 

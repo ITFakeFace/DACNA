@@ -15,10 +15,14 @@ namespace EVOLEC_Server.Services
             _mapper = mapper;
         }
 
-        public async Task<int> CreateAsync(ClassRoomDTO dto)
+        public async Task<int> CreateAsync(ClassRoomCreateDTO dto)
         {
             var entity = _mapper.Map<ClassRoom>(dto);
-            return await _repository.AddClassRoomAsync(entity);
+            ClassRoom addedClassroom = await _repository.AddClassRoomAsync(entity);
+
+                        
+
+            return addedClassroom.Id;
         }
 
 
@@ -45,33 +49,33 @@ namespace EVOLEC_Server.Services
         }
 
 
-
-
-
         public async Task<ClassRoomDTO?> GetByIdAsync(int id)
         {
             var _class = await _repository.GetClassRoomByIdAsync(id);
-            var responseRaw = new 
-            {
-                Id = _class.Id,
-                Name = _class.Course.Name,
-                Teachers = new List<object>()
-                {
-                    _class.Teacher1 != null 
-                                        ? new {Teacher1Id = _class.Teacher1Id,Teacher1Name = _class.Teacher1.Fullname}
-                                        : null!,
-                    _class.Teacher2 != null 
-                                        ? new {Teacher1Id = _class.Teacher2Id,Teacher1Name = _class.Teacher2.Fullname}
-                                        : null!,
-                },
-                lessonDate = _class.LessonDates,
-
-            };
-
             if (_class == null) { return null; }
-            return _mapper.Map<ClassRoomDTO>(_class);
+            var classRoomDto = new ClassRoomDTO
+            {
+                Teacher1 = _class.Teacher1 != null ? _mapper.Map<ShortInformationTeacher>(_class.Teacher1) : null,
+                Teacher2 = _class.Teacher2 != null ? _mapper.Map<ShortInformationTeacher>(_class.Teacher2) : null,
+                Creator = _class.Creator != null ? _mapper.Map<ShortInformationTeacher>(_class.Creator) : null,
+                Course = _mapper.Map<CourseDto>(_class.Course),
+
+                StartDate = _class.StartDate,
+                EndDate = _class.EndDate,
+                Status = _class.Status,
+                Shift = _class.Shift
+            };
+            return classRoomDto;
         }
 
+        public async Task<bool> UpdateAsync(int id, ClassRoomUpdateDto request)
+        {
+            var classRoom = await _repository.GetClassRoomByIdAsync(id);
+            if (classRoom == null) return false;
 
+            // Cập nhật dữ liệu từ DTO sang entity
+            _mapper.Map(request, classRoom);
+            return await _repository.UpdateClassRoomAsync(classRoom);
+        }
     }
 }

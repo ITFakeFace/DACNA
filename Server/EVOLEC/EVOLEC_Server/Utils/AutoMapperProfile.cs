@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.DTOs.Lesson;
 using EVOLEC_Server.Models;
@@ -21,7 +21,8 @@ namespace EVOLEC_Server.Utils
 
             CreateMap<ClassRoomDTO, ClassRoom>();
             CreateMap<ClassRoom, ClassRoomDTO>();
-            CreateMap<ClassRoom, ClassRoomCreateDTO>();
+            CreateMap<ClassRoomUpdateDto,ClassRoom>();
+            CreateMap<ClassRoomCreateDTO, ClassRoom>();
             CreateMap<ApplicationUser, ShortInformationTeacher>();
 
             // Entity -> DTO
@@ -30,6 +31,10 @@ namespace EVOLEC_Server.Utils
             // DTO -> Entity
             CreateMap<LessonOffDateCreateDto, LessonOffDate>();
             CreateMap<LessonOffDateUpdateDto, LessonOffDate>();
+
+            CreateMap<LessonDate, LessonDateDto>();
+            CreateMap<LessonDateCreateDto, LessonDate>();
+            CreateMap<LessonDateUpdateDto, LessonDate>();
         }
     }
 }

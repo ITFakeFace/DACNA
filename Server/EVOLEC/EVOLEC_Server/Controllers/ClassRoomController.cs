@@ -71,7 +71,7 @@ namespace EVOLEC_Server.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateClassRoom([FromBody] ClassRoomDTO request)
+        public async Task<IActionResult> CreateClassRoom([FromBody] ClassRoomCreateDTO request)
         {
             if (!ModelState.IsValid)
             {
@@ -118,6 +118,31 @@ namespace EVOLEC_Server.Controllers
             });
 
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] ClassRoomUpdateDto classRoom)
+        {
+            var result = await _classRoomService.UpdateAsync(id, classRoom);
+            if (!result)
+            {
+                return StatusCode(500, new ResponseEntity<string>
+                {
+                    Status = false,
+                    ResponseCode = 500,
+                    StatusMessage = "Cập nhật lớp học thất bại",
+                    Data = null
+                });
+            }
+
+            return Ok(new ResponseEntity<bool>
+            {
+                Status = true,
+                ResponseCode = 200,
+                StatusMessage = "Cập nhật lớp học thành công",
+                Data = result
+            });
+        }
+
 
     }
 }

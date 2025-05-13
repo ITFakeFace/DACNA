@@ -1,0 +1,25 @@
+.view-container {
+  border: solid #1d2937 2px;
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.img-teacher{
+  border-radius: 29px;
+  overflow: hidden;
+}
+.teacher-name {
+  font-family: Garamond, 'Times New Roman', Times, serif;
+  font-size: 2.25vw;
+  font-weight: bold;
+}
+
+.teacher-description{
+  font-size: clamp(1.75vw,0.5vw,1.5vw);
+  font-weight: normal;
+}
+
+.teacher-quote{
+  font-size: 1.25vw;
+  color:#5a7ca3
+}

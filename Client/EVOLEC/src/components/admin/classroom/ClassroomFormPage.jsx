@@ -60,7 +60,7 @@ const ClassroomFormPage = () => {
             setFeedback({ type: 'error', message: 'Cannot load classroom' });
           }
         } catch (error) {
-            console.error('Error fetching course:', error);
+          console.error('Error fetching course:', error);
         }
       };
       fetchClassroom();
@@ -100,7 +100,7 @@ const ClassroomFormPage = () => {
         setFeedback({ type: 'error', message: result.statusMessage || (id ? 'Failed to Update Classroom' : 'Failed to Create Classroom') });
       }
     } catch (error) {
-        console.error('Lỗi khi submit:', error);
+      console.error('Lỗi khi submit:', error);
     }
   };
 
@@ -143,15 +143,15 @@ const ClassroomFormPage = () => {
 
           <div className="mb-3">
             <label>Start Date</label>
-            <br/>
-            <DatePicker 
+            <br />
+            <DatePicker
               selected={form.values.startDate}
               onChange={(date) => {
-                form.setFieldValue('startDate', date); 
+                form.setFieldValue('startDate', date);
                 form.setFieldValue('endDate', null); // Reset End Date khi thay đổi Start Date
-              }} 
+              }}
               dateFormat="dd/MM/yyyy"
-              
+
               placeholderText="Select start date"
               className="form-control"
             />
@@ -159,12 +159,12 @@ const ClassroomFormPage = () => {
 
           <div className="mb-3">
             <label>End Date</label>
-            <br/>
-            <DatePicker 
+            <br />
+            <DatePicker
               selected={form.values.endDate}
               onChange={(date) => form.setFieldValue('endDate', date)} // Cập nhật giá trị form
-              dateFormat="dd/MM/yyyy" 
-              minDate={form.values.startDate} 
+              dateFormat="dd/MM/yyyy"
+              minDate={form.values.startDate}
               placeholderText="Select end date"
               className="form-control"
             />

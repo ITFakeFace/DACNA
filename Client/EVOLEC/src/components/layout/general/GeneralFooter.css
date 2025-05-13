@@ -1,12 +1,12 @@
 .footer {
-  color: white;
+  color: white !important;
   height: 300px;
   width: 100%;
   background-color: #1d2937;
 }
 
 .anchor-style{
-  color:white;
+  color:white !important;
 }
 
 .footer-info {

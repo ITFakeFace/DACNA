@@ -15,9 +15,11 @@ import TeacherLayout from "./components/layout/teacher/TeacherLayout";
 import AcademicAdminLayout from "./components/layout/academic-admin/AcademicAdminLayout";
 import ProtectedRoute from "./components/layout/components/ProtectedRoute";
 import HomePage from "./components/homepage/HomePage";
-import EducationalInformationPage from "./components/EducationalInformationPage/EducationalInformationPage";
 import ClassroomListPage from "./components/admin/classroom/ClassroomListPage";
 import ClassroomFormPage from "./components/admin/classroom/ClassroomFormPage";
+import EducationalInformationPage from "./components/educational-information-page/EducationalInformationPage";
+import AboutUsPage from "./components/about-us-page/AboutUsPage";
+import ForgotPasswordPage from "./components/authentication/ForgotPasswordPage";
 
 
 function Dashboard() {
@@ -40,7 +42,9 @@ export default function App() {
         <Route path="/" element={<GeneralLayout />}>
           <Route path="" index element={<HomePage />} />
           <Route path="educational-information" index element={<EducationalInformationPage />} />
+          <Route path="about-us" index element={<AboutUsPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
         </Route>
 
         {/* Admin Routes */}
@@ -57,8 +61,8 @@ export default function App() {
             <Route path="courses/update/:id" element={<CourseFormPage />} />
             <Route path="class" element={<ClassroomListPage />} />
             <Route path="class/create" element={<ClassroomFormPage />} />
-            
-            
+
+
           </Route>
         </Route>
 

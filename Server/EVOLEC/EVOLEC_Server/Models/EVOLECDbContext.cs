@@ -12,11 +12,12 @@ namespace EVOLEC_Server.Models
         {
         }
 
-        public DbSet<OffDate> OffDates { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<ClassRoom> ClassRooms { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<LessonDate> LessonDates { get; set; }
+        public DbSet<LessonOffDate> LessonOffDates { get; set; }
+        public DbSet<OffDate> OffDates { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<StudentAttendance> StudentAttendances { get; set; }
 
@@ -33,11 +34,12 @@ namespace EVOLEC_Server.Models
             builder.Entity<IdentityUserToken<string>>().ToTable("tblUserTokens");
             builder.Entity<IdentityRoleClaim<string>>().ToTable("tblRoleClaims");
             // Additional Table
-            builder.Entity<OffDate>().ToTable("tblOffDates");
             builder.Entity<Course>().ToTable("tblCourses");
             builder.Entity<ClassRoom>().ToTable("tblClassRooms");
             builder.Entity<Lesson>().ToTable("tblLessons");
             builder.Entity<LessonDate>().ToTable("tblLessonDates");
+            builder.Entity<LessonOffDate>().ToTable("tblLessonOffDates");
+            builder.Entity<OffDate>().ToTable("tblOffDates");
             builder.Entity<Enrollment>().ToTable("tblEnrollments");
             builder.Entity<StudentAttendance>().ToTable("tblStudentAttendances");
 
@@ -83,6 +85,20 @@ namespace EVOLEC_Server.Models
                 .WithMany(c => c.CreatorEnrollments)       // navigation từ ClassRoom đến danh sách Enrollment
                 .HasForeignKey(e => e.ClassRoomId)         // tên khóa ngoại trong Enrollment
                 .OnDelete(DeleteBehavior.Restrict);         // hoặc Restrict nếu bạn muốn
+
+            // LessonOffDate Composite Key
+            builder.Entity<LessonOffDate>()
+                .HasKey(lod => new { lod.LessonDateId, lod.OffDateId }); // Composite Key
+
+            builder.Entity<LessonOffDate>()
+                .HasOne(lod => lod.LessonDate)
+                .WithMany(ld => ld.LessonOffDates)
+                .HasForeignKey(lod => lod.LessonDateId);
+
+            builder.Entity<LessonOffDate>()
+                .HasOne(lod => lod.OffDate)
+                .WithMany(od => od.LessonOffDates)
+                .HasForeignKey(lod => lod.OffDateId);
 
             // Thiết lập Cascade cho tất cả quan hệ còn lại (ngoại trừ ApplicationUser, Enrollment, ClassRoom, Course)
             foreach (var entity in builder.Model.GetEntityTypes())

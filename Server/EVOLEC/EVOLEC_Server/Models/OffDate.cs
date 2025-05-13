@@ -13,8 +13,8 @@ namespace EVOLEC_Server.Models
         [Required]
         public DateOnly FromDate { get; set; }
         [Required]
-        public DateTime ToDate { get; set; }
+        public DateOnly ToDate { get; set; }
 
-        public ICollection<LessonDate> LessonDates { get; set; } = new List<LessonDate>();
+        public ICollection<LessonOffDate> LessonOffDates { get; set; } = new List<LessonOffDate>();
     }
 }

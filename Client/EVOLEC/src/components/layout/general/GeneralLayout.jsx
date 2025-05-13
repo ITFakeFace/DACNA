@@ -80,7 +80,7 @@ const GeneralLayout = () => {
                 <Group ml="sm" gap={15} visibleFrom="sm">
                   <UnstyledButton size="md" onClick={() => navigate('/')}>Homepage</UnstyledButton>
                   <UnstyledButton size="md" onClick={() => navigate('/educational-information')} >Educational Information</UnstyledButton>
-                  <UnstyledButton size="md">About Us</UnstyledButton>
+                  <UnstyledButton size="md" onClick={() => navigate('/about-us')}>About Us</UnstyledButton>
                 </Group>
               </Group>
               <Group gap={15} visibleFrom="sm">
@@ -96,15 +96,15 @@ const GeneralLayout = () => {
         </AppShell.Header>
 
         <AppShell.Navbar py="md" px={4}>
-          <UnstyledButton>Trang chủ</UnstyledButton>
-          <UnstyledButton>Thông tin đào tạo</UnstyledButton>
-          <UnstyledButton>Về chúng tôi</UnstyledButton>
+          <UnstyledButton onClick={() => navigate('/')}>Homepage</UnstyledButton>
+          <UnstyledButton onClick={() => navigate('/educational-information')}>Educational Information</UnstyledButton>
+          <UnstyledButton onClick={() => navigate('/about-us')}>About Us</UnstyledButton>
           {logged ?
             <>
               <UserButton /> /
-              <UnstyledButton type='button' onClick={() => logout}> Đăng xuất</UnstyledButton>
+              <UnstyledButton type='button' onClick={() => logout()}>Sign Out</UnstyledButton>
             </>
-            : <UnstyledButton type='button' onClick={() => navigate('/login')}>Đăng nhập</UnstyledButton>}
+            : <UnstyledButton type='button' onClick={() => navigate('/login')}>Sign In</UnstyledButton>}
         </AppShell.Navbar>
 
         <AppShell.Main className='flex'>

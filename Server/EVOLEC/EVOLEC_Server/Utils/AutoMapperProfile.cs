@@ -23,6 +23,13 @@ namespace EVOLEC_Server.Utils
             CreateMap<ClassRoom, ClassRoomDTO>();
             CreateMap<ClassRoom, ClassRoomCreateDTO>();
             CreateMap<ApplicationUser, ShortInformationTeacher>();
+
+            // Entity -> DTO
+            CreateMap<LessonOffDate, LessonOffDateDto>();
+
+            // DTO -> Entity
+            CreateMap<LessonOffDateCreateDto, LessonOffDate>();
+            CreateMap<LessonOffDateUpdateDto, LessonOffDate>();
         }
     }
 }

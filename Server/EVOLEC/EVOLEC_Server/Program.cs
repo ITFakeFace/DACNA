@@ -163,6 +163,9 @@ internal class Program
         // Lesson Repository & Service
         builder.Services.AddScoped<ILessonRepository, LessonRepository>();
         builder.Services.AddScoped<ILessonService, LessonService>();
+        // Lesson Off Dates Repository & Service
+        builder.Services.AddScoped<ILessonOffDateRepository, LessonOffDateRepository>();
+        builder.Services.AddScoped<ILessonOffDateService, LessonOffDateService>();
         // Jwt Service
         builder.Services.AddScoped<JwtHelper>();
         // Add services to the container.

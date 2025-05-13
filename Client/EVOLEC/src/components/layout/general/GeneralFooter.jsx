@@ -1,8 +1,8 @@
 import { Anchor } from '@mantine/core';
-import './GeneralFooter.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faTiktok } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faPhone, faVoicemail } from '@fortawesome/free-solid-svg-icons';
+import './GeneralFooter.css';
 
 const GeneralFooter = () => {
   return (

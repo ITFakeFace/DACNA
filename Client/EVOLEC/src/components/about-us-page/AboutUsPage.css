@@ -1,0 +1,10 @@
+.marker{
+  border-radius: 50%;
+}
+
+.last-row {
+  color: white;
+  background-color: #1d2937;
+  padding: 20px 40px;
+  border-radius: 20px 40px 20px 40px;
+}

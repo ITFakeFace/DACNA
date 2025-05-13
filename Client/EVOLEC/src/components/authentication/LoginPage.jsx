@@ -44,7 +44,7 @@ const LoginPage = () => {
   return (
     <form
       onSubmit={handleLogin}
-      className="flex flex-row flex-row-reverse flex-wrap-reverse form-container"
+      className="flex flex-row-reverse flex-wrap-reverse form-container"
     >
       <div className="form-left md:basis-1/2 ">
         <Group gap={30} align="center" justify="center">

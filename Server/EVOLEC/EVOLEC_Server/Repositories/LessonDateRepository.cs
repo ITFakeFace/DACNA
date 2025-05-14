@@ -12,15 +12,13 @@ namespace EVOLEC_Server.Repositories
             _ctx = context;
         }
 
-        public async Task<LessonDate> GetLessonDateByIdAsync(int id)
+        public async Task<LessonDate?> GetLessonDateByIdAsync(int id)
         {
-            return await _ctx.LessonDates.FindAsync(id);
+            return await _ctx.LessonDates
+                              .Where(lsd => lsd.Id == id)
+                              .FirstOrDefaultAsync(); // Dùng FirstOrDefaultAsync thay vì FirstOrDefault
         }
 
-        public async Task<IEnumerable<LessonDate>> GetAllLessonDatesAsync()
-        {
-            return await _ctx.LessonDates.ToListAsync();
-        }
 
         public async Task<LessonDate> AddLessonDateAsync(LessonDate lessonDate)
         {
@@ -29,10 +27,10 @@ namespace EVOLEC_Server.Repositories
             return lessonDate;
         }
 
-        public async Task<bool> UpdateLessonDateAsync(LessonDate lessonDate)
+        public async Task<int> UpdateLessonDateAsync(LessonDate lessonDate)
         {
             _ctx.LessonDates.Update(lessonDate);
-            return await _ctx.SaveChangesAsync() > 0;
+            return await _ctx.SaveChangesAsync() ;
         }
 
         public async Task<bool> DeleteLessonDateAsync(int id)
@@ -43,5 +41,16 @@ namespace EVOLEC_Server.Repositories
             _ctx.LessonDates.Remove(lessonDate);
             return await _ctx.SaveChangesAsync() > 0;
         }
+
+        public async Task<IEnumerable<LessonDate>> GetLessonDatesAsyncByClassId(int classId)
+        {
+            return await _ctx.LessonDates
+                .Where(ld => ld.ClassRoomId == classId)
+                .Include(ld=>ld.Teacher)
+                .Include(ld=>ld.Lesson)
+                .OrderBy(ld => ld.Date)
+                .ToListAsync();
+        }
+
     }
 }

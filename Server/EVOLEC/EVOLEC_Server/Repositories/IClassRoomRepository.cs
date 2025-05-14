@@ -7,8 +7,8 @@ namespace EVOLEC_Server.Repositories
     {
         Task<ClassRoom?> GetClassRoomByIdAsync(int id);
         Task<IEnumerable<ClassRoom>> GetAllClassRoomsAsync();
-        Task<int> AddClassRoomAsync(ClassRoom classRoom);
-        Task<bool> UpdateClassRoomAsync(ClassRoom classRoom);
+        Task<ClassRoom> AddClassRoomAsync(ClassRoom classRoom);
+        Task<int> UpdateClassRoomAsync(ClassRoom classRoom);
         Task<bool> DeleteClassRoomAsync(int id);
     }
 }

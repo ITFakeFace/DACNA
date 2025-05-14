@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using EVOLEC_Server.Services;
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models; // Namespace chứa ResponseEntity<T>
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 
 
 namespace EVOLEC_Server.Controllers
@@ -26,6 +27,9 @@ namespace EVOLEC_Server.Controllers
         {
             var data = await _classRoomService.GetAllAsync();
 
+            Debug.WriteLine("-------------------------------------------------------------------------------- ");
+            Debug.WriteLine(data);
+            Debug.WriteLine("-------------------------------------------------------------------------------- ");
             // Cấu hình JsonSerializer để xử lý vòng lặp
             var options = new JsonSerializerOptions
             {
@@ -39,7 +43,8 @@ namespace EVOLEC_Server.Controllers
                 Status = true,
                 ResponseCode = 200,
                 StatusMessage = "Danh sách lớp học",
-                Data = data
+                Data = data,
+              
             }, options);
 
             return Ok(jsonResponse);

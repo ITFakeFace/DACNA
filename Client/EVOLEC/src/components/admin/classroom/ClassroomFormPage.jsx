@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Button, TextInput, Select, Group, Box, Notification
-} from '@mantine/core';
+import { Button, TextInput, Select, Group, Box, Notification } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { postRequest, getRequest, putRequest } from '../../../services/APIService';
-import DatePicker from 'react-datepicker';  // Import react-datepicker
-import "react-datepicker/dist/react-datepicker.css"; // Import css cho react-datepicker
+import { Calendar } from 'primereact/calendar';  // Import Calendar từ PrimeReact
+import 'primereact/resources/themes/lara-light-indigo/theme.css'; // Import theme cho PrimeReact
+import 'primereact/resources/primereact.min.css'; // Import PrimeReact core styles
+import 'primeicons/primeicons.css'; // Import PrimeIcons (nếu cần sử dụng các icon)
 
 const ClassroomFormPage = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // Nếu có id thì là update, không thì create
   const [feedback, setFeedback] = useState(null);
 
+  // Khởi tạo form với Mantine form hooks
   const form = useForm({
     initialValues: {
       id: '',
@@ -37,9 +38,9 @@ const ClassroomFormPage = () => {
     },
   });
 
+  // Nếu có id thì load dữ liệu lớp học
   useEffect(() => {
     if (id) {
-      // Nếu có id thì load Classroom
       const fetchClassroom = async () => {
         try {
           const res = await getRequest(`/classrooms/${id}`);
@@ -67,6 +68,7 @@ const ClassroomFormPage = () => {
     }
   }, [id]);
 
+  // Hàm gửi dữ liệu đến API để tạo hoặc cập nhật lớp học
   const handleSubmit = async (values) => {
     const payload = {
       id: values.id,
@@ -82,12 +84,11 @@ const ClassroomFormPage = () => {
 
     try {
       let result;
+      // Gửi API create Classroom
       if (id) {
-        // Update
-        result = await putRequest(`/classrooms/${id}`, payload);
+        result = await putRequest(`/classrooms/${id}`, payload); // Cập nhật lớp học
       } else {
-        // Create
-        result = await postRequest('/classrooms', payload);
+        result = await postRequest('/classrooms/create', payload); // Tạo mới lớp học
       }
 
       if (result.status) {
@@ -101,28 +102,29 @@ const ClassroomFormPage = () => {
       }
     } catch (error) {
       console.error('Lỗi khi submit:', error);
+      setFeedback({ type: 'error', message: 'Có lỗi khi thực hiện thao tác!' });
     }
   };
 
   return (
-    <div className='container'>
-      <div className='mb-4'>
+    <div className="container">
+      <div className="mb-4">
         <Button
-          className='!bg-transparent !text-black'
-          size='xl'
-          p='xs'
+          className="!bg-transparent !text-black"
+          size="xl"
+          p="xs"
           onClick={() => {
-            window.location.replace("/admin/class");
+            window.location.replace("/admin/classrooms");
           }}
         >
           <FontAwesomeIcon icon={faArrowLeft} />
         </Button>
-        <span className='font-bold text-2xl'>
+        <span className="font-bold text-2xl">
           {id ? 'Update Classroom' : 'Create New Classroom'}
         </span>
       </div>
 
-      <Box maw={600} mx="auto">
+      <B  ox maw={600} mx="auto">
         {feedback && (
           <Notification
             icon={feedback.type === 'success' ? <IconCheck size={18} /> : <IconX size={18} />}
@@ -144,29 +146,23 @@ const ClassroomFormPage = () => {
           <div className="mb-3">
             <label>Start Date</label>
             <br />
-            <DatePicker
-              selected={form.values.startDate}
-              onChange={(date) => {
-                form.setFieldValue('startDate', date);
-                form.setFieldValue('endDate', null); // Reset End Date khi thay đổi Start Date
-              }}
-              dateFormat="dd/MM/yyyy"
-
-              placeholderText="Select start date"
-              className="form-control"
+            <Calendar
+              value={form.values.startDate}
+              onChange={(e) => form.setFieldValue('startDate', e.value)}
+              dateFormat="dd/mm/yy"
+              placeholder="Select start date"
             />
           </div>
 
           <div className="mb-3">
             <label>End Date</label>
             <br />
-            <DatePicker
-              selected={form.values.endDate}
-              onChange={(date) => form.setFieldValue('endDate', date)} // Cập nhật giá trị form
-              dateFormat="dd/MM/yyyy"
-              minDate={form.values.startDate}
-              placeholderText="Select end date"
-              className="form-control"
+            <Calendar
+              value={form.values.endDate}
+              onChange={(e) => form.setFieldValue('endDate', e.value)}
+              dateFormat="dd/mm/yy"
+              minDate={form.values.startDate} // Ensure end date is after start date
+              placeholder="Select end date"
             />
           </div>
 
@@ -178,6 +174,7 @@ const ClassroomFormPage = () => {
             required
             mt="sm"
           />
+
           <Select
             label="Shift"
             placeholder="Select Shift"
@@ -186,11 +183,12 @@ const ClassroomFormPage = () => {
             required
             mt="sm"
           />
+
           <Group position="right" mt="md">
             <Button type="submit">{id ? 'Update Classroom' : 'Create New Classroom'}</Button>
           </Group>
         </form>
-      </Box>
+      </B>
     </div>
   );
 };

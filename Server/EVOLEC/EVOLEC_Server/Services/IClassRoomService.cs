@@ -9,7 +9,7 @@ namespace EVOLEC_Server.Services
         Task<IEnumerable<ClassRoomDTO>> GetAllAsync();
         Task<ClassRoomDTO?> GetByIdAsync(int id);
         Task<int> CreateAsync(ClassRoomCreateDTO request);
-        Task<bool> UpdateAsync(int id, ClassRoomUpdateDto request);
+        Task<int> UpdateAsync(int id, ClassRoomUpdateDto request);
         //Task<bool> AddStudentAsync(Guid classId, Guid studentId);
         //Task<bool> RemoveStudentAsync(Guid classId, Guid studentId);
         //Task<IEnumerable<StudentDto>> GetStudentsAsync(Guid classId);

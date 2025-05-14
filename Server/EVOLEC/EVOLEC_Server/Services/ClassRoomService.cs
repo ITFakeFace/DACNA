@@ -8,21 +8,42 @@ namespace EVOLEC_Server.Services
     public class ClassRoomService : IClassRoomService
     {
         private readonly IClassRoomRepository _repository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public ClassRoomService(IClassRoomRepository repository, IMapper mapper)
+        public ClassRoomService(IClassRoomRepository repository, IMapper mapper,IUserRepository userRepository)
         {
             _repository = repository;
             _mapper = mapper;
+            _userRepository = userRepository;
         }
 
         public async Task<int> CreateAsync(ClassRoomCreateDTO dto)
         {
-            var entity = _mapper.Map<ClassRoom>(dto);
-            ClassRoom addedClassroom = await _repository.AddClassRoomAsync(entity);
+            try
+            {
+                if (dto.Teacher1Id != null)
+                {
+                    ApplicationUser? teacher1 = await _userRepository.FindById(dto.Teacher1Id);
+                    if (teacher1 == null)
+                    {
+                        return -1;
+                    }
+                    ApplicationUser? teacher2 = await _userRepository.FindById(dto.Teacher2Id);
+                    if (teacher2 == null)
+                    {
+                        return -2;
+                    }
+                }
+                var entity = _mapper.Map<ClassRoom>(dto);
+                ClassRoom addedClassroom = await _repository.AddClassRoomAsync(entity);
 
-                        
 
-            return addedClassroom.Id;
+                return addedClassroom.Id;
+            }
+            catch (Exception ex) 
+            {
+                return -3;
+            }
         }
 
 
@@ -68,14 +89,28 @@ namespace EVOLEC_Server.Services
             return classRoomDto;
         }
 
-        public async Task<bool> UpdateAsync(int id, ClassRoomUpdateDto request)
+        public async Task<int> UpdateAsync(int id, ClassRoomUpdateDto request)
         {
-            var classRoom = await _repository.GetClassRoomByIdAsync(id);
-            if (classRoom == null) return false;
+            try
+            {
+                var classRoom = await _repository.GetClassRoomByIdAsync(id);
+                if (classRoom == null) return -1;
 
-            // Cập nhật dữ liệu từ DTO sang entity
-            _mapper.Map(request, classRoom);
-            return await _repository.UpdateClassRoomAsync(classRoom);
-        }
+                // Cập nhật dữ liệu từ DTO sang entity
+                _mapper.Map(request, classRoom);
+                bool IsShiftHasValue = classRoom.Shift.HasValue;
+                bool IsStartDateHasValue = classRoom.StartDate.HasValue;
+                await _repository.UpdateClassRoomAsync(classRoom);
+                if (IsShiftHasValue && IsStartDateHasValue) { return 1; };
+                if (!IsShiftHasValue) { return 2; };
+                if (!IsStartDateHasValue) { return 3; }
+                return 4;
+
+            }
+            catch (Exception ex) 
+            {
+                return -2;
+            }
+            }
     }
 }

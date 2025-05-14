@@ -37,18 +37,32 @@ namespace EVOLEC_Server.Services
 
         public async Task<LessonDateDto> CreateLessonDateAsync(LessonDateCreateDto lessonDateCreateDto)
         {
-            var lessonDate = _mapper.Map<LessonDate>(lessonDateCreateDto);
-            var createdLessonDate = await _lessonDateRepository.AddLessonDateAsync(lessonDate);
-            return _mapper.Map<LessonDateDto>(createdLessonDate);
+            try
+            {
+                var lessonDate = _mapper.Map<LessonDate>(lessonDateCreateDto);
+                var createdLessonDate = await _lessonDateRepository.AddLessonDateAsync(lessonDate);
+                return _mapper.Map<LessonDateDto>(createdLessonDate);
+
+            }
+            catch (Exception ex) 
+            {
+                return null!;
+            }
         }
 
-        public async Task<bool> UpdateLessonDateAsync(int id, LessonDateUpdateDto lessonDateUpdateDto)
+        public async Task<int> UpdateLessonDateAsync(int id, LessonDateUpdateDto lessonDateUpdateDto)
         {
-            var lessonDate = await _lessonDateRepository.GetLessonDateByIdAsync(id);
-            if (lessonDate == null) return false;
-
-            _mapper.Map(lessonDateUpdateDto, lessonDate);
-            return await _lessonDateRepository.UpdateLessonDateAsync(lessonDate);
+            try
+            {
+                var lessonDate = await _lessonDateRepository.GetLessonDateByIdAsync(id);
+                if (lessonDate == null) return -2;
+                _mapper.Map(lessonDateUpdateDto, lessonDate);
+                return await _lessonDateRepository.UpdateLessonDateAsync(lessonDate);
+            }
+            catch (Exception ex) 
+            {
+                return -1;
+            }
         }
 
         public async Task<bool> DeleteLessonDateAsync(int id)

@@ -16,8 +16,6 @@ namespace EVOLEC_Server.Repositories
         {
             return await _ctx.LessonDates
                               .Where(lsd => lsd.Id == id)
-                              .Include(lsd => lsd.Lesson) // Include nếu bạn muốn dữ liệu `Lesson` đi kèm
-                              .Include(lsd => lsd.Teacher)
                               .FirstOrDefaultAsync(); // Dùng FirstOrDefaultAsync thay vì FirstOrDefault
         }
 
@@ -29,10 +27,10 @@ namespace EVOLEC_Server.Repositories
             return lessonDate;
         }
 
-        public async Task<bool> UpdateLessonDateAsync(LessonDate lessonDate)
+        public async Task<int> UpdateLessonDateAsync(LessonDate lessonDate)
         {
             _ctx.LessonDates.Update(lessonDate);
-            return await _ctx.SaveChangesAsync() > 0;
+            return await _ctx.SaveChangesAsync() ;
         }
 
         public async Task<bool> DeleteLessonDateAsync(int id)

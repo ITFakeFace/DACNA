@@ -4,6 +4,7 @@ using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models; // Namespace chứa ResponseEntity<T>
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace EVOLEC_Server.Controllers
@@ -91,31 +92,40 @@ namespace EVOLEC_Server.Controllers
 
             var result = await _classRoomService.CreateAsync(request);
 
-            if (result == -1)
+            if (result > 0)
             {
-                return BadRequest(new ResponseEntity<object>
+                bool isCreateLessonDate = (request.Shift.HasValue && !request.StartDate.ToString().IsNullOrEmpty());
+                return Ok(new ResponseEntity<object>
                 {
-                    Status = false,
-                    ResponseCode = 400,
-                    StatusMessage = "Tạo lớp học thất bại",
+
+                    Status = true,
+                    ResponseCode = isCreateLessonDate ? 200 : 201,
+                    StatusMessage = isCreateLessonDate
+                    ? "Tạo lớp học thành công"
+                    : "Vui lòng nhập ca học và ngày học để tạo lessonDate",
                     Data = new
                     {
                         Id = result
                     }
+
                 });
             }
-
-            return Ok(new ResponseEntity<object>
+            else
             {
-                Status = true,
-                ResponseCode = 201,
-                StatusMessage = "Tạo lớp học thành công",
-                Data = new
+                Dictionary<int,string> _errorMapping = new Dictionary<int, string>()
                 {
-                    Id = result
-                }
-
-            });
+                    { -1,"TeacherID1 không tồn tại"},
+                    { -2,"TeacherID2 không tồn tại"},
+                    { -3, "Lỗi không xác định" }
+                };
+                return BadRequest(new ResponseEntity<object>
+                {
+                    Status = false,
+                    ResponseCode = 400,
+                    StatusMessage = _errorMapping.GetValueOrDefault(result),
+                    Data = null!
+                });
+            }
 
         }
 
@@ -123,13 +133,22 @@ namespace EVOLEC_Server.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] ClassRoomUpdateDto classRoom)
         {
             var result = await _classRoomService.UpdateAsync(id, classRoom);
-            if (!result)
+            Dictionary<int, string> _resultMapping = new Dictionary<int, string>
+            {
+                { 1, "Tạo lớp học thành công" },
+                { 2, "Shift không có giá trị. Vui lòng cập nhật để tạo lessonDate" },
+                { 3, "Start Date không có giá trị. Vui lòng cập nhật để tạo lessonDate" },
+                { 4, "Shift Date và StartDate ko có giá trị. Vui lòng cập nhật để tạo lessonDate" },
+                { -2, "Lỗi không xác định" }
+            };
+
+            if (result <0 )
             {
                 return StatusCode(500, new ResponseEntity<string>
                 {
                     Status = false,
                     ResponseCode = 500,
-                    StatusMessage = "Cập nhật lớp học thất bại",
+                    StatusMessage = _resultMapping.GetValueOrDefault(result),
                     Data = null
                 });
             }
@@ -138,8 +157,8 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Cập nhật lớp học thành công",
-                Data = result
+                StatusMessage = _resultMapping.GetValueOrDefault(result),
+                Data = result>0
             });
         }
 

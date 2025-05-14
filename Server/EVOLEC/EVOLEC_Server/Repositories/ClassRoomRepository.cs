@@ -41,49 +41,43 @@ namespace EVOLEC_Server.Repositories
 
         public async Task<ClassRoom> AddClassRoomAsync(ClassRoom classRoom)
         {
-            try
-            {
-                var course = await _ctx.Courses
-                    .Include(c => c.Lessons)  
-                    .FirstOrDefaultAsync(c => c.Id == classRoom.CourseId);
+           
+            var course = await _ctx.Courses
+                .Include(c => c.Lessons)  
+                .FirstOrDefaultAsync(c => c.Id == classRoom.CourseId);
 
-                if (course == null)
-                {
-                    return null;
-                }
-
-                _ctx.ClassRooms.Add(classRoom);
-                await _ctx.SaveChangesAsync();
-                bool IsShiftHasValue = classRoom.Shift.HasValue;
-                bool IsStartDateHasValue = classRoom.StartDate.HasValue;
-                List<DateOnly>? LessonDates = null!;
-
-                Shift? shift = null;
-                List<LessonDate>? lessonDates = null;
-                if (IsShiftHasValue && IsStartDateHasValue)
-                {
-                    lessonDates = await LessonDateHelper.CreateLessonDates(classRoom);
-                    lessonDates = await LessonDateHelper.HandleDateOff(_ctx,lessonDates, (int)classRoom.Shift!);
-                }
-                
-                if (lessonDates != null)
-                {
-                    _ctx.LessonDates.AddRange(lessonDates);
-                    await _ctx.SaveChangesAsync();
-                }
-        
-                return classRoom;
-            }
-            catch (Exception ex)
+            if (course == null)
             {
                 return null;
             }
+
+            _ctx.ClassRooms.Add(classRoom);
+            await _ctx.SaveChangesAsync();
+            bool IsShiftHasValue = classRoom.Shift.HasValue;
+            bool IsStartDateHasValue = classRoom.StartDate.HasValue;
+            List<DateOnly>? LessonDates = null!;
+
+            Shift? shift = null;
+            List<LessonDate>? lessonDates = null;
+            if (IsShiftHasValue && IsStartDateHasValue)
+            {
+                lessonDates = await LessonDateHelper.CreateLessonDates(classRoom);
+                lessonDates = await LessonDateHelper.HandleDateOff(_ctx,lessonDates, (int)classRoom.Shift!);
+            }
+                
+            if (lessonDates != null)
+            {
+                _ctx.LessonDates.AddRange(lessonDates);
+                await _ctx.SaveChangesAsync();
+            }
+        
+            return classRoom;
+            
         }
-        public async Task<bool> UpdateClassRoomAsync(ClassRoom classRoom)
+        public async Task<int> UpdateClassRoomAsync(ClassRoom classRoom)
         {
             // Cập nhật thông tin lớp học
             _ctx.ClassRooms.Update(classRoom);
-
             // Xóa hết LessonDate cũ
             var oldLessonDates = await _ctx.LessonDates
                 .Where(ld => ld.ClassRoomId == classRoom.Id)
@@ -109,7 +103,7 @@ namespace EVOLEC_Server.Repositories
                 await _ctx.SaveChangesAsync();
             }
 
-            return await _ctx.SaveChangesAsync() > 0;
+            return await _ctx.SaveChangesAsync() ;
         }
 
 

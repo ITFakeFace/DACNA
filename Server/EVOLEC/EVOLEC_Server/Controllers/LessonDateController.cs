@@ -71,13 +71,18 @@ namespace EVOLEC_Server.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] LessonDateUpdateDto dto)
         {
             var success = await _lessonDateService.UpdateLessonDateAsync(id, dto);
-            if (!success)
+            Dictionary<int, string> _resultMapping = new Dictionary<int, string>()
+            {
+                {-1,"Lỗi không xác định" },
+                {-2,"Không tìm thấy buổi học" },
+            };
+            if (success <=-1)
             {
                 return BadRequest(new ResponseEntity<string>
                 {
                     Status = false,
                     ResponseCode = 400,
-                    StatusMessage = "Cập nhật buổi học thất bại",
+                    StatusMessage = _resultMapping.GetValueOrDefault(success),
                     Data = null
                 });
             }

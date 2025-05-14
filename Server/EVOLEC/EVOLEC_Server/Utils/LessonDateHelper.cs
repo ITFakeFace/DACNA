@@ -17,8 +17,8 @@ namespace EVOLEC_Server.Utils
 
             var offDatesInRange = await _ctx.OffDates
                 .Where(offDate => offDate.FromDate > minDate && offDate.FromDate < maxDate &&
-                                  DateOnly.FromDateTime(offDate.ToDate) > minDate &&
-                                  DateOnly.FromDateTime(offDate.ToDate) < maxDate)
+                                  offDate.ToDate > minDate &&
+                                  offDate.ToDate < maxDate)
                 .ToListAsync();
 
             int count = 0;
@@ -29,9 +29,15 @@ namespace EVOLEC_Server.Utils
 
                 foreach (var offDate in offDatesInRange)
                 {
-                    if (lessonDate.Date >= offDate.FromDate && lessonDate.Date <= DateOnly.FromDateTime(offDate.ToDate))
+                    if (lessonDate.Date >= offDate.FromDate && lessonDate.Date <= offDate.ToDate)
                     {
-                        offDate.LessonDates.Add(lessonDate);
+                        LessonOffDate lessonOffDate = new LessonOffDate()
+                        {
+                            LessonDateId = lessonDate.Id,
+                            OffDateId = offDate.Id,
+                            InitDate = (DateOnly)lessonDate.Date
+                        };
+                        lessonDate.LessonOffDates.Add(lessonOffDate);
                         DateOnly lastLessonDate = (DateOnly)lessonDates[lessonDates.Count - 1].Date;
                         List<DateOnly> dates = ShiftSchedule.GetDateFromShift(lastLessonDate.AddDays(1), ShiftId, 1);
                         count += dates.Count();
@@ -65,7 +71,7 @@ namespace EVOLEC_Server.Utils
                 var currentDate = lessonDates[ptrUpdated].Date;
 
                 bool isOff = offDatesInRange.Any(off =>
-                    currentDate >= off.FromDate && currentDate <= DateOnly.FromDateTime(off.ToDate));
+                    currentDate >= off.FromDate && currentDate <= off.ToDate);
 
                 lessonDates[ptrUpdated].LessonId = originalLessonDates[ptrOriginal].LessonId;
 

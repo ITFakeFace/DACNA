@@ -7,7 +7,7 @@ namespace EVOLEC_Server.Services
         Task<LessonDateDto> GetLessonDateByIdAsync(int id);
         Task<IEnumerable<LessonDateDto>> GetLessonDatesByClassIdAsync(int id);
         Task<LessonDateDto> CreateLessonDateAsync(LessonDateCreateDto lessonDateCreateDto);
-        Task<bool> UpdateLessonDateAsync(int id, LessonDateUpdateDto lessonDateUpdateDto);
+        Task<int> UpdateLessonDateAsync(int id, LessonDateUpdateDto lessonDateUpdateDto);
         Task<bool> DeleteLessonDateAsync(int id);
     }
 }

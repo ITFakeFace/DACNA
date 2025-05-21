@@ -10,7 +10,29 @@ const ClassroomListPage = () => {
   const [classrooms, setClassrooms] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Hàm fetch danh sách Classroom từ API
+  const fetchClassroom = async () => {
+    try {
+      const data = await getRequest("/classroom"); // Gọi API lấy danh sách khóa học
+      
+      // console.log("----------------------------------");
+      // console.log("API Response:", data);
+      // console.log("ID API Response:", data.$id);
+      // console.log("Data API Response:", data.Data);
+      //console.log("Data value API Response:", data.Data.$values);
+      // console.log("satus API Response:", data.Status);
+      // console.log("----------------------------------");
+
+      
+      if (data.Status) {
+        setClassrooms(data.Data.$values);
+        // console.log("------------------11111111111111111111")
+        // console.log(data.Data.$values)
+      }
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+  };
+  // Fetch courses data when component mounts
   useEffect(() => {
     const fetchClassrooms = async () => {
       try {
@@ -38,8 +60,9 @@ const ClassroomListPage = () => {
       name: 'Actions',
       selector: row => (
         <div className="flex gap-2 justify-center">
-          <Button size="xs" onClick={() => navigate(`/classrooms/${row.Id}`)}>Details</Button>
-          <Button size="xs" onClick={() => navigate(`/classrooms/update/${row.Id}`)}>Edit</Button>
+           
+          <Button size="xs" onClick={() => navigate(`${row.Id}`)}>Details</Button>
+          <Button size="xs" onClick={() => navigate(`/classrooms/update/${row.$id}`)}>Edit</Button>
           <Button size="xs" color="red">Delete</Button>
         </div>
       ),

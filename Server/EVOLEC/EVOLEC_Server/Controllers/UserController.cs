@@ -69,6 +69,34 @@ namespace EVOLEC_Server.Controllers
             });
         }
 
+        [HttpGet("teachers")]
+        public async Task<IActionResult> GetAllTeachers()
+        {
+            var users = await _userService.GetTeachersAsync();
+            var results = new List<ShortInformationTeacher>();
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                results.Add(new ShortInformationTeacher
+                {
+                    Id = user.Id,
+                    Username = user.UserName,
+                    Email = user.Email,
+                    Fullname = user.Fullname,
+                    Gender = user.Gender
+                   
+                });
+            }
+
+            return Ok(new ResponseEntity<List<ShortInformationTeacher>>
+            {
+                Status = true,
+                ResponseCode = 200,
+                StatusMessage = "Success",
+                Data = results
+            });
+        }
+
         // Lấy thông tin người dùng theo Id
         [HttpGet("{id}")]
         [Authorize] // Cả admin và user có thể truy cập, nhưng user chỉ xem thông tin của chính mình

@@ -7,6 +7,7 @@ namespace EVOLEC_Server.Services
     {
         Task<List<ApplicationUser>> FindAll();
         Task<ApplicationUser?> FindById(string id);
+        Task<List<ApplicationUser?>> GetTeachersAsync();
         Task<bool> Create(UserCreateDto model);
         Task<bool> Update(string userId, UserUpdateDto model);
         Task<bool> Delete(string userId);

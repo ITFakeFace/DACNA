@@ -1,5 +1,6 @@
 ﻿using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace EVOLEC_Server.Repositories
 {
@@ -11,6 +12,7 @@ namespace EVOLEC_Server.Repositories
         Task<bool> Update(string userId, UserUpdateDto model);
         Task<bool> Delete(string userId);
         Task<bool> ToggleStatus(string userId, bool status);
-
+        Task<List<ApplicationUser>> GetUsersByRoleAsync(string roleName);
+        
     }
 }

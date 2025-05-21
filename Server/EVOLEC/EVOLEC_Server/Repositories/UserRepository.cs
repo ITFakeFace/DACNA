@@ -116,5 +116,11 @@ namespace EVOLEC_Server.Repositories
             }
             return false;
         }
+        public async Task<List<ApplicationUser>> GetUsersByRoleAsync(string roleName)
+        {
+            // Lấy danh sách user có role chỉ định (ví dụ "teacher")
+            var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
+            return usersInRole.ToList();
+        }
     }
 }

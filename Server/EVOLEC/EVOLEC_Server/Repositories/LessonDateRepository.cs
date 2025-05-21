@@ -22,6 +22,13 @@ namespace EVOLEC_Server.Repositories
 
         public async Task<LessonDate> AddLessonDateAsync(LessonDate lessonDate)
         {
+            var matchedOffDates = _ctx.OffDates
+                        .Where(od => lessonDate.Date >= od.FromDate && lessonDate.Date <= od.ToDate)
+                        .ToList();
+            if (matchedOffDates.Count > 0)
+            {
+                return null!;
+            }
             _ctx.LessonDates.Add(lessonDate);
             await _ctx.SaveChangesAsync();
             return lessonDate;

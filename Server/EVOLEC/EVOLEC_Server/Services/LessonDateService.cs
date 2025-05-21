@@ -39,8 +39,14 @@ namespace EVOLEC_Server.Services
         {
             try
             {
+                //chuyển check date-off lên tầng này ( nếu có ) 
+
                 var lessonDate = _mapper.Map<LessonDate>(lessonDateCreateDto);
                 var createdLessonDate = await _lessonDateRepository.AddLessonDateAsync(lessonDate);
+                if (createdLessonDate == null)
+                {
+                    return null!;
+                }
                 return _mapper.Map<LessonDateDto>(createdLessonDate);
 
             }

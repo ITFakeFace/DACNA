@@ -58,6 +58,16 @@ namespace EVOLEC_Server.Controllers
         public async Task<IActionResult> Create([FromBody] LessonDateCreateDto dto)
         {
             var result = await _lessonDateService.CreateLessonDateAsync(dto);
+            if(result is null)
+            {
+                return Ok(new ResponseEntity<IEnumerable<LessonDateDto>>
+                {
+                    Status = true,
+                    ResponseCode = 400,
+                    StatusMessage = "Ngày học không thể trùng vào ngày nghĩ",
+                    Data = null
+                });
+            }
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, new ResponseEntity<LessonDateDto>
             {
                 Status = true,

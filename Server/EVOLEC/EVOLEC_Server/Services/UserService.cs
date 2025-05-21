@@ -61,5 +61,11 @@ namespace EVOLEC_Server.Services
 
             return await _userRepository.ToggleStatus(userId, isEnable);
         }
+
+        public async Task<List<ApplicationUser>> GetTeachersAsync()
+        {
+            // Lấy user có role "teacher"
+            return await _userRepository.GetUsersByRoleAsync("teacher");
+        }
     }
 }

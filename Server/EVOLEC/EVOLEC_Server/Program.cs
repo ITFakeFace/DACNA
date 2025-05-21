@@ -152,7 +152,9 @@ internal class Program
         });
         // Add AutoMapper
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+        // Add Email Setting & Service
+        builder.Services.Configure<SmtpSetting>(builder.Configuration.GetSection("SmtpSettings"));
+        builder.Services.AddScoped<EmailService>();
         // Add Services and Repositories to the container
         // User Repository & Service
         builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -209,7 +211,6 @@ internal class Program
             // Nếu không dùng JWT thì fake authentication để bỏ qua [Authorize]
             app.UseMiddleware<FakeAuthenticationMiddleware>();
             app.UseAuthorization();
-
         }
 
         app.MapControllers();

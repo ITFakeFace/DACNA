@@ -1,9 +1,12 @@
 ﻿using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Securities.Jwt;
+using EVOLEC_Server.Services;
+using EVOLEC_Server.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace EVOLEC_Server.Controllers
 {
@@ -13,10 +16,14 @@ namespace EVOLEC_Server.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly JwtTokenGenerator _tokenGenerator;
-        public AuthenticationController(UserManager<ApplicationUser> userManager, JwtTokenGenerator tokenGenerator)
+        private readonly SecurityUtil _securityUtil = new SecurityUtil();
+        private readonly EmailService _emailService;
+        private string _confirmCode { get; set; }
+        public AuthenticationController(UserManager<ApplicationUser> userManager, JwtTokenGenerator tokenGenerator, EmailService emailService)
         {
             _userManager = userManager;
             _tokenGenerator = tokenGenerator;
+            _emailService = emailService;
         }
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto model)
@@ -55,5 +62,64 @@ namespace EVOLEC_Server.Controllers
                 StatusMessage = "Invalid credentials"
             });
         }
+        [HttpPost("send-code-forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] EmailForgotPasswordDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                if (await _userManager.IsLockedOutAsync(user))
+                    return BadRequest(new ResponseEntity<String>
+                    {
+                        Status = false,
+                        ResponseCode = 400,
+                        StatusMessage = "Account has been locked",
+                        Data = null,
+                    });
+                var code = SecurityUtil.GenerateCode();
+                _confirmCode = code;
+
+                return Ok(new ResponseEntity<string>
+                {
+                    Status = true,
+                    ResponseCode = 200,
+                    StatusMessage = "Success",
+                    Data = code
+                });
+            }
+            return Unauthorized(new ResponseEntity<string>
+            {
+                Status = false,
+                ResponseCode = 401,
+                StatusMessage = "Invalid credentials"
+            });
+        }
+        [HttpPost("confirm-code-forgot-password")]
+        public async Task<IActionResult> ConfirmForgotPassword([FromBody] ForgotPasswordDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                if (model.ConfirmPassword == model.Password && model.Code == _confirmCode)
+                {
+                    await _userManager.RemovePasswordAsync(user);
+                    await _userManager.AddPasswordAsync(user, model.Password);
+                    return Ok(new ResponseEntity<string>
+                    {
+                        Status = true,
+                        ResponseCode = 200,
+                        StatusMessage = "Success",
+                        Data = null
+                    });
+                }
+            }
+            return Unauthorized(new ResponseEntity<string>
+            {
+                Status = false,
+                ResponseCode = 401,
+                StatusMessage = "Invalid credentials"
+            });
+        }
+
     }
 }

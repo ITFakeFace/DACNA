@@ -58,11 +58,7 @@ export default function App() {
             <Route path="courses/create" element={<CourseFormPage />} />
             <Route path="courses/update/:id" element={<CourseFormPage />} />
             <Route path="ClassRoom" element={<ClassroomListPage />} />
-            <Route path="ClassRoom/:id" element={<ClassroomDetailsPage />} />
-
             <Route path="classroom/create" element={<ClassroomFormPage />} />
-
-
           </Route>
         </Route>
 

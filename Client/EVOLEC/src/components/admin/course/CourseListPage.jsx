@@ -15,6 +15,8 @@ const CourseListPage = () => {
       const data = await getRequest("/course"); // Gọi API lấy danh sách khóa học
       if (data.status) {
         setCourses(data.data);
+        // console.log(data.data)
+
       }
     } catch (error) {
       console.error("Error fetching courses:", error);

@@ -53,6 +53,7 @@ namespace EVOLEC_Server.Services
 
             var classRoomDtos = _classes.Select(classRoom => new ClassRoomDTO
             {
+                Id = classRoom.Id,
                 Teacher1 = classRoom.Teacher1 != null ? _mapper.Map<ShortInformationTeacher>(classRoom.Teacher1) : null,
                 Teacher2 = _mapper.Map<ShortInformationTeacher>(classRoom.Teacher2),
                 Creator = _mapper.Map<ShortInformationTeacher>(classRoom.Creator),
@@ -76,6 +77,7 @@ namespace EVOLEC_Server.Services
             if (_class == null) { return null; }
             var classRoomDto = new ClassRoomDTO
             {
+              
                 Teacher1 = _class.Teacher1 != null ? _mapper.Map<ShortInformationTeacher>(_class.Teacher1) : null,
                 Teacher2 = _class.Teacher2 != null ? _mapper.Map<ShortInformationTeacher>(_class.Teacher2) : null,
                 Creator = _class.Creator != null ? _mapper.Map<ShortInformationTeacher>(_class.Creator) : null,

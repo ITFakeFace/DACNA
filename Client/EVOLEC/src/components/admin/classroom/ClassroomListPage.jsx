@@ -18,7 +18,7 @@ const ClassroomListPage = () => {
       // console.log("API Response:", data);
       // console.log("ID API Response:", data.$id);
       // console.log("Data API Response:", data.Data);
-      //console.log("Data value API Response:", data.Data.$values);
+      // console.log("Data value API Response:", data.Data.$values);
       // console.log("satus API Response:", data.Status);
       // console.log("----------------------------------");
 
@@ -34,34 +34,43 @@ const ClassroomListPage = () => {
   };
   // Fetch courses data when component mounts
   useEffect(() => {
-    const fetchClassrooms = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await getRequest("/classrooms"); // Gọi API Classroom
-        setClassrooms(data.data); // Giả sử API trả về danh sách Classroom trong `data.data`
+        await fetchClassroom();
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching classrooms:', error);
-        setLoading(false);
+        console.error(error);
       }
     };
 
-    fetchClassrooms();
+    fetchData();
   }, []);
+
 
   // Cấu hình các cột cho DataTable
   const columns = [
-    { name: 'Classroom ID', selector: row => row.Id, sortable: true },
-    { name: 'Teacher 1', selector: row => row.Teacher1Id, sortable: true },
-    { name: 'Teacher 2', selector: row => row.Teacher2Id, sortable: true },
-    { name: 'Course ID', selector: row => row.CourseId, sortable: true },
-    { name: 'Status', selector: row => row.Status, sortable: true },
+    { name: 'Classroom ID', selector: row => row.$id, sortable: true },
+    { name: 'Teacher 1', selector: row => row.Teacher1.Username, sortable: true },
+    { name: 'Teacher 2', selector: row => row.Teacher2.Username, sortable: true },
+    { name: 'Course ID', selector: row => row.Course.Name, sortable: true },
+    // { name: 'Status', selector: row => row.Status, sortable: true },
+     {
+          name: 'Status',
+          selector: row => {
+            return row.Status == 1
+              ? <Button color='green'>Active</Button>
+              : <Button color='red'>Inactive</Button>;
+          },
+          sortable: true,
+          center: true,
+        },
     {
       name: 'Actions',
       selector: row => (
         <div className="flex gap-2 justify-center">
            
-          <Button size="xs" onClick={() => navigate(`${row.Id}`)}>Details</Button>
+          <Button size="xs" onClick={() => navigate(`/classrooms/${row.$id}`)}>Details</Button>
           <Button size="xs" onClick={() => navigate(`/classrooms/update/${row.$id}`)}>Edit</Button>
           <Button size="xs" color="red">Delete</Button>
         </div>

@@ -278,7 +278,7 @@ const AccountListPage = () => {
           ? <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
           : <DataTable className='w-full' value={users} paginator showGridlines rows={10} loading={loading} dataKey="id"
             filters={filters} globalFilterFields={['fullname', 'gender', 'dob', 'email', 'phone', 'role', 'status']} header={tableHeader}
-            emptyMessage="No customers found." onFilter={(e) => setFilters(e.filters)}>
+            emptyMessage="No accounts found." onFilter={(e) => setFilters(e.filters)}>
             <Column header="Fullname" field="fullname" filter sortable filterPlaceholder="Search by fullname" style={{ minWidth: '12rem' }} />
             {/* Same with Agent Example */}
             <Column header="Gender" field='gender' filterField="gender" sortable showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '5rem' }}

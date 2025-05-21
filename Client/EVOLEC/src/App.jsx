@@ -5,8 +5,6 @@ import GeneralLayout from "./components/layout/general/GeneralLayout";
 import LoginPage from "./components/authentication/LoginPage";
 import AccountListPage from "./components/authentication/admin/AccountListPage";
 import CourseListPage from "./components/admin/course/CourseListPage";
-// import { useEffect } from "react";
-// import { getRoleFromToken, isTokenValid } from "./services/authService";
 import AccountFormPage from "./components/authentication/admin/AccountFormPage";
 import CourseFormPage from "./components/admin/course/CourseFormPage";
 import CourseDetailsPage from "./components/admin/course/CourseDetailsPage";
@@ -59,10 +57,8 @@ export default function App() {
             <Route path="courses/:id" element={<CourseDetailsPage />} />
             <Route path="courses/create" element={<CourseFormPage />} />
             <Route path="courses/update/:id" element={<CourseFormPage />} />
-            <Route path="class" element={<ClassroomListPage />} />
-            <Route path="class/create" element={<ClassroomFormPage />} />
-
-
+            <Route path="ClassRoom" element={<ClassroomListPage />} />
+            <Route path="classroom/create" element={<ClassroomFormPage />} />
           </Route>
         </Route>
 

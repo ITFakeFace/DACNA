@@ -6,6 +6,7 @@ using EVOLEC_Server.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace EVOLEC_Server.Controllers
@@ -59,7 +60,8 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = false,
                 ResponseCode = 401,
-                StatusMessage = "Invalid credentials"
+                StatusMessage = "Invalid credentials",
+                Data = null,
             });
         }
         [HttpPost("send-code-forgot-password")]
@@ -78,29 +80,45 @@ namespace EVOLEC_Server.Controllers
                     });
                 var code = SecurityUtil.GenerateCode();
                 _confirmCode = code;
-
+                try
+                {
+                    _emailService.SendEmailForgotPassword(model.Email, code);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new ResponseEntity<String>
+                    {
+                        Status = false,
+                        ResponseCode = 400,
+                        StatusMessage = $"Cannot send to mail {model.Email}",
+                        Data = null,
+                    });
+                }
                 return Ok(new ResponseEntity<string>
                 {
                     Status = true,
                     ResponseCode = 200,
                     StatusMessage = "Success",
-                    Data = code
+                    Data = code,
                 });
             }
             return Unauthorized(new ResponseEntity<string>
             {
                 Status = false,
                 ResponseCode = 401,
-                StatusMessage = "Invalid credentials"
+                StatusMessage = "Invalid credentials",
+                Data = null,
             });
         }
         [HttpPost("confirm-code-forgot-password")]
         public async Task<IActionResult> ConfirmForgotPassword([FromBody] ForgotPasswordDto model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
+            Console.WriteLine($"User null? {user == null}");
             if (user != null)
             {
-                if (model.ConfirmPassword == model.Password && model.Code == _confirmCode)
+                Console.WriteLine($"\n\nCode: {_confirmCode}, Model: {JsonConvert.SerializeObject(model)}");
+                if (model.ConfirmPassword == model.Password && model.Code == model.CorrectCode)
                 {
                     await _userManager.RemovePasswordAsync(user);
                     await _userManager.AddPasswordAsync(user, model.Password);
@@ -109,7 +127,17 @@ namespace EVOLEC_Server.Controllers
                         Status = true,
                         ResponseCode = 200,
                         StatusMessage = "Success",
-                        Data = null
+                        Data = null,
+                    });
+                }
+                else if (model.ConfirmPassword == model.Password && model.Code != model.CorrectCode)
+                {
+                    return Ok(new ResponseEntity<string>
+                    {
+                        Status = false,
+                        ResponseCode = 402,
+                        StatusMessage = "Invalid Code",
+                        Data = null,
                     });
                 }
             }
@@ -117,7 +145,8 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = false,
                 ResponseCode = 401,
-                StatusMessage = "Invalid credentials"
+                StatusMessage = "Invalid credentials",
+                Data = null,
             });
         }
 

@@ -1,16 +1,19 @@
 import { faEnvelope, faKey, faLock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { InputText } from "primereact/inputtext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import './ForgotPasswordPage.css';
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 import { postRequest } from "../../services/APIService";
+import { useNavigate } from "react-router-dom";
+import { Toast } from "primereact/toast";
 
 const ForgotPasswordPage = () => {
   const emptyModel = {
     email: "",
     code: "",
+    correctCode: "",
     password: "",
     confirmPassword: "",
   };
@@ -20,6 +23,8 @@ const ForgotPasswordPage = () => {
   const [sendCode, setSendCode] = useState(false);
   const [submited, setSubmitted] = useState(false);
   const [formModel, setFormModel] = useState(emptyModel);
+  const navigate = useNavigate();
+  const toast = useRef(null);
 
   const onInputChange = (e, name) => {
     const val = (e.target && e.target.value) || '';
@@ -27,15 +32,24 @@ const ForgotPasswordPage = () => {
   };
 
   const handleSendCode = async () => {
-    let _temp = formModel;
     setSendCode(true);
     if (!formModel.email) return;
 
     try {
       // Gửi email (dạng string) nên bạn phải truyền đúng kiểu vào body
-      await postRequest("/authentication/send-code-forgot-password", formModel.email);
+      var body = { "email": formModel.email };
+      var res = await postRequest("/authentication/send-code-forgot-password", body);
+      if (res.status == true) {
+        formModel.correctCode = res.data
+      }
       setCooldown(cooldownBase);
       setSendCode(false);
+      toast.current.show({
+        severity: 'success',
+        summary: 'Successful',
+        detail: 'Email has been sent',
+        life: 3000,
+      });
     } catch (error) {
       console.error("Failed to send code:", error);
     }
@@ -52,9 +66,21 @@ const ForgotPasswordPage = () => {
       formModel.password === formModel.confirmPassword
     ) {
       try {
-        await postRequest("/authentication/confirm-code-forgot-password", formModel);
-        alert("Password reset successfully!");
-        setFormModel(emptyModel);
+        var res = await postRequest("/authentication/confirm-code-forgot-password", formModel);
+        if (res.data == 401) {
+
+        } else if (res.data == 402) {
+
+        } else if (res.status == true) {
+          setFormModel(emptyModel);
+          toast.current.show({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Password changed',
+            life: 3000,
+          });
+          navigate("/login");
+        }
       } catch (error) {
         alert("Reset failed. Please check your code and try again.");
       }
@@ -70,6 +96,7 @@ const ForgotPasswordPage = () => {
 
   return (
     <form autoComplete="off" className="flex flex-wrap w-full justify-around align-middle items-center" onSubmit={(e) => e.preventDefault()}>
+      <Toast ref={toast} />
       <div className="md:w-3/4 lg:w-1/2 bg-white h-fit px-20 py-10 items-center gap-5 flex flex-wrap flex-col form-container">
         <div className="w-full form-title text-4xl font-bold text-center py-10">Recovery Password</div>
 

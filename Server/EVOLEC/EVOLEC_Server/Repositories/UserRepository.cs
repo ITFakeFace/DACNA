@@ -27,6 +27,7 @@ namespace EVOLEC_Server.Repositories
             Console.WriteLine("\nFindUserId\n");
             return _ctx.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
         }
+
         public async Task<bool> Create(UserCreateDto model)
         {
             var user = new ApplicationUser

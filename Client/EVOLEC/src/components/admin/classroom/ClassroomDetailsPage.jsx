@@ -157,16 +157,16 @@ useEffect(() => {
         </Group>
       </div>
 
-          <div className="row">
-          <Title size='xl' mt={50}>Lesson Day </Title>
-          <Group>
-            {lessonLoading ? (
-              <LoadingOverlay visible={lessonLoading} overlayProps={{ blur: 2 }} />
-            ) : (
-               <LessonDayListComponent classroomId={id} loading={lessonLoading} />
-            )}
-          </Group>
-        </div>
+            <div className="row">
+            <Title size='xl' mt={50}>Lesson Day </Title>
+            <Group>
+              {lessonLoading ? (
+                <LoadingOverlay visible={lessonLoading} overlayProps={{ blur: 2 }} />
+              ) : (
+                <LessonDayListComponent classroomId={id} loading={lessonLoading} />
+              )}
+            </Group>
+          </div>
     </div>
   
   );

@@ -70,7 +70,7 @@ const ClassroomListPage = () => {
       selector: row => (
         <div className="flex gap-2 justify-center">
            
-          <Button size="xs" onClick={() => navigate(`/classrooms/${row.$id}`)}>Details</Button>
+          <Button size="xs" onClick={() => navigate(`/admin/classroom/${row.Id}`)}>Details</Button>
           <Button size="xs" onClick={() => navigate(`/classrooms/update/${row.$id}`)}>Edit</Button>
           <Button size="xs" color="red">Delete</Button>
         </div>

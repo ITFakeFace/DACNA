@@ -16,6 +16,9 @@ namespace EVOLEC_Server.Repositories
         {
             return await _ctx.LessonDates
                               .Where(lsd => lsd.Id == id)
+                              .Include(lsd => lsd.ClassRoom)
+                              .Include(lsd => lsd.Teacher)
+                              .Include(lsd => lsd.Lesson)
                               .FirstOrDefaultAsync(); // Dùng FirstOrDefaultAsync thay vì FirstOrDefault
         }
 

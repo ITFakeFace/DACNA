@@ -112,54 +112,84 @@ namespace EVOLEC_Server.Controllers
             }
             else
             {
-                Dictionary<int,string> _errorMapping = new Dictionary<int, string>()
+                switch (result)
                 {
-                    { -1,"TeacherID1 không tồn tại"},
-                    { -2,"TeacherID2 không tồn tại"},
-                    { -3, "Lỗi không xác định" }
-                };
-                return BadRequest(new ResponseEntity<object>
-                {
-                    Status = false,
-                    ResponseCode = 400,
-                    StatusMessage = _errorMapping.GetValueOrDefault(result),
-                    Data = null!
-                });
+                    case -1:
+                        return BadRequest(new ResponseEntity<object>
+                        {
+                            Status = false,
+                            ResponseCode = 400,
+                            StatusMessage = "TeacherID1 not found",
+                            Data = null!
+                        });
+                    case -2:
+                        return BadRequest(new ResponseEntity<object>
+                        {
+                            Status = false,
+                            ResponseCode = 400,
+                            StatusMessage = "TeacherID2 not found",
+                            Data = null!
+                        });
+                    default:
+                        return BadRequest(new ResponseEntity<object>
+                        {
+                            Status = false,
+                            ResponseCode = 400,
+                            StatusMessage = "Unidentified error",
+                            Data = null!
+                        });
+                }
             }
-
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] ClassRoomUpdateDto classRoom)
         {
             var result = await _classRoomService.UpdateAsync(id, classRoom);
-            Dictionary<int, string> _resultMapping = new Dictionary<int, string>
+            switch (result)
             {
-                { 1, "Tạo lớp học thành công" },
-                { 2, "Shift không có giá trị. Vui lòng cập nhật để tạo lessonDate" },
-                { 3, "Start Date không có giá trị. Vui lòng cập nhật để tạo lessonDate" },
-                { 4, "Shift Date và StartDate ko có giá trị. Vui lòng cập nhật để tạo lessonDate" },
-                { -2, "Lỗi không xác định" }
-            };
-
-            if (result <0 )
-            {
-                return StatusCode(500, new ResponseEntity<string>
-                {
-                    Status = false,
-                    ResponseCode = 500,
-                    StatusMessage = _resultMapping.GetValueOrDefault(result),
-                    Data = null
-                });
+                case 1:
+                    return Ok(new ResponseEntity<string>
+                    {
+                        Status = true,
+                        ResponseCode = 200,
+                        StatusMessage = "Successfully",
+                        Data = null
+                    });
+                case 2:
+                    return Ok(new ResponseEntity<string>
+                    {
+                        Status = true,
+                        ResponseCode = 201,
+                        StatusMessage = "Shift is null, please update shift to create lesson date",
+                        Data = null
+                    });
+                case 3:
+                    return Ok(new ResponseEntity<string>
+                    {
+                        Status = true,
+                        ResponseCode = 201,
+                        StatusMessage = "StartDate is null, please update start date to create lesson date",
+                        Data = null
+                    });
+                case 4:
+                    return Ok(new ResponseEntity<string>
+                    {
+                        Status = true,
+                        ResponseCode = 201,
+                        StatusMessage = "Shift and StartDate is null, please update shift and start date to create lesson date",
+                        Data = null
+                    });
+                default:
+                    return BadRequest(new ResponseEntity<string>
+                    {
+                        Status = false,
+                        ResponseCode = 400,
+                        StatusMessage = "Unidentified error",
+                        Data = null
+                    });
             }
 
-            return Ok(new ResponseEntity<bool>
-            {
-                Status = true,
-                ResponseCode = 200,
-                StatusMessage = _resultMapping.GetValueOrDefault(result),
-                Data = result>0
-            });
         }
 
 

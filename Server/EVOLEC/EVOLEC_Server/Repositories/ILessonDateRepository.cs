@@ -9,6 +9,7 @@ namespace EVOLEC_Server.Repositories
         Task<LessonDate> AddLessonDateAsync(LessonDate lessonDate);
         Task<int> UpdateLessonDateAsync(LessonDate lessonDate);
         Task<bool> DeleteLessonDateAsync(int id);
-        //Task<LessonDate> AddLessonDatesAsync(LessonDate lessonDate);
+        Task<List<LessonDate>>? AddLessonDateByClassRoom(ClassRoom classRoom);
+        Task<List<LessonDate>?> HandleLessonDateOff(List<LessonDate> lessonDates, int ShiftId);
     }
 }

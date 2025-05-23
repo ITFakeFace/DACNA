@@ -9,12 +9,14 @@ namespace EVOLEC_Server.Services
     {
         private readonly IClassRoomRepository _repository;
         private readonly IUserRepository _userRepository;
+        private readonly ILessonDateService _lessonDateService;
         private readonly IMapper _mapper;
-        public ClassRoomService(IClassRoomRepository repository, IMapper mapper,IUserRepository userRepository)
+        public ClassRoomService(IClassRoomRepository repository, IMapper mapper,IUserRepository userRepository, ILessonDateService lessonDateService)
         {
             _repository = repository;
             _mapper = mapper;
             _userRepository = userRepository;
+            _lessonDateService = lessonDateService;
         }
 
         public async Task<int> CreateAsync(ClassRoomCreateDTO dto)

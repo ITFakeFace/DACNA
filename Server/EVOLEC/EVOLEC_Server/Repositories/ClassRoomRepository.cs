@@ -9,10 +9,12 @@ namespace EVOLEC_Server.Repositories
     public class ClassRoomRepository : IClassRoomRepository
     {
         private readonly EVOLECDbContext _ctx;
+        private readonly ILessonDateRepository _lessonDateRepository;
 
-        public ClassRoomRepository(EVOLECDbContext context)
+        public ClassRoomRepository(EVOLECDbContext context, ILessonDateRepository lessonDateRepository)
         {
             _ctx = context;
+            _lessonDateRepository = lessonDateRepository;
         }
 
         public async Task<ClassRoom?> GetClassRoomByIdAsync(int id)
@@ -41,14 +43,14 @@ namespace EVOLEC_Server.Repositories
 
         public async Task<ClassRoom> AddClassRoomAsync(ClassRoom classRoom)
         {
-           
+           int result = 0;
             var course = await _ctx.Courses
                 .Include(c => c.Lessons)  
                 .FirstOrDefaultAsync(c => c.Id == classRoom.CourseId);
 
             if (course == null)
             {
-                return null;
+                return null!;
             }
 
             _ctx.ClassRooms.Add(classRoom);
@@ -61,16 +63,15 @@ namespace EVOLEC_Server.Repositories
             List<LessonDate>? lessonDates = null;
             if (IsShiftHasValue && IsStartDateHasValue)
             {
-                lessonDates = await LessonDateHelper.CreateLessonDates(classRoom);
-                lessonDates = await LessonDateHelper.HandleDateOff(_ctx,lessonDates, (int)classRoom.Shift!);
+                lessonDates = await _lessonDateRepository.AddLessonDateByClassRoom(classRoom)!;
+                lessonDates = await _lessonDateRepository.HandleLessonDateOff(lessonDates, (int)classRoom.Shift!);
+                if (lessonDates != null)
+                {
+                    lessonDates.Sort((x, y) => x.Date.GetValueOrDefault().CompareTo(y.Date.GetValueOrDefault()));
+                }
+                classRoom.EndDate = lessonDates[lessonDates.Count - 1].Date;
             }
-                
-            if (lessonDates != null)
-            {
-                _ctx.LessonDates.AddRange(lessonDates);
-                await _ctx.SaveChangesAsync();
-            }
-        
+            await _ctx.SaveChangesAsync();
             return classRoom;
             
         }
@@ -93,14 +94,9 @@ namespace EVOLEC_Server.Repositories
             List<LessonDate>? lessonDates = null;
             if (IsShiftHasValue && IsStartDateHasValue)
             {
-                lessonDates = await LessonDateHelper.CreateLessonDates(classRoom);
-                lessonDates = await LessonDateHelper.HandleDateOff(_ctx, lessonDates, (int)classRoom.Shift!);
-            }
-
-            if (lessonDates != null)
-            {
-                _ctx.LessonDates.AddRange(lessonDates);
-                await _ctx.SaveChangesAsync();
+                lessonDates = await _lessonDateRepository.AddLessonDateByClassRoom(classRoom)!;
+                lessonDates = await _lessonDateRepository.HandleLessonDateOff(lessonDates, (int)classRoom.Shift!);
+                classRoom.EndDate = lessonDates[lessonDates.Count - 1].Date;
             }
 
             return await _ctx.SaveChangesAsync() ;

@@ -18,6 +18,7 @@ import ClassroomFormPage from "./components/admin/classroom/ClassroomFormPage";
 import EducationalInformationPage from "./components/educational-information-page/EducationalInformationPage";
 import AboutUsPage from "./components/about-us-page/AboutUsPage";
 import ForgotPasswordPage from "./components/authentication/ForgotPasswordPage";
+import OffDateListPage from "./components/admin/off-date/OffDateListPage";
 
 
 function Dashboard() {
@@ -57,8 +58,9 @@ export default function App() {
             <Route path="courses/:id" element={<CourseDetailsPage />} />
             <Route path="courses/create" element={<CourseFormPage />} />
             <Route path="courses/update/:id" element={<CourseFormPage />} />
-            <Route path="ClassRoom" element={<ClassroomListPage />} />
+            <Route path="classRoom" element={<ClassroomListPage />} />
             <Route path="classroom/create" element={<ClassroomFormPage />} />
+            <Route path="off-dates" element={<OffDateListPage />} />
           </Route>
         </Route>
 

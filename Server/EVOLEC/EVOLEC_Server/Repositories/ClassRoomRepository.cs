@@ -30,10 +30,10 @@ namespace EVOLEC_Server.Repositories
         public async Task<IEnumerable<ClassRoom>> GetAllClassRoomsAsync()
         {
             return await _ctx.ClassRooms
-                             .Include(x=>x.Teacher1)
-                             .Include(x=>x.Teacher2)
-                             .Include(x=>x.Creator)
-                             .Include(x=>x.Course)
+                             .Include(x => x.Teacher1)
+                             .Include(x => x.Teacher2)
+                             .Include(x => x.Creator)
+                             .Include(x => x.Course)
                              .ToListAsync();
         }
 
@@ -41,9 +41,9 @@ namespace EVOLEC_Server.Repositories
 
         public async Task<ClassRoom> AddClassRoomAsync(ClassRoom classRoom)
         {
-           
+
             var course = await _ctx.Courses
-                .Include(c => c.Lessons)  
+                .Include(c => c.Lessons)
                 .FirstOrDefaultAsync(c => c.Id == classRoom.CourseId);
 
             if (course == null)
@@ -62,17 +62,17 @@ namespace EVOLEC_Server.Repositories
             if (IsShiftHasValue && IsStartDateHasValue)
             {
                 lessonDates = await LessonDateHelper.CreateLessonDates(classRoom);
-                lessonDates = await LessonDateHelper.HandleDateOff(_ctx,lessonDates, (int)classRoom.Shift!);
+                lessonDates = await LessonDateHelper.HandleDateOff(_ctx, lessonDates, (int)classRoom.Shift!);
             }
-                
+
             if (lessonDates != null)
             {
                 _ctx.LessonDates.AddRange(lessonDates);
                 await _ctx.SaveChangesAsync();
             }
-        
+
             return classRoom;
-            
+
         }
         public async Task<int> UpdateClassRoomAsync(ClassRoom classRoom)
         {
@@ -103,7 +103,7 @@ namespace EVOLEC_Server.Repositories
                 await _ctx.SaveChangesAsync();
             }
 
-            return await _ctx.SaveChangesAsync() ;
+            return await _ctx.SaveChangesAsync();
         }
 
 

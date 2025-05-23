@@ -32,7 +32,7 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = false,
                     ResponseCode = 404,
-                    StatusMessage = "Không tìm thấy khóa học",
+                    StatusMessage = "Course not found",
                     Data = null,
                 });
 
@@ -40,7 +40,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Thành công",
+                StatusMessage = "Success",
                 Data = course,
             });
         }
@@ -56,7 +56,7 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = false,
                     ResponseCode = 404,
-                    StatusMessage = "Không tìm thấy khóa học",
+                    StatusMessage = "Course not found",
                     Data = null,
                 });
 
@@ -64,7 +64,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Thành công",
+                StatusMessage = "Success",
                 Data = course,
             });
         }
@@ -77,7 +77,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Thành công",
+                StatusMessage = "Success",
                 Data = courses,
             });
         }
@@ -85,23 +85,26 @@ namespace EVOLEC_Server.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCourse([FromBody] CourseCreateDto courseCreateDto)
         {
-            /*var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            /*
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (currentUserId == null)
                 return BadRequest(new ResponseEntity<string>
                 {
                     Status = false,
                     ResponseCode = 400,
-                    StatusMessage = "Không thể xác định người tạo",
+                    StatusMessage = "Cannot identify creator",
                     Data = null,
                 });
 
-            courseCreateDto.CreatorId = currentUserId;*/
+            courseCreateDto.CreatorId = currentUserId;
+            */
+
             var course = await _courseService.CreateCourseAsync(courseCreateDto);
             return CreatedAtAction(nameof(GetCourseById), new { id = course.Id }, new ResponseEntity<string>
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Tạo khóa học thành công",
+                StatusMessage = "Course created successfully",
                 Data = null,
             });
         }
@@ -114,7 +117,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = false,
                 ResponseCode = 400,
-                StatusMessage = "Cập nhật khóa học thất bại",
+                StatusMessage = "Course update failed",
                 Data = null,
             });
 
@@ -122,7 +125,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Cập nhật khóa học thành công",
+                StatusMessage = "Course updated successfully",
                 Data = null,
             });
         }
@@ -137,7 +140,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Xóa khóa học thành công",
+                StatusMessage = "Course deleted successfully",
                 Data = null,
             });
         }

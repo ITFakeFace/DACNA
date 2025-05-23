@@ -154,7 +154,7 @@ const LessonListComponent = ({ courseId, loading }) => {
           var res = await createLesson();
           if (res) {
             fetchLessons();
-            _lessons.push(_res.data);
+            _lessons.push(res.data);
           }
         }
       } catch (ex) {
@@ -333,7 +333,7 @@ const LessonListComponent = ({ courseId, loading }) => {
   return (
     <div className="w-full">
       <Toast ref={toast} />
-      <Toolbar className="mb-4" left={leftToolbar} right={rightToolbar}></Toolbar>
+      <Toolbar className="mb-4" start={leftToolbar} end={rightToolbar}></Toolbar>
 
       <DataTable ref={dt} value={lessons} selection={selectedLessons} onSelectionChange={(e) => setSelectedLessons(e.value)}
         dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}

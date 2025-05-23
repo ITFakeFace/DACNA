@@ -15,6 +15,9 @@ namespace EVOLEC_Server.Models
         [Required]
         public DateOnly ToDate { get; set; }
 
+        [Required]
+        public int Status { get; set; }
+
         public ICollection<LessonOffDate> LessonOffDates { get; set; } = new List<LessonOffDate>();
     }
 }

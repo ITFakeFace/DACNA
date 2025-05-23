@@ -6,14 +6,11 @@
         public DayOfWeek[] DayOfWeeks { get; set; }
         public TimeOnly FromTime { get; set; }
         public TimeOnly ToTime { get; set; }
-        public Shift(int Id,DayOfWeek[] days_of_week,TimeOnly fromTime, TimeOnly toTime) 
+        public Shift(int Id, DayOfWeek[] days_of_week, TimeOnly fromTime, TimeOnly toTime)
         {
-
             DayOfWeeks = days_of_week;
             FromTime = fromTime;
             ToTime = toTime;
-        } 
-
-
+        }
     }
 }

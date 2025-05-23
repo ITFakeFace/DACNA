@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Button, TextInput, Select, Group, Box, Notification
 } from '@mantine/core';
@@ -10,11 +10,15 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import { postRequest, getRequest, putRequest } from '../../../services/APIService';
 import DatePicker from 'react-datepicker';  // Import react-datepicker
 import "react-datepicker/dist/react-datepicker.css"; // Import css cho react-datepicker
+import { Dropdown } from 'primereact/dropdown';
 
 const ClassroomFormPage = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // Nếu có id thì là update, không thì create
   const [feedback, setFeedback] = useState(null);
+
+  const [teachers, setTeachers] = useState([]); // Mới thêm để lưu danh sách giáo viên
+  const [courses, setCourses] = useState([]);  // Mới thêm để lưu danh sách khóa học
 
   const form = useForm({
     initialValues: {
@@ -65,11 +69,41 @@ const ClassroomFormPage = () => {
       };
       fetchClassroom();
     }
+
+    // Fetch teachers
+    const fetchTeachers = async () => {
+      try {
+        const res = await getRequest("/user/teachers"); // Địa chỉ API để lấy danh sách giáo viên
+        if (res.status) {
+          setTeachers(res.data); // Lưu giáo viên vào state
+        } else {
+          setFeedback({ type: 'warn', message: 'No teachers found' });
+        }
+      } catch (err) {
+        console.error("Error fetching teachers:", err);
+      }
+    };
+
+    // Fetch courses
+    const fetchCourses = async () => {
+      try {
+        const res = await getRequest("/course"); // Địa chỉ API để lấy danh sách khóa học
+        if (res.status) {
+          setCourses(res.data); // Lưu khóa học vào state
+        } else {
+          setFeedback({ type: 'warn', message: 'No courses found' });
+        }
+      } catch (err) {
+        console.error("Error fetching courses:", err);
+      }
+    };
+
+    fetchTeachers();
+    fetchCourses();
   }, [id]);
 
   const handleSubmit = async (values) => {
     const payload = {
-      id: values.id,
       teacher1Id: values.teacher1Id,
       teacher2Id: values.teacher2Id,
       courseId: values.courseId,
@@ -79,7 +113,7 @@ const ClassroomFormPage = () => {
       status: values.status,
       shift: values.shift,
     };
-
+    console.log(payload)
     try {
       let result;
       if (id) {
@@ -112,7 +146,7 @@ const ClassroomFormPage = () => {
           size='xl'
           p='xs'
           onClick={() => {
-            window.location.replace("/admin/class");
+            window.location.replace("/admin/classroom");
           }}
         >
           <FontAwesomeIcon icon={faArrowLeft} />
@@ -136,11 +170,60 @@ const ClassroomFormPage = () => {
         )}
 
         <form onSubmit={form.onSubmit(handleSubmit)}>
-          <TextInput label="Teacher 1 ID" {...form.getInputProps('teacher1Id')} required />
-          <TextInput label="Teacher 2 ID" {...form.getInputProps('teacher2Id')} required mt="sm" />
-          <TextInput label="Course ID" {...form.getInputProps('courseId')} required mt="sm" />
-          <TextInput label="Creator ID" {...form.getInputProps('creatorId')} required mt="sm" />
+          
+                    {/* Dropdown for Teacher 1 */}
+          <div className="p-field">
+            <label htmlFor="teacher1Id">Teacher 1</label>
+            <Dropdown
+              id="teacher1Id"
+              options={teachers}
+              optionLabel="fullname"
+              optionValue="id"
+              value={form.values.teacher1Id}
+              onChange={(e) => form.setFieldValue('teacher1Id', e.value)} // Cập nhật teacher1Id khi người dùng chọn
+              placeholder="Select Teacher 1"
+              filter
+              showClear
+              className={feedback && feedback.type === 'error' ? "p-invalid" : ""}
+            />
+          </div>
 
+          {/* Dropdown for Teacher 2 */}
+          <div className="p-field">
+            <label htmlFor="teacher2Id">Teacher 2</label>
+            <Dropdown
+              id="teacher2Id"
+              options={teachers}
+              optionLabel="fullname"
+              optionValue="id"
+              value={form.values.teacher2Id}
+              onChange={(e) => form.setFieldValue('teacher2Id', e.value)} // Cập nhật teacher2Id khi người dùng chọn
+              placeholder="Select Teacher 2"
+              filter
+              showClear
+              className={feedback && feedback.type === 'error' ? "p-invalid" : ""}
+            />
+          </div>
+
+          {/* Dropdown for Course */}
+          <div className="p-field">
+            <label htmlFor="courseId">Course</label>
+            <Dropdown
+              id="courseId"
+              options={courses}
+              optionLabel="name"
+              optionValue="id"
+              value={form.values.courseId}
+              onChange={(e) => form.setFieldValue('courseId', e.value)} // Cập nhật courseId khi người dùng chọn
+              placeholder="Select Course"
+              filter
+              showClear
+              className={feedback && feedback.type === 'error' ? "p-invalid" : ""}
+            />
+          </div>
+
+
+            <TextInput label="Creator ID" {...form.getInputProps('creatorId')} required mt="sm" />
           <div className="mb-3">
             <label>Start Date</label>
             <br />
@@ -151,7 +234,6 @@ const ClassroomFormPage = () => {
                 form.setFieldValue('endDate', null); // Reset End Date khi thay đổi Start Date
               }}
               dateFormat="dd/MM/yyyy"
-
               placeholderText="Select start date"
               className="form-control"
             />
@@ -169,6 +251,8 @@ const ClassroomFormPage = () => {
               className="form-control"
             />
           </div>
+
+
 
           <Select
             label="Status"

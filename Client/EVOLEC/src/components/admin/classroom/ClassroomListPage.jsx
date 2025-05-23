@@ -84,7 +84,7 @@ const ClassroomListPage = () => {
     <div className="container">
       <Title mb={20}>Classroom List</Title>
       <div>
-        <Button onClick={() => navigate("/admin/class/create")}>Create new Classroom</Button>
+        <Button onClick={() => navigate("/admin/classroom/create")}>Create new Classroom</Button>
       </div>
       {loading ? <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} /> :
         <DataTable

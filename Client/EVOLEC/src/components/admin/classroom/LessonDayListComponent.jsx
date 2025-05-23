@@ -218,6 +218,7 @@ const LessonDateListComponent = ({ classroomId }) => {
       let res;
       if (lessonDateForm.id) {
         res = await putRequest(`/lessondate/${lessonDateForm.id}`, payload);
+        console.log(payload)
       } else {
         res = await postRequest(`/lessondate`, payload);
       }
@@ -489,7 +490,7 @@ const LessonDateListComponent = ({ classroomId }) => {
           />
           {errors.endTime && <small className="p-error">{errors.endTime}</small>}
         </div>
-
+{/* 
         <div className="p-field">
           <label htmlFor="note">Note</label>
           <InputTextarea
@@ -500,7 +501,7 @@ const LessonDateListComponent = ({ classroomId }) => {
             cols={30}
             placeholder="Enter notes here..."
           />
-        </div>
+        </div> */}
 
         <div className="mt-4 flex justify-end gap-2">
           <Button

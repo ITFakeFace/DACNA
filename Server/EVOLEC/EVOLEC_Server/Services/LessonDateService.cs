@@ -30,6 +30,7 @@ namespace EVOLEC_Server.Services
                 Date = lessonDate.Date,
                 StartTime = lessonDate.StartTime,
                 EndTime = lessonDate.EndTime,
+                Note = lessonDate.Note,
             };
 
             return lessonDateDto;
@@ -88,7 +89,8 @@ namespace EVOLEC_Server.Services
                 Lesson = _mapper.Map<LessonDto>(lessonDate.Lesson),
                 Date = lessonDate.Date,
                 StartTime = lessonDate.StartTime,
-                EndTime = lessonDate.EndTime
+                EndTime = lessonDate.EndTime,
+                Note = lessonDate.Note,
             }).ToList();
 
             return lessonDateDtos;

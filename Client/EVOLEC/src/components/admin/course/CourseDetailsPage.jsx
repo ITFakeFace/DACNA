@@ -69,7 +69,7 @@ const CourseDetailsPage = () => {
     } catch (error) {
 
     }
-  }, [])
+  }, [])  
 
   if (loading)
     return <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />

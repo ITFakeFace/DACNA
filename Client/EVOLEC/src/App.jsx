@@ -15,6 +15,7 @@ import ProtectedRoute from "./components/layout/components/ProtectedRoute";
 import HomePage from "./components/homepage/HomePage";
 import ClassroomListPage from "./components/admin/classroom/ClassroomListPage";
 import ClassroomFormPage from "./components/admin/classroom/ClassroomFormPage";
+import ClassroomDetailsPage from "./components/admin/classroom/ClassroomDetailsPage";
 import EducationalInformationPage from "./components/educational-information-page/EducationalInformationPage";
 import AboutUsPage from "./components/about-us-page/AboutUsPage";
 import ForgotPasswordPage from "./components/authentication/ForgotPasswordPage";
@@ -57,7 +58,8 @@ export default function App() {
             <Route path="courses/:id" element={<CourseDetailsPage />} />
             <Route path="courses/create" element={<CourseFormPage />} />
             <Route path="courses/update/:id" element={<CourseFormPage />} />
-            <Route path="ClassRoom" element={<ClassroomListPage />} />
+            <Route path="classroom" element={<ClassroomListPage />} />
+            <Route path="classroom/:id" element={<ClassroomDetailsPage />} />
             <Route path="classroom/create" element={<ClassroomFormPage />} />
           </Route>
         </Route>

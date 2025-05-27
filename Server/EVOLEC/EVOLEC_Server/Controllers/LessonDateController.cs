@@ -77,7 +77,7 @@ namespace EVOLEC_Server.Controllers
             });
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}")]   
         public async Task<IActionResult> Update(int id, [FromBody] LessonDateUpdateDto dto)
         {
             var success = await _lessonDateService.UpdateLessonDateAsync(id, dto);

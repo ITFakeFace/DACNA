@@ -21,6 +21,7 @@ const ClassroomFormPage = () => {
 
   const [teachers, setTeachers] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [shifts, setShifts] = useState([]); // Thêm state để lưu dữ liệu shift
 
   const form = useForm({
     initialValues: {
@@ -31,7 +32,7 @@ const ClassroomFormPage = () => {
       startDate: null,
       endDate: null,
       status: 'Active',
-      shift: '',
+      shift: '', // Khởi tạo shift trống
     },
     validate: {
       teacher1Id: (value) => (value ? null : 'Teacher 1 is required'),
@@ -43,7 +44,6 @@ const ClassroomFormPage = () => {
   });
 
   useEffect(() => {
-    // Load classroom data nếu có id
     if (id) {
       const fetchClassroom = async () => {
         try {
@@ -56,9 +56,9 @@ const ClassroomFormPage = () => {
               teacher2Id: classroom.teacher2Id,
               courseId: classroom.courseId,
               startDate: classroom.startDate ? new Date(classroom.startDate) : null,
-              endDate: classroom.endDate ? new Date(classroom.endDate) : null,
-              status: classroom.status,
-              shift: classroom.shift,
+             // endDate: classroom.endDate ? new Date(classroom.endDate) : null,
+              status: 0,
+              shift: classroom.shift, // Set giá trị shift từ classroom
             });
           } else {
             setFeedback({ type: 'error', message: 'Cannot load classroom data' });
@@ -71,7 +71,7 @@ const ClassroomFormPage = () => {
       fetchClassroom();
     }
 
-    // Load danh sách teachers
+    // Fetch teachers
     const fetchTeachers = async () => {
       try {
         const res = await getRequest("/user/teachers");
@@ -86,7 +86,7 @@ const ClassroomFormPage = () => {
       }
     };
 
-    // Load danh sách courses
+    // Fetch courses
     const fetchCourses = async () => {
       try {
         const res = await getRequest("/course");
@@ -101,29 +101,53 @@ const ClassroomFormPage = () => {
       }
     };
 
+    // Fetch shift options from API
+    const fetchShifts = async () => {
+      try {
+        const res = await getRequest("/Shift/getAllShifts"); // API này bạn sẽ sửa đường dẫn
+        if (res.status) {
+          const formattedShifts = res.data.map(shift => {
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const days = shift.dayOfWeeks.map(day => dayNames[day - 1]); // Chuyển từ số thành tên ngày
+            return {
+              value: shift.id, // Sử dụng shift id làm giá trị của dropdown
+              label: `From: ${shift.fromTime} To: ${shift.toTime} - Days: ${days.join(', ')}`, // Hiển thị thông tin đầy đủ
+            };
+          });
+          setShifts(formattedShifts);
+          
+        } else {
+          setFeedback({ type: 'warn', message: 'No shifts found' });
+        }
+      } catch (err) {
+        console.error("Error fetching shifts:", err);
+        setFeedback({ type: 'error', message: 'Failed to load shifts' });
+      }
+    };
+
     fetchTeachers();
     fetchCourses();
+    fetchShifts(); // Gọi API lấy shifts
   }, [id]);
 
   const handleSubmit = async (values) => {
-    // Chuẩn bị payload với creatorId lấy từ token
     const payload = {
       teacher1Id: values.teacher1Id,
       teacher2Id: values.teacher2Id,
       courseId: values.courseId,
       creatorId: getUserIdFromToken(localStorage.getItem('token')),
       startDate: values.startDate ? values.startDate.toISOString().split('T')[0] : null,
-      endDate: values.endDate ? values.endDate.toISOString().split('T')[0] : null,
-      status: values.status,
+     // endDate: values.endDate ? values.endDate.toISOString().split('T')[0] : null,
+      status:1,
       shift: values.shift,
     };
-
+    console.log(payload)
     try {
       let result;
       if (id) {
         result = await putRequest(`/classrooms/${id}`, payload);
       } else {
-        result = await postRequest('/classrooms', payload);
+        result = await postRequest('/classroom/create', payload);
       }
 
       if (result.status) {
@@ -148,7 +172,7 @@ const ClassroomFormPage = () => {
           className='!bg-transparent !text-black'
           size='xl'
           p='xs'
-          onClick={() => window.location.replace("/admin/classrooms")}
+          onClick={() => window.location.replace("/admin/classroom")}
         >
           <FontAwesomeIcon icon={faArrowLeft} />
         </Button>
@@ -170,7 +194,7 @@ const ClassroomFormPage = () => {
           </Notification>
         )}
 
-        <form onSubmit={form.onSubmit(handleSubmit)}>
+        <form onSubmit={form.onSubmit(handleSubmit)} className='flex flex-col gap-5'>
           <div className="p-field">
             <label htmlFor="teacher1Id">Teacher 1</label>
             <Dropdown
@@ -223,8 +247,8 @@ const ClassroomFormPage = () => {
             label="Creator"
             value={getUsernameFromToken(localStorage.getItem('token')) || ''}
             disabled
-            hidden
-            className="custom-disabled-input"
+            
+            className="custom-disabled-input select-none"
           />
 
           <div className="mb-3">
@@ -241,38 +265,24 @@ const ClassroomFormPage = () => {
               className="form-control"
             />
           </div>
-
-          <div className="mb-3">
-            <label>End Date</label>
-            <br />
-            <DatePicker
-              selected={form.values.endDate}
-              onChange={(date) => form.setFieldValue('endDate', date)}
-              dateFormat="dd/MM/yyyy"
-              minDate={form.values.startDate}
-              placeholderText="Select end date"
-              className="form-control"
+          <div className="p-field">
+            <label htmlFor="shift">Shift</label>
+            <Dropdown
+              label="Shift"
+              placeholder="Select Shift"
+              options={shifts} // Hiển thị các shift đã chuyển đổi
+              optionLabel="label" // Chỉ định thuộc tính dùng để hiển thị trong dropdown
+              optionValue="value" // Chỉ định giá trị của mỗi mục trong dropdown
+              value={form.values.shift} // Gán giá trị từ form vào dropdown
+              onChange={(e) => form.setFieldValue('shift', e.value)} // Lấy giá trị khi thay đổi
+              filter
+              showClear
+              className={feedback && feedback.type === 'error' ? "p-invalid" : ""}
+              required
+              mt="sm"
             />
           </div>
-
-          <Select
-            label="Status"
-            placeholder="Select Status"
-            data={[{ value: 'Active', label: 'Active' }, { value: 'Inactive', label: 'Inactive' }]}
-            {...form.getInputProps('status')}
-            required
-            mt="sm"
-          />
-
-          <Select
-            label="Shift"
-            placeholder="Select Shift"
            
-            {...form.getInputProps('shift')}
-            required
-            mt="sm"
-          />
-
           <Group position="right" mt="md">
             <Button type="submit">{id ? 'Update Classroom' : 'Create New Classroom'}</Button>
           </Group>

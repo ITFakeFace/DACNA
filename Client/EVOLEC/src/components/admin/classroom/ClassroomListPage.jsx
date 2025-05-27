@@ -70,7 +70,7 @@ const ClassroomListPage = () => {
       selector: row => (
         <div className="flex gap-2 justify-center">
            
-          <Button size="xs" onClick={() => navigate(`/admin/classroom/${row.Id}`)}>Details</Button>
+          <Button size="xs" onClick={() => navigate(`/admin/classrooms/${row.Id}`)}>Details</Button>
           <Button size="xs" onClick={() => navigate(`/classrooms/update/${row.$id}`)}>Edit</Button>
           <Button size="xs" color="red">Delete</Button>
         </div>
@@ -84,7 +84,7 @@ const ClassroomListPage = () => {
     <div className="container">
       <Title mb={20}>Classroom List</Title>
       <div>
-        <Button onClick={() => navigate("/admin/classroom/create")}>Create new Classroom</Button>
+        <Button onClick={() => navigate("/admin/classrooms/create")}>Create new Classroom</Button>
       </div>
       {loading ? <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} /> :
         <DataTable

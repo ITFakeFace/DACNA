@@ -1,4 +1,4 @@
-﻿using EVOLEC_Server.Dtos;
+using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -21,7 +21,7 @@ namespace EVOLEC_Server.Controllers
                 Status = true,
                 ResponseCode = 200,
                 StatusMessage = "Successfully",
-                Data = ShiftSchedule._shiftList
+                Data = shifts
 
             });
         }

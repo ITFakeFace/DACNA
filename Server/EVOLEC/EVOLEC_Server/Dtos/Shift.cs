@@ -1,4 +1,4 @@
-﻿namespace EVOLEC_Server.Dtos
+namespace EVOLEC_Server.Dtos
 {
     public class Shift
     {

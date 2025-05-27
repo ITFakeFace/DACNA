@@ -71,8 +71,9 @@ const LessonDateListComponent = ({ classroomId }) => {
         const mappedData = res.data.map((item) => ({
           id: item.id,
           teacherName: item.teacher?.username || "",
-          teacherid: item.teacher?.Id,
+          teacherId: item.teacher?.id,
           lessonName: item.lesson?.name || "",
+          lessonId:item.lesson?.id || "",
           date: item.date ? new Date(item.date) : null,
           startTime: item.startTime || "",
           endTime: item.endTime || "",
@@ -80,7 +81,8 @@ const LessonDateListComponent = ({ classroomId }) => {
         }));
         // console.log(res)
         setLessonDates(mappedData);
-        
+        // console.log("map Data:")
+        // console.log(mappedData)
       } else {
         toast.current.show({
           severity: "warn",
@@ -122,6 +124,8 @@ const LessonDateListComponent = ({ classroomId }) => {
     setLessonDateForm({
       id: null,
       teacherName: "",
+      teacherId:"",
+      lessonId:"",
       lessonName: "",
       date: null,
       startTime: "",
@@ -151,8 +155,8 @@ const LessonDateListComponent = ({ classroomId }) => {
   // Validate form data
   const validateForm = () => {
     const newErrors = {};
-    if (!lessonDateForm.teacherName) newErrors.teacherName = "Teacher is required";
-    if (!lessonDateForm.lessonName) newErrors.lessonName = "Lesson Name is required";
+    if (!lessonDateForm.teacherId) newErrors.teacherName = "Teacher is required";
+    if (!lessonDateForm.lessonId) newErrors.lessonName = "Lesson Name is required";
 
     if (!lessonDateForm.date) {
       newErrors.date = "Date is required";
@@ -204,8 +208,10 @@ const LessonDateListComponent = ({ classroomId }) => {
 
     try {
       const payload = {
-        teacherId: lessonDateForm.teacherName,
-        lessonId: lessonDateForm.lessonName,
+        teacherId: lessonDateForm.teacherId,
+        teacherName:lessonDateForm.teacherName,
+        lessonName:lessonDateForm.lessonName,
+        lessonId: lessonDateForm.lessonId,
         classRoomId: classroomId,
         date: lessonDateForm.date
           ? lessonDateForm.date.toISOString().split("T")[0]
@@ -217,8 +223,14 @@ const LessonDateListComponent = ({ classroomId }) => {
       // console.log(payload)
       let res;
       if (lessonDateForm.id) {
+      // console.log("PayLoad: ") 
+      // console.log(payload) 
+      // console.log("lesson: ")
+      // console.log(lessonDateForm)
+      // console.log("Lesson Date:")
+      // console.log(lessonDates)
         res = await putRequest(`/lessondate/${lessonDateForm.id}`, payload);
-        console.log(payload)
+        
       } else {
         res = await postRequest(`/lessondate`, payload);
       }
@@ -415,30 +427,30 @@ const LessonDateListComponent = ({ classroomId }) => {
         onHide={() => setLessonDateDialog(false)}
         className="p-fluid"
       >
-        <div className="p-field">
-          <label htmlFor="teacherName">Teacher</label>
-          <Dropdown
-            id="teacherName"
-            options={teachers}
-            optionLabel="fullname"
-            optionValue="id"
-            value={lessonDateForm.teacherName}
-            onChange={(e) => onInputChange(e, "teacherName")}
-            placeholder="Select a Teacher"
-            filter
-            filterPlaceholder="Search teacher"
-            showClear
-            className={errors.teacherName ? "p-invalid" : ""}
-          />
-          {errors.teacherName && (
-            <small className="p-error">{errors.teacherName}</small>
-          )}
-        </div>
+          <div className="p-field">
+            <label htmlFor="teacherId">Teacher</label>
+            <Dropdown
+              id="teacherId"
+              options={teachers}
+              optionLabel="fullname" // Tên giáo viên hiển thị trong dropdown
+              optionValue="id" // Giá trị ID của giáo viên, được lưu trữ
+              value={lessonDateForm.teacherId} // Đảm bảo giá trị teacherId được lưu và chọn đúng trong dropdown
+              onChange={(e) => onInputChange(e, "teacherId")} // Cập nhật teacherId khi người dùng chọn
+              placeholder="Select a Teacher"
+              filter
+              filterPlaceholder="Search teacher"
+              showClear
+              className={errors.teacherName ? "p-invalid" : ""} // Hiển thị lỗi nếu có
+            />
+            {errors.teacherName && (
+              <small className="p-error">{errors.teacherName}</small> // Hiển thị lỗi nếu có
+            )}
+          </div>
 
           <div className="p-field">
-            <label htmlFor="lessonName">Lesson Name</label>
+            <label htmlFor="lessonId">Lesson Name</label>
            <Dropdown
-              id="lessonName"
+              id="lessonId"
               options={lessons}
               optionLabel="name" // Hiển thị tên bài học
               optionValue="id" // Lưu ID của bài học
@@ -490,7 +502,7 @@ const LessonDateListComponent = ({ classroomId }) => {
           />
           {errors.endTime && <small className="p-error">{errors.endTime}</small>}
         </div>
-{/* 
+
         <div className="p-field">
           <label htmlFor="note">Note</label>
           <InputTextarea
@@ -501,7 +513,7 @@ const LessonDateListComponent = ({ classroomId }) => {
             cols={30}
             placeholder="Enter notes here..."
           />
-        </div> */}
+        </div>
 
         <div className="mt-4 flex justify-end gap-2">
           <Button

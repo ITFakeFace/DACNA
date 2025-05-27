@@ -1,4 +1,4 @@
-﻿using EVOLEC_Server.Models;
+using EVOLEC_Server.Models;
 using System;
 using System.Collections.Generic;
 

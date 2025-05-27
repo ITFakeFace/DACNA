@@ -32,7 +32,7 @@ const LoginPage = () => {
 
       const token = response.data.data;
       localStorage.setItem("token", token);
-
+      console.log(token)
       window.location.replace("/");  // replacing navigate + reload by replace
     } catch (error) {
       setEmailError(" ");

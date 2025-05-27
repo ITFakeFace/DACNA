@@ -72,7 +72,7 @@ useEffect(() => {
           className='!bg-transparent !text-black'
           size='xl'
           p='xs'
-          onClick={() => navigate('/admin/classroom')}
+          onClick={() => navigate('/admin/classrooms')}
         >
           <FontAwesomeIcon icon={faArrowLeft} />
           <span className='font-bold text-2xl ml-3'>

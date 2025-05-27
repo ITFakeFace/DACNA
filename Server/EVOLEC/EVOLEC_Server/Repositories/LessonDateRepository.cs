@@ -1,4 +1,4 @@
-﻿using EVOLEC_Server.Models;
+using EVOLEC_Server.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EVOLEC_Server.Repositories
@@ -62,5 +62,124 @@ namespace EVOLEC_Server.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<LessonDate>>? AddLessonDateByClassRoom(ClassRoom classRoom)
+        {
+            if (classRoom.Course.Lessons.Count == 0)
+                return null!;
+
+            List<Lesson> lessons = classRoom.Course.Lessons.ToList();
+            List<LessonDate> lessonDates = new List<LessonDate>();
+            List<string> teacherIds = new List<string>();
+            List<DateOnly> LessonDates = null!;
+            Shift? shift = ShiftSchedule.GetShiftById((int)classRoom.Shift!);
+            LessonDates = ShiftSchedule.GetDateFromShift((DateOnly)classRoom.StartDate!, (int)classRoom.Shift!, classRoom.Course.Lessons.Count);
+
+            switch (CheckTeacher(classRoom))
+            {
+                case 1:
+                    teacherIds.Add(classRoom.Teacher1Id ?? classRoom.Teacher2Id!);
+                    break;
+                case 2:
+                    teacherIds.Add(classRoom.Teacher1Id!);
+                    teacherIds.Add(classRoom.Teacher2Id!);
+                    break;
+            }
+
+            int temp = 0;
+
+            for (int i = 0; i < lessons.Count(); i++)
+            {
+                var lesson = lessons[i];
+
+                var lessonDate = new LessonDate
+                {
+                    ClassRoomId = classRoom.Id,
+                    LessonId = lesson.Id,
+                    Date = LessonDates[i],
+                    StartTime = shift!.FromTime,
+                    EndTime = shift!.ToTime
+                };
+
+                if (teacherIds.Count == 1)
+                {
+                    lessonDate.TeacherId = teacherIds[0];
+                }
+                else if (teacherIds.Count == 2)
+                {
+                    lessonDate.TeacherId = temp == 0 ? teacherIds[0] : teacherIds[1];
+                    temp ^= 1;
+                }
+
+                lessonDates.Add(lessonDate);
+            }
+            _ctx.LessonDates.AddRange(lessonDates);
+            await _ctx.SaveChangesAsync();
+            return lessonDates;
+        }
+        public int CheckTeacher(ClassRoom classRoom)
+        {
+            int hasTeacher = 0;
+            if (!string.IsNullOrEmpty(classRoom.Teacher1Id))
+            {
+                hasTeacher++;
+            }
+            if (!string.IsNullOrEmpty(classRoom.Teacher2Id))
+            {
+                hasTeacher++;
+            }
+            return hasTeacher;
+        }
+
+        public async Task<List<LessonDate>?> HandleLessonDateOff( List<LessonDate> lessonDates, int ShiftId)
+        {
+            if (lessonDates == null || ShiftId == null)
+                return null;
+
+            var minDate = lessonDates.Min(ld => ld.Date);
+            var maxDate = lessonDates.Max(ld => ld.Date);
+
+            var offDatesInRange = await _ctx.OffDates
+                .Where(offDate => offDate.FromDate > minDate && offDate.FromDate < maxDate &&
+                                  offDate.ToDate > minDate &&
+                                  offDate.ToDate < maxDate)
+                .ToListAsync();
+            int count = 0;
+            for (int i = 0; i < lessonDates.Count; i++)
+            {
+                var lessonDate = lessonDates[i];
+
+                foreach (var offDate in offDatesInRange)
+                {
+                    int flag =0;
+                    while (lessonDate.Date >= offDate.FromDate && lessonDate.Date <= offDate.ToDate)
+                    {
+                        if(flag == 0)
+                        {
+                            flag = 1;
+                            count++;
+                        }
+                        DateOnly lastLessonDate = (DateOnly)lessonDates[lessonDates.Count - 1].Date;
+                        List<DateOnly> tmpDate = ShiftSchedule.GetDateFromShift(lastLessonDate.AddDays(1), ShiftId, 1);
+                        lessonDate.Date = tmpDate[0];
+                        LessonOffDate lessonOffDate = new LessonOffDate()
+                        {
+                            LessonDateId = lessonDate.Id,
+                            OffDateId = offDate.Id,
+                            InitDate = (DateOnly)lessonDate.Date
+                        };
+                    }
+
+                }
+            }
+            var originalLessonDates = lessonDates
+               .Select(ld => new { ld.LessonId, ld.Date })
+               .OrderBy(ld => ld.Date)
+               .ToList();
+            lessonDates.OrderBy(ld => ld.Date);
+            int ptrOriginal = 0;
+            int ptrUpdated = 0;
+
+            return lessonDates;
+        }
     }
 }

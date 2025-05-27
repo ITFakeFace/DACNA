@@ -92,7 +92,10 @@ namespace EVOLEC_Server.Dtos
             return resultDates;
         }
 
-
+        public static List<Shift> GetAllShifts()
+        {
+            return _shiftList;
+        }
         public static Shift GetShiftById(int id)
         {
             return _shiftList[id-1];

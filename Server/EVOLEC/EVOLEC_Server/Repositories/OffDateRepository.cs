@@ -22,6 +22,12 @@ namespace EVOLEC_Server.Repositories
             return await _ctx.OffDates.ToListAsync();
         }
 
+        public async Task<IEnumerable<OffDate>> GetAllRecentOffDatesAsync()
+        {
+            var now = DateOnly.FromDateTime(DateTime.Now);
+            return await _ctx.OffDates.Where(od => od.ToDate >= now).ToListAsync();
+        }
+
         public async Task<OffDate> AddOffDateAsync(OffDate offDate)
         {
             _ctx.OffDates.Add(offDate);

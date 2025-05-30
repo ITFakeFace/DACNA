@@ -4,6 +4,7 @@ using EVOLEC_Server.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EVOLEC_Server.Migrations
 {
     [DbContext(typeof(EVOLECDbContext))]
-    partial class EVOLECDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250522120537_v3")]
+    partial class v3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -132,9 +135,6 @@ namespace EVOLEC_Server.Migrations
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("Shift")
                         .HasColumnType("int");
 
@@ -159,8 +159,6 @@ namespace EVOLEC_Server.Migrations
                     b.HasIndex("CourseId");
 
                     b.HasIndex("CreatorId");
-
-                    b.HasIndex("RoomId");
 
                     b.HasIndex("Teacher1Id");
 
@@ -330,9 +328,6 @@ namespace EVOLEC_Server.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
                     b.Property<TimeOnly?>("StartTime")
                         .HasColumnType("time(6)");
 
@@ -345,8 +340,6 @@ namespace EVOLEC_Server.Migrations
                     b.HasIndex("ClassRoomId");
 
                     b.HasIndex("LessonId");
-
-                    b.HasIndex("RoomId");
 
                     b.HasIndex("TeacherId");
 
@@ -396,30 +389,6 @@ namespace EVOLEC_Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("tblOffDates", (string)null);
-                });
-
-            modelBuilder.Entity("EVOLEC_Server.Models.Room", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("tblRooms", (string)null);
                 });
 
             modelBuilder.Entity("EVOLEC_Server.Models.StudentAttendance", b =>
@@ -589,12 +558,6 @@ namespace EVOLEC_Server.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("EVOLEC_Server.Models.Room", "Room")
-                        .WithMany("ClassRooms")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("EVOLEC_Server.Models.ApplicationUser", "Teacher1")
                         .WithMany("Teacher1ClassRooms")
                         .HasForeignKey("Teacher1Id")
@@ -608,8 +571,6 @@ namespace EVOLEC_Server.Migrations
                     b.Navigation("Course");
 
                     b.Navigation("Creator");
-
-                    b.Navigation("Room");
 
                     b.Navigation("Teacher1");
 
@@ -684,12 +645,6 @@ namespace EVOLEC_Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EVOLEC_Server.Models.Room", "Room")
-                        .WithMany("LessonDates")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("EVOLEC_Server.Models.ApplicationUser", "Teacher")
                         .WithMany("TeachedDates")
                         .HasForeignKey("TeacherId")
@@ -699,8 +654,6 @@ namespace EVOLEC_Server.Migrations
                     b.Navigation("ClassRoom");
 
                     b.Navigation("Lesson");
-
-                    b.Navigation("Room");
 
                     b.Navigation("Teacher");
                 });
@@ -840,13 +793,6 @@ namespace EVOLEC_Server.Migrations
             modelBuilder.Entity("EVOLEC_Server.Models.OffDate", b =>
                 {
                     b.Navigation("LessonOffDates");
-                });
-
-            modelBuilder.Entity("EVOLEC_Server.Models.Room", b =>
-                {
-                    b.Navigation("ClassRooms");
-
-                    b.Navigation("LessonDates");
                 });
 #pragma warning restore 612, 618
         }

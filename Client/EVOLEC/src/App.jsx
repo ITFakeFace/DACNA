@@ -19,6 +19,10 @@ import ClassroomDetailsPage from "./components/admin/classroom/ClassroomDetailsP
 import EducationalInformationPage from "./components/educational-information-page/EducationalInformationPage";
 import AboutUsPage from "./components/about-us-page/AboutUsPage";
 import ForgotPasswordPage from "./components/authentication/ForgotPasswordPage";
+import OffDateListPage from "./components/admin/off-date/OffDateListPage";
+import OffDateDetailsPage from "./components/admin/off-date/OffDateDetailsPage";
+import RoomListPage from "./components/admin/room/RoomListPage";
+import RoomDetailsPage from "./components/admin/room/RoomDetailsPage";
 
 
 function Dashboard() {
@@ -58,9 +62,12 @@ export default function App() {
             <Route path="courses/:id" element={<CourseDetailsPage />} />
             <Route path="courses/create" element={<CourseFormPage />} />
             <Route path="courses/update/:id" element={<CourseFormPage />} />
-            <Route path="classroom" element={<ClassroomListPage />} />
-            <Route path="classroom/:id" element={<ClassroomDetailsPage />} />
-            <Route path="classroom/create" element={<ClassroomFormPage />} />
+            <Route path="classrooms" element={<ClassroomListPage />} />
+            <Route path="classrooms/create" element={<ClassroomFormPage />} />
+            <Route path="off-dates" element={<OffDateListPage />} />
+            <Route path="off-dates/:id" element={<OffDateDetailsPage />} />
+            <Route path="rooms" element={<RoomListPage />} />
+            <Route path="rooms/:id" element={<RoomDetailsPage />} />
           </Route>
         </Route>
 

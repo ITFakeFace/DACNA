@@ -26,7 +26,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Thành công",
+                StatusMessage = "Success",
                 Data = lessons
             });
         }
@@ -41,7 +41,7 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = false,
                     ResponseCode = 404,
-                    StatusMessage = "Không tìm thấy bài học",
+                    StatusMessage = "Lesson not found",
                     Data = null
                 });
             }
@@ -50,7 +50,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Thành công",
+                StatusMessage = "Success",
                 Data = lesson
             });
         }
@@ -63,7 +63,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Thành công",
+                StatusMessage = "Success",
                 Data = lessons
             });
         }
@@ -77,7 +77,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 201,
-                StatusMessage = "Tạo bài học thành công",
+                StatusMessage = "Lesson created successfully",
                 Data = lesson
             });
         }
@@ -92,7 +92,7 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = false,
                     ResponseCode = 400,
-                    StatusMessage = "Cập nhật bài học thất bại",
+                    StatusMessage = "Failed to update lesson",
                     Data = null
                 });
             }
@@ -101,7 +101,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Cập nhật bài học thành công",
+                StatusMessage = "Lesson updated successfully",
                 Data = null
             });
         }
@@ -116,7 +116,7 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = false,
                     ResponseCode = 404,
-                    StatusMessage = "Không tìm thấy bài học để xóa",
+                    StatusMessage = "Lesson not found for deletion",
                     Data = null
                 });
             }
@@ -125,7 +125,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Xóa bài học thành công",
+                StatusMessage = "Lesson deleted successfully",
                 Data = null
             });
         }

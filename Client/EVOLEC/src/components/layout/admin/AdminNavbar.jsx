@@ -1,7 +1,7 @@
 
 import { Button } from '@mantine/core';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCompress, faHome, faSchool, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faCompress, faHome, faSchool, faUser } from "@fortawesome/free-solid-svg-icons";
 import './AdminNavbar.css';
 import NavItem from '../components/NavItem';
 import EVOLEC_LogoRectangle from '../../../assets/web_logo/EVOLEC_LogoRectangle.png';
@@ -34,14 +34,24 @@ const AdminNavbar = ({ isOpened, setOpened }) => {
         isOpened={isOpened}
         url={`${pathRoot}/courses`}
       ></NavItem>
-
       <NavItem
         icon={<FontAwesomeIcon icon={faSchool} />}
         title="classroom"
         isOpened={isOpened}
-        url={`${pathRoot}/classroom`}
+        url={`${pathRoot}/classrooms`}
       ></NavItem>
-
+      <NavItem
+        icon={<FontAwesomeIcon icon={faCalendar} />}
+        title="Rooms"
+        isOpened={isOpened}
+        url={`${pathRoot}/rooms`}
+      ></NavItem>
+      <NavItem
+        icon={<FontAwesomeIcon icon={faCalendar} />}
+        title="Off-Dates"
+        isOpened={isOpened}
+        url={`${pathRoot}/off-dates`}
+      ></NavItem>
 
     </NavbarTemplate>
   )

@@ -33,7 +33,6 @@ namespace EVOLEC_Server.Dtos
             new Shift(23, [DayOfWeek.Tuesday, DayOfWeek.Thursday, DayOfWeek.Saturday], new TimeOnly(20, 30), new TimeOnly(22, 0)),
             
         public static List<DateOnly> GetDateFromShift(DateOnly FromDate, int shiftId, int DateNumber)
-            
         {
             List<DateOnly> resultDates = new List<DateOnly>();
             DateOnly currentDate = FromDate;
@@ -58,7 +57,7 @@ namespace EVOLEC_Server.Dtos
         }
         public static Shift GetShiftById(int id)
         {
-            return _shiftList[id-1];
+            return _shiftList[id - 1];
         }
     }
 }

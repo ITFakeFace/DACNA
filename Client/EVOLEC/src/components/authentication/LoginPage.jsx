@@ -4,6 +4,7 @@ import {
   Group,
   PasswordInput,
   TextInput,
+  UnstyledButton,
 } from "@mantine/core";
 import "./LoginPage.css";
 import EVOLEC_LogoSquare from "../../assets/web_logo/EVOLEC_LogoSquare.jpg";
@@ -86,7 +87,7 @@ const LoginPage = () => {
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.currentTarget.checked)}
             />
-            <a href="/forgot-password">Forgot Password?</a>
+            <UnstyledButton onClick={() => navigate("/forgot-password")}>Forgot Password?</UnstyledButton>
           </div>
 
           <div>

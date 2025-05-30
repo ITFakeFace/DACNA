@@ -17,5 +17,8 @@ namespace EVOLEC_Server.Models
         public string Address { get; set; }
         [Required]
         public int Status { get; set; } = 1;
+
+        public ICollection<ClassRoom> ClassRooms { get; set; } = new List<ClassRoom>();
+        public ICollection<LessonDate> LessonDates { get; set; } = new List<LessonDate>();
     }
 }

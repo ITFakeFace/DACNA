@@ -6,6 +6,7 @@ namespace EVOLEC_Server.Repositories
     {
         Task<LessonOffDate> GetAsync(int lessonDateId, int offDateId);
         Task<IEnumerable<LessonOffDate>> GetAllAsync();
+        Task<IEnumerable<LessonOffDate>> GetAllByOffDateIdAsync(int offDateId);
         Task<LessonOffDate> AddAsync(LessonOffDate lessonOffDate);
         Task<bool> UpdateAsync(LessonOffDate lessonOffDate);
         Task<bool> DeleteAsync(int lessonDateId, int offDateId);

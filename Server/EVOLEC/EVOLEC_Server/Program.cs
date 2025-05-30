@@ -174,6 +174,12 @@ internal class Program
         // LessonDate Repository & Service
         builder.Services.AddScoped<ILessonDateRepository, LessonDateRepository>();
         builder.Services.AddScoped<ILessonDateService, LessonDateService>();
+        // OffDate Repository & Service
+        builder.Services.AddScoped<IOffDateRepository, OffDateRepository>();
+        builder.Services.AddScoped<IOffDateService, OffDateService>();
+        // Room Repository & Service
+        builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+        builder.Services.AddScoped<IRoomService, RoomService>();
         // Jwt Service
         builder.Services.AddScoped<JwtHelper>();
         // Add services to the container.

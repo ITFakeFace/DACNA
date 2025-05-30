@@ -1,4 +1,4 @@
-﻿namespace EVOLEC_Server.Dtos
+namespace EVOLEC_Server.Dtos
 {
     public class Shift
     {
@@ -12,8 +12,6 @@
             DayOfWeeks = days_of_week;
             FromTime = fromTime;
             ToTime = toTime;
-        } 
-
-
+        }
     }
 }

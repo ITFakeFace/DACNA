@@ -21,7 +21,7 @@ namespace EVOLEC_Server.Utils
 
             CreateMap<ClassRoomDTO, ClassRoom>();
             CreateMap<ClassRoom, ClassRoomDTO>();
-            CreateMap<ClassRoomUpdateDto,ClassRoom>();
+            CreateMap<ClassRoomUpdateDto, ClassRoom>();
             CreateMap<ClassRoomCreateDTO, ClassRoom>();
             CreateMap<ApplicationUser, ShortInformationTeacher>();
 
@@ -35,6 +35,14 @@ namespace EVOLEC_Server.Utils
             CreateMap<LessonDate, LessonDateDto>();
             CreateMap<LessonDateCreateDto, LessonDate>();
             CreateMap<LessonDateUpdateDto, LessonDate>();
+
+            CreateMap<OffDate, OffDateDto>();
+            CreateMap<OffDateCreateDto, OffDate>();
+            CreateMap<OffDateUpdateDto, OffDate>();
+
+            CreateMap<Room, RoomDto>();
+            CreateMap<RoomCreateDto, Room>();
+            CreateMap<RoomUpdateDto, Room>();
         }
     }
 }

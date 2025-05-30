@@ -67,5 +67,22 @@ namespace EVOLEC_Server.Services
             // Lấy user có role "teacher"
             return await _userRepository.GetUsersByRoleAsync("teacher");
         }
+
+        public async Task<List<DateOnly>> GetTeacherTeachDayAsync(string id)
+        {
+            var teachers = await _userRepository.GetUsersByRoleAsync("TEACHER");
+            var teacherList = teachers.Where(teacher => teacher.Id == id).ToList();
+            var resultTeacher = teacherList.Count > 0 ? teacherList[0] : null;
+            if (resultTeacher == null)
+                return new List<DateOnly>();
+
+            var result = new List<DateOnly>();
+            foreach (var lessonDate in resultTeacher.TeachedDates)
+            {
+                if (lessonDate.Date != null)
+                    result.Add((DateOnly)lessonDate.Date);
+            }
+            return result;
+        }
     }
 }

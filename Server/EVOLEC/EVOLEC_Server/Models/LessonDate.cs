@@ -28,6 +28,10 @@ namespace EVOLEC_Server.Models
         public TimeOnly? StartTime { get; set; }
         public TimeOnly? EndTime { get; set; }
 
+        public int RoomId { get; set; }
+        [Required]
+        public Room Room { get; set; }
+
         public ICollection<LessonOffDate> LessonOffDates { get; set; } = new List<LessonOffDate>();
         public ICollection<StudentAttendance> studentAttendances { get; set; } = new List<StudentAttendance>();
 

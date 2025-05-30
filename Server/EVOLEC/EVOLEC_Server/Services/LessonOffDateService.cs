@@ -2,6 +2,7 @@
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Repositories;
+using System.Collections.Generic;
 
 namespace EVOLEC_Server.Services
 {
@@ -25,6 +26,12 @@ namespace EVOLEC_Server.Services
         public async Task<IEnumerable<LessonOffDateDto>> GetAllAsync()
         {
             var list = await _repository.GetAllAsync();
+            return _mapper.Map<IEnumerable<LessonOffDateDto>>(list);
+        }
+
+        public async Task<IEnumerable<LessonOffDateDto>> GetAllByOffDateIdAsync(int offDateId)
+        {
+            var list = await _repository.GetAllByOffDateIdAsync(offDateId);
             return _mapper.Map<IEnumerable<LessonOffDateDto>>(list);
         }
 

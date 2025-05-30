@@ -38,12 +38,12 @@ const LessonListComponent = ({ courseId, loading }) => {
   const [lessonForm, setLessonForm] = useState(emptyLesson);
   const [lessons, setLessons] = useState(null);
   const [selectedLessons, setSelectedLessons] = useState(null);
-  const [globalFilter, setGlobalFilter] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [lessonDialog, setLessonDialog] = useState(false);
   const [deleteLessonDialog, setDeleteLessonDialog] = useState(false);
   const [deleteLessonsDialog, setDeleteLessonsDialog] = useState(false);
   const navigate = useNavigate();
+  const [globalFilter, setGlobalFilter] = useState(null);
   const dt = useRef(null);
   const toast = useRef(null);
 

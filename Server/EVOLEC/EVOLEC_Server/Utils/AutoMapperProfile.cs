@@ -39,6 +39,10 @@ namespace EVOLEC_Server.Utils
             CreateMap<OffDate, OffDateDto>();
             CreateMap<OffDateCreateDto, OffDate>();
             CreateMap<OffDateUpdateDto, OffDate>();
+
+            CreateMap<Room, RoomDto>();
+            CreateMap<RoomCreateDto, Room>();
+            CreateMap<RoomUpdateDto, Room>();
         }
     }
 }

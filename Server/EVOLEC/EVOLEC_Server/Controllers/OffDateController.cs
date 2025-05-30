@@ -4,6 +4,7 @@ using EVOLEC_Server.Models;
 using EVOLEC_Server.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace EVOLEC_Server.Controllers
 {
@@ -12,11 +13,15 @@ namespace EVOLEC_Server.Controllers
     public class OffDateController : ControllerBase
     {
         private readonly IOffDateService _offDateService;
+        private readonly IClassRoomService _classRoomService;
+        private readonly ILessonOffDateService _lessonOffDateService;
         private readonly IMapper _mapper;
 
-        public OffDateController(IOffDateService offDateService, IMapper mapper)
+        public OffDateController(IOffDateService offDateService, IMapper mapper, IClassRoomService classRoomService, ILessonOffDateService lessonOffDateService)
         {
             _offDateService = offDateService;
+            _classRoomService = classRoomService;
+            _lessonOffDateService = lessonOffDateService;
             _mapper = mapper;
         }
 
@@ -60,6 +65,7 @@ namespace EVOLEC_Server.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOffDate([FromBody] OffDateCreateDto dto)
         {
+            Console.WriteLine(JsonConvert.SerializeObject(dto));
             var created = await _offDateService.CreateOffDateAsync(dto);
             return CreatedAtAction(nameof(GetOffDateById), new { id = created.Id }, new ResponseEntity<OffDateDto>
             {
@@ -73,6 +79,7 @@ namespace EVOLEC_Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateOffDate(int id, [FromBody] OffDateUpdateDto dto)
         {
+            Console.WriteLine(JsonConvert.SerializeObject(dto));
             var updated = await _offDateService.UpdateOffDateAsync(id, dto);
             if (!updated)
             {
@@ -115,6 +122,30 @@ namespace EVOLEC_Server.Controllers
                 ResponseCode = 200,
                 StatusMessage = "OffDate deleted successfully",
                 Data = null
+            });
+        }
+
+        [HttpPost("add-class")]
+        public async Task<IActionResult> AddLessonOffDateByClass([FromBody] OffDateAddByClassDto classList)
+        {
+            var list = classList.ClassRoomIds;
+            while (list.Count > 0)
+            {
+                var classRoom = await _classRoomService.GetByIdAsync(list[0]);
+                list.Remove(list[0]);
+            }
+            return Ok();
+        }
+
+        [HttpGet("get-affected-class/{id}")]
+        public async Task<IActionResult> GetAffectedClassByOffDateId(int id)
+        {
+            return Ok(new ResponseEntity<List<ClassRoomDTO>>
+            {
+                Status = true,
+                ResponseCode = 200,
+                StatusMessage = "Success",
+                Data = await _offDateService.GetAffectedClassByOffDateId(id),
             });
         }
     }

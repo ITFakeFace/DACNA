@@ -12,6 +12,7 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
+import { useNavigate } from "react-router-dom";
 
 const OffDateListPage = () => {
   let emptyOffDate = {
@@ -22,8 +23,8 @@ const OffDateListPage = () => {
     status: 1,
   };
   const statuses = [
-    { name: 'Inactive', value: 0, severity: 'danger' },
-    { name: 'Active', value: 1, severity: 'success' },
+    { name: 'Not Approved', value: 0, severity: 'danger' },
+    { name: 'Approved', value: 1, severity: 'success' },
   ]
   const [offDate, setOffDate] = useState(emptyOffDate);
   const [offDates, setOffDates] = useState(null);
@@ -32,12 +33,17 @@ const OffDateListPage = () => {
   const [offDateDialog, setOffDateDialog] = useState(false);
   const [deleteOffDateDialog, setDeleteOffDateDialog] = useState(false);
   const [deleteOffDatesDialog, setDeleteOffDatesDialog] = useState(false);
-  const [filters, setFilters] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState('');
-
+  const [filters, setFilters] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
+  const navigate = useNavigate();
+  const onStatusChange = (e) => {
+    let _offDate = { ...offDate };
 
+    _offDate['status'] = e.value;
+    setOffDate(_offDate);
+  };
   const initFilters = () => {
     setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -68,6 +74,13 @@ const OffDateListPage = () => {
       year: 'numeric'
     });
   };
+  const formatDateToLocalISO = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = `${d.getMonth() + 1}`.padStart(2, '0');
+    const day = `${d.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
   const onInputChange = (e, name) => {
     const val = (e.target && e.target.value) || '';
     let _offDate = { ...offDate };
@@ -80,10 +93,10 @@ const OffDateListPage = () => {
     const val = (e.target && e.target.value) || '';
     let _offDate = { ...offDate };
 
-    _offDate.fromDate = val;
+    _offDate['fromDate'] = val;
 
     if (val > _offDate.toDate) {
-      _offDate.toDate = val;
+      _offDate['toDate'] = val;
     }
 
     setOffDate(_offDate);
@@ -108,8 +121,8 @@ const OffDateListPage = () => {
     const toDate = new Date(dto.toDate);
 
     // Format to 'yyyy-MM-dd'
-    dto.fromDate = fromDate.toISOString().split('T')[0];
-    dto.toDate = toDate.toISOString().split('T')[0];
+    dto.fromDate = formatDateToLocalISO(dto.fromDate);
+    dto.toDate = formatDateToLocalISO(dto.toDate);
     const res = await postRequest(`/OffDate`, dto); // POST
     if (res.status) {
       toast.current.show({
@@ -126,12 +139,13 @@ const OffDateListPage = () => {
   const updateOffDate = async () => {
     const { id, ...dto } = offDate;
     // Convert to Date object if not already
-    const fromDate = new Date(dto.fromDate);
-    const toDate = new Date(dto.toDate);
+    // const fromDate = new Date(dto.fromDate);
+    // const toDate = new Date(dto.toDate);
 
     // Format to 'yyyy-MM-dd'
-    dto.fromDate = fromDate.toISOString().split('T')[0];
-    dto.toDate = toDate.toISOString().split('T')[0];
+    dto.fromDate = formatDateToLocalISO(dto.fromDate);
+    dto.toDate = formatDateToLocalISO(dto.toDate);
+    console.log(JSON.stringify(dto));
     const res = await putRequest(`/OffDate/${offDate.id}`, dto); // PUT
     if (res.status) {
       toast.current.show({
@@ -179,7 +193,6 @@ const OffDateListPage = () => {
       // update list
       let _offDates = [...offDates];
       let _offDate = { ...offDate };
-
       try {
         if (offDate.id) {
           // update
@@ -224,7 +237,10 @@ const OffDateListPage = () => {
     setOffDateDialog(false);
   }
   const editOffDate = (offDate) => {
-    setOffDate({ ...offDate });
+    let _offDate = { ...offDate }
+    _offDate.fromDate = new Date(_offDate.fromDate)
+    _offDate.toDate = new Date(_offDate.toDate)
+    setOffDate(_offDate);
     setOffDateDialog(true);
   };
   const confirmDeleteOffDate = (offDate) => {
@@ -237,7 +253,7 @@ const OffDateListPage = () => {
     if (res) {
       setOffDates(_offDates);
       setDeleteOffDateDialog(false);
-      setOffDateForm(emptyOffDate);
+      setOffDate(emptyOffDate);
     }
   };
 
@@ -458,11 +474,11 @@ const OffDateListPage = () => {
         </div>
         <div className="field">
           <label htmlFor="status" className="font-bold">
-            To Date
+            Status
           </label>
           <Dropdown id="status"
             value={offDate.status}
-            onChange={(e) => setSelectedCity(e.value)}
+            onChange={(e) => onStatusChange(e)}
             options={statuses}
             optionLabel="name"
             placeholder="Select status"

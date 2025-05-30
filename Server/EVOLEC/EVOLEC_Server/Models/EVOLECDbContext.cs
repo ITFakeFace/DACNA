@@ -20,6 +20,7 @@ namespace EVOLEC_Server.Models
         public DbSet<OffDate> OffDates { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<StudentAttendance> StudentAttendances { get; set; }
+        public DbSet<Room> Rooms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -42,6 +43,7 @@ namespace EVOLEC_Server.Models
             builder.Entity<OffDate>().ToTable("tblOffDates");
             builder.Entity<Enrollment>().ToTable("tblEnrollments");
             builder.Entity<StudentAttendance>().ToTable("tblStudentAttendances");
+            builder.Entity<Room>().ToTable("tblRooms");
 
             builder.Entity<StudentAttendance>()
                 .HasKey(sa => new { sa.StudentId, sa.LessonDateId });
@@ -99,6 +101,20 @@ namespace EVOLEC_Server.Models
                 .HasOne(lod => lod.OffDate)
                 .WithMany(od => od.LessonOffDates)
                 .HasForeignKey(lod => lod.OffDateId);
+
+            // ClassRoom -> Room (nhiều ClassRoom thuộc 1 Room)
+            builder.Entity<ClassRoom>()
+                .HasOne(cr => cr.Room)
+                .WithMany(r => r.ClassRooms)
+                .HasForeignKey(cr => cr.RoomId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // LessonDate -> Room (nhiều LessonDate thuộc 1 Room)
+            builder.Entity<LessonDate>()
+                .HasOne(ld => ld.Room)
+                .WithMany(r => r.LessonDates)
+                .HasForeignKey(ld => ld.RoomId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Thiết lập Cascade cho tất cả quan hệ còn lại (ngoại trừ ApplicationUser, Enrollment, ClassRoom, Course)
             foreach (var entity in builder.Model.GetEntityTypes())

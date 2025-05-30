@@ -6,6 +6,7 @@ namespace EVOLEC_Server.Services
     {
         Task<LessonOffDateDto> GetAsync(int lessonDateId, int offDateId);
         Task<IEnumerable<LessonOffDateDto>> GetAllAsync();
+        Task<IEnumerable<LessonOffDateDto>> GetAllByOffDateIdAsync(int offDateId);
         Task<LessonOffDateDto> CreateAsync(LessonOffDateCreateDto createDto);
         Task<bool> UpdateAsync(LessonOffDateUpdateDto updateDto); // Đã thay đổi
         Task<bool> DeleteAsync(int lessonDateId, int offDateId);

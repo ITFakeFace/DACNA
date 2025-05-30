@@ -32,6 +32,10 @@ namespace EVOLEC_Server.Models
         public int Status { get; set; } = 1;
         public int? Shift { get; set; }
 
+        public int RoomId { get; set; }
+        [Required]
+        public Room Room { get; set; }
+
         public ICollection<LessonDate> LessonDates { get; set; } = new List<LessonDate>();
         public ICollection<Enrollment> StudentEnrollments { get; set; } = new List<Enrollment>();
         public ICollection<Enrollment> CreatorEnrollments { get; set; } = new List<Enrollment>();

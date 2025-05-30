@@ -10,5 +10,6 @@ namespace EVOLEC_Server.Services
         Task<OffDateDto> CreateOffDateAsync(OffDateCreateDto dto);
         Task<bool> UpdateOffDateAsync(int id, OffDateUpdateDto dto);
         Task<bool> DeleteOffDateAsync(int id);
+        Task<List<ClassRoomDTO>> GetAffectedClassByOffDateId(int id);
     }
 }

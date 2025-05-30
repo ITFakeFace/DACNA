@@ -24,7 +24,14 @@ namespace EVOLEC_Server.Repositories
                 .Include(o => o.OffDate)
                 .ToListAsync();
         }
-
+        public async Task<IEnumerable<LessonOffDate>> GetAllByOffDateIdAsync(int offDateId)
+        {
+            return await _ctx.LessonOffDates
+                .Include(l => l.LessonDate)
+                .Include(o => o.OffDate)
+                .Where(lod => lod.OffDateId == offDateId)
+                .ToListAsync();
+        }
         public async Task<LessonOffDate> AddAsync(LessonOffDate lessonOffDate)
         {
             _ctx.LessonOffDates.Add(lessonOffDate);
@@ -46,5 +53,7 @@ namespace EVOLEC_Server.Repositories
             _ctx.LessonOffDates.Remove(entity);
             return await _ctx.SaveChangesAsync() > 0;
         }
+
+
     }
 }

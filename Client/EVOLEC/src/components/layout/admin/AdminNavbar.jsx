@@ -38,7 +38,13 @@ const AdminNavbar = ({ isOpened, setOpened }) => {
         icon={<FontAwesomeIcon icon={faSchool} />}
         title="class"
         isOpened={isOpened}
-        url={`${pathRoot}/class`}
+        url={`${pathRoot}/classrooms`}
+      ></NavItem>
+      <NavItem
+        icon={<FontAwesomeIcon icon={faCalendar} />}
+        title="Rooms"
+        isOpened={isOpened}
+        url={`${pathRoot}/rooms`}
       ></NavItem>
       <NavItem
         icon={<FontAwesomeIcon icon={faCalendar} />}

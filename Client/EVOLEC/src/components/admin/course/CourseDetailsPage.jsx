@@ -148,8 +148,8 @@ const CourseDetailsPage = () => {
             <div className="w-1/4 font-semibold">Gender :</div>
             <div className="w-3/4">
               {course.creator.gender === 1
-                ? <span className="text-male">Nam </span>
-                : <span className="text-female">Nữ </span>}
+                ? <span className="text-male">Male </span>
+                : <span className="text-female">Female </span>}
             </div>
           </div>
         </Group>

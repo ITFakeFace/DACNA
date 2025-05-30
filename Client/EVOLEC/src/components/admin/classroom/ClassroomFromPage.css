@@ -1,0 +1,17 @@
+/* Tạo class tùy chỉnh cho TextInput disabled */
+.custom-disabled-input .mantine-TextInput-input:disabled {
+  background-color: #ffffff; /* Màu nền nhạt cho disabled */
+  color: #000; /* Màu chữ */
+  border: 1px solid #ccc; /* Border nhạt */
+  cursor: not-allowed; /* Chỉ báo rằng trường không thể chỉnh sửa */
+  
+}
+
+.custom-disabled-input .mantine-TextInput-input {
+  transition: background-color 0.3s ease;
+}
+
+.custom-disabled-input .mantine-TextInput-input:focus {
+  outline: none;
+  box-shadow: none;
+}

@@ -21,6 +21,7 @@ const OffDateListPage = () => {
     fromDate: new Date(), // yyyy-MM-dd
     toDate: new Date(),   // yyyy-MM-dd
     status: 1,
+    teacherId: null,
   };
   const statuses = [
     { name: 'Not Approved', value: 0, severity: 'danger' },
@@ -35,6 +36,8 @@ const OffDateListPage = () => {
   const [deleteOffDatesDialog, setDeleteOffDatesDialog] = useState(false);
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [filters, setFilters] = useState(null);
+  const [teacher, setTeacher] = useState(null);
+  const [teachers, setTeachers] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
   const navigate = useNavigate();
@@ -42,6 +45,13 @@ const OffDateListPage = () => {
     let _offDate = { ...offDate };
 
     _offDate['status'] = e.value;
+    setOffDate(_offDate);
+  };
+
+  const onTeacherChange = (e) => {
+    let _offDate = { ...offDate };
+
+    _offDate['teacherId'] = e.value;
     setOffDate(_offDate);
   };
   const initFilters = () => {
@@ -185,6 +195,20 @@ const OffDateListPage = () => {
       console.log("Cannot fetch data");
     }
   };
+
+  const fetchTeachers = async () => {
+    try {
+      var res = await getRequest(`/User/teachers`);
+      if (res.status) {
+        const data = res.data;
+        setTeachers(data);
+      }
+      console.log("Fetch Teachers");
+      console.log(`Teachers: ${JSON.stringify(teachers)}`);
+    } catch (ex) {
+      console.log("Cannot fetch Teachers");
+    }
+  };
   const saveOffDate = async () => {
     setSubmitted(true);
     // validation
@@ -193,6 +217,9 @@ const OffDateListPage = () => {
       // update list
       let _offDates = [...offDates];
       let _offDate = { ...offDate };
+
+      console.log(`Saving Model: ${JSON.stringify(_offDate)}`);
+
       try {
         if (offDate.id) {
           // update
@@ -224,6 +251,7 @@ const OffDateListPage = () => {
   }
   useEffect(() => {
     fetchOffDates();
+    fetchTeachers();
     initFilters();
     console.log(JSON.stringify(offDates));
   }, []);
@@ -243,6 +271,11 @@ const OffDateListPage = () => {
     setOffDate(_offDate);
     setOffDateDialog(true);
   };
+  const clearTeacher = (e) => {
+    let _offDate = { ...offDate };
+    _offDate['teacherId'] = null;
+    setOffDate(_offDate);
+  }
   const confirmDeleteOffDate = (offDate) => {
     setOffDate(offDate);
     setDeleteOffDateDialog(true);
@@ -457,6 +490,23 @@ const OffDateListPage = () => {
           </label>
           <InputText id="name" value={offDate.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={submitted && !offDate.name ? 'p-invalid' : ''} />
           {submitted && !offDate.name && <small className="p-error">Name is required.</small>}
+        </div>
+        <div className="field">
+          <label htmlFor="teachers" className="font-bold">
+            Off Teacher
+          </label>
+          <div className="w-full flex">
+            <Dropdown id="teachers"
+              value={offDate.teacherId}
+              onChange={(e) => onTeacherChange(e)}
+              options={teachers}
+              optionValue="id"
+              optionLabel="fullname"
+              placeholder="Select teacher"
+              className="w-2/1"
+            />
+            <Button label="Unselect" className="w-1/4" onClick={(e) => clearTeacher(e)}></Button>
+          </div>
         </div>
         <div className="field">
           <label htmlFor="fromDate" className="font-bold">

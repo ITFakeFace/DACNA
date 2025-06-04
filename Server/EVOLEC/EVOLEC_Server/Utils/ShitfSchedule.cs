@@ -31,7 +31,9 @@ namespace EVOLEC_Server.Dtos
             new Shift(21, [DayOfWeek.Tuesday, DayOfWeek.Thursday, DayOfWeek.Saturday], new TimeOnly(17, 30), new TimeOnly(19, 0)),
             new Shift(22, [DayOfWeek.Tuesday, DayOfWeek.Thursday, DayOfWeek.Saturday], new TimeOnly(19, 0), new TimeOnly(20, 30)),
             new Shift(23, [DayOfWeek.Tuesday, DayOfWeek.Thursday, DayOfWeek.Saturday], new TimeOnly(20, 30), new TimeOnly(22, 0)),
-            
+        };
+
+
         public static List<DateOnly> GetDateFromShift(DateOnly FromDate, int shiftId, int DateNumber)
         {
             List<DateOnly> resultDates = new List<DateOnly>();

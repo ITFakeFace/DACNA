@@ -18,6 +18,9 @@ namespace EVOLEC_Server.Models
         [Required]
         public int Status { get; set; }
 
+        public string? TeacherId { get; set; }
+        public ApplicationUser? Teacher { get; set; }
+
         public ICollection<LessonOffDate> LessonOffDates { get; set; } = new List<LessonOffDate>();
     }
 }

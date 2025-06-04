@@ -84,7 +84,7 @@ namespace EVOLEC_Server.Controllers
                     Email = user.Email,
                     Fullname = user.Fullname,
                     Gender = user.Gender
-                   
+
                 });
             }
 

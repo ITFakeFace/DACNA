@@ -11,5 +11,7 @@ namespace EVOLEC_Server.Repositories
         Task<bool> DeleteLessonDateAsync(int id);
         Task<List<LessonDate>>? AddLessonDateByClassRoom(ClassRoom classRoom);
         Task<List<LessonDate>?> HandleLessonDateOff(List<LessonDate> lessonDates, int ShiftId);
-    }
+        Task<int> AddLessonDates(IEnumerable<LessonDate> lessonDates);
+        Task<List<(DateTime, DateTime)>> GetTeacherScheduleOnTIme(string UID, DateTime startTime, DateTime endTime);
+    } 
 }

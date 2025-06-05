@@ -1,4 +1,3 @@
-using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -52,25 +51,7 @@ namespace EVOLEC_Server.Repositories
             {
                 return null!;
             }
-
             _ctx.ClassRooms.Add(classRoom);
-            await _ctx.SaveChangesAsync();
-            bool IsShiftHasValue = classRoom.Shift.HasValue;
-            bool IsStartDateHasValue = classRoom.StartDate.HasValue;
-            List<DateOnly>? LessonDates = null!;
-
-            Shift? shift = null;
-            List<LessonDate>? lessonDates = null;
-            if (IsShiftHasValue && IsStartDateHasValue)
-            {
-                lessonDates = await _lessonDateRepository.AddLessonDateByClassRoom(classRoom)!;
-                lessonDates = await _lessonDateRepository.HandleLessonDateOff(lessonDates, (int)classRoom.Shift!);
-                if (lessonDates != null)
-                {
-                    lessonDates.Sort((x, y) => x.Date.GetValueOrDefault().CompareTo(y.Date.GetValueOrDefault()));
-                }
-                classRoom.EndDate = lessonDates[lessonDates.Count - 1].Date;
-            }
             await _ctx.SaveChangesAsync();
             return classRoom;
 
@@ -85,20 +66,6 @@ namespace EVOLEC_Server.Repositories
                 .ToListAsync();
 
             _ctx.LessonDates.RemoveRange(oldLessonDates);
-
-            bool IsShiftHasValue = classRoom.Shift.HasValue;
-            bool IsStartDateHasValue = classRoom.StartDate.HasValue;
-            List<DateOnly>? LessonDates = null!;
-
-            Shift? shift = null;
-            List<LessonDate>? lessonDates = null;
-            if (IsShiftHasValue && IsStartDateHasValue)
-            {
-                lessonDates = await _lessonDateRepository.AddLessonDateByClassRoom(classRoom)!;
-                lessonDates = await _lessonDateRepository.HandleLessonDateOff(lessonDates, (int)classRoom.Shift!);
-                classRoom.EndDate = lessonDates[lessonDates.Count - 1].Date;
-            }
-
             return await _ctx.SaveChangesAsync() ;
         }
 

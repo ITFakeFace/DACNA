@@ -38,7 +38,7 @@ namespace EVOLEC_Server.Services
                 }
                 var entity = _mapper.Map<ClassRoom>(dto);
                 ClassRoom addedClassroom = await _repository.AddClassRoomAsync(entity);
-
+                _lessonDateService.AddLessonDatesToClassRoom(addedClassroom, dto.StartDate, dto.Shift); 
 
                 return addedClassroom.Id;
             }

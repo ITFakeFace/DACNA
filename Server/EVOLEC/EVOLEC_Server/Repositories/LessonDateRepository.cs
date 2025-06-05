@@ -62,7 +62,7 @@ namespace EVOLEC_Server.Repositories
                 .OrderBy(ld => ld.Date)
                 .ToListAsync();
         }
-
+        
         public async Task<List<LessonDate>>? AddLessonDateByClassRoom(ClassRoom classRoom)
         {
             if (classRoom.Course.Lessons.Count == 0)
@@ -167,5 +167,34 @@ namespace EVOLEC_Server.Repositories
             }
             return lessonDates;
         }
+
+        public Task<int> AddLessonDates(IEnumerable<LessonDate> lessonDates)
+        {
+            List<LessonDate> lessonDateList = lessonDates.ToList();
+            _ctx.LessonDates.AddRangeAsync(lessonDateList);
+            return _ctx.SaveChangesAsync();
+        }
+
+        public async Task<List<(DateTime,DateTime)>> GetTeacherScheduleOnTIme(string UID, DateTime startTime, DateTime endTime)
+        {
+            DateOnly startDate = DateOnly.FromDateTime(startTime);
+            DateOnly endDate = DateOnly.FromDateTime(endTime);
+            TimeOnly startTimeOnly = TimeOnly.FromDateTime(startTime);
+            TimeOnly endTimeOnly = TimeOnly.FromDateTime(endTime);
+            List<LessonDate> lessonDates = await _ctx.LessonDates
+                                .Where(ld => ld.TeacherId == UID &&
+                                             ld.StartTime >= startTimeOnly &&
+                                             ld.StartTime <= endTimeOnly)
+                                .ToListAsync();
+            var lessonDateTimeRanges = lessonDates
+                    .Where(ld => ld.Date.HasValue && ld.StartTime.HasValue && ld.EndTime.HasValue)
+                    .Select(ld => (
+                        Start: ld.Date!.Value.ToDateTime(ld.StartTime!.Value),
+                        End: ld.Date.Value.ToDateTime(ld.EndTime!.Value)
+                    ))
+                    .ToList();
+            return lessonDateTimeRanges;
+        }
+
     }
 }

@@ -9,8 +9,9 @@ namespace EVOLEC_Server.Services
     {
         Task<Enrollment> GetEnrollmentByIdAsync(int id);
         Task<IEnumerable<EnrollmentDto>> GetAllEnrollmentsAsync();
-        Task<Enrollment> CreateEnrollmentAsync(EnrollmentDto enrollmentDto);
         Task<Enrollment> UpdateEnrollmentAsync(EnrollmentDto enrollmentDto);
         Task<bool> DeleteEnrollmentAsync(int id);
+        Task<int> CreateAsync(EnrollmentCreateDTO request);
+        Task<int> UpdateAsync(int id, EnrollmentUpdateDTO request);
     }
 }

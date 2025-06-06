@@ -50,7 +50,7 @@ const ClassroomListPage = () => {
 
   // Cấu hình các cột cho DataTable
   const columns = [
-    { name: 'Classroom ID', selector: row => row.$id, sortable: true },
+    { name: 'Classroom ID', selector: row => row.Id, sortable: true },
     { name: 'Teacher 1', selector: row => row.Teacher1.Username, sortable: true },
     { name: 'Teacher 2', selector: row => row.Teacher2.Username, sortable: true },
     { name: 'Course ID', selector: row => row.Course.Name, sortable: true },
@@ -71,7 +71,7 @@ const ClassroomListPage = () => {
         <div className="flex gap-2 justify-center">
            
           <Button size="xs" onClick={() => navigate(`/admin/classrooms/${row.Id}`)}>Details</Button>
-          <Button size="xs" onClick={() => navigate(`/classrooms/update/${row.$id}`)}>Edit</Button>
+          <Button size="xs" onClick={() => navigate(`/admin/classrooms/update/${row.Id}`)}>Edit</Button>
           <Button size="xs" color="red">Delete</Button>
         </div>
       ),

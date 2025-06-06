@@ -65,7 +65,11 @@ export default function App() {
             <Route path="courses/create" element={<CourseFormPage />} />
             <Route path="courses/update/:id" element={<CourseFormPage />} />
             <Route path="classrooms" element={<ClassroomListPage />} />
+            <Route path="classrooms/:id" element={<ClassroomDetailsPage />} />
+            
             <Route path="classrooms/create" element={<ClassroomFormPage />} />
+            <Route path="classrooms/update/:id" element={<ClassroomFormPage />} />
+
             <Route path="off-dates" element={<OffDateListPage />} />
             <Route path="off-dates/:id" element={<OffDateDetailsPage />} />
             <Route path="rooms" element={<RoomListPage />} />

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Button, TextInput, Group, Box, Notification, Select
+  Button, TextInput, Group, Box, Notification
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
@@ -16,62 +15,25 @@ import './ClassroomFromPage.css';
 
 const ClassroomFormPage = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // id có nghĩa là update, không có là create
+  const { id } = useParams();
   const [feedback, setFeedback] = useState(null);
 
   const [teachers, setTeachers] = useState([]);
   const [courses, setCourses] = useState([]);
-  const [shifts, setShifts] = useState([]); // Thêm state để lưu dữ liệu shift
+  const [shifts, setShifts] = useState([]);
 
-  const form = useForm({
-    initialValues: {
-      id: '',
-      teacher1Id: '',
-      teacher2Id: '',
-      courseId: '',
-      startDate: null,
-      endDate: null,
-      status: 'Active',
-      shift: '', // Khởi tạo shift trống
-    },
-    validate: {
-      teacher1Id: (value) => (value ? null : 'Teacher 1 is required'),
-      teacher2Id: (value) => (value ? null : 'Teacher 2 is required'),
-      courseId: (value) => (value ? null : 'Course is required'),
-      status: (value) => (value ? null : 'Status is required'),
-      shift: (value) => (value ? null : 'Shift is required'),
-    },
+  const [form, setForm] = useState({
+    id: '',
+    teacher1Id: '',
+    teacher2Id: '',
+    courseId: '',
+    startDate: null,
+    endDate: null,
+    status: 'Active',
+    shift: '',
   });
 
   useEffect(() => {
-    if (id) {
-      const fetchClassroom = async () => {
-        try {
-          const res = await getRequest(`/classrooms/${id}`);
-          if (res && res.status && res.data) {
-            const classroom = res.data;
-            form.setValues({
-              id: classroom.id,
-              teacher1Id: classroom.teacher1Id,
-              teacher2Id: classroom.teacher2Id,
-              courseId: classroom.courseId,
-              startDate: classroom.startDate ? new Date(classroom.startDate) : null,
-             // endDate: classroom.endDate ? new Date(classroom.endDate) : null,
-              status: 0,
-              shift: classroom.shift, // Set giá trị shift từ classroom
-            });
-          } else {
-            setFeedback({ type: 'error', message: 'Cannot load classroom data' });
-          }
-        } catch (error) {
-          console.error('Error fetching classroom:', error);
-          setFeedback({ type: 'error', message: 'Error fetching classroom data' });
-        }
-      };
-      fetchClassroom();
-    }
-
-    // Fetch teachers
     const fetchTeachers = async () => {
       try {
         const res = await getRequest("/user/teachers");
@@ -86,7 +48,6 @@ const ClassroomFormPage = () => {
       }
     };
 
-    // Fetch courses
     const fetchCourses = async () => {
       try {
         const res = await getRequest("/course");
@@ -101,21 +62,19 @@ const ClassroomFormPage = () => {
       }
     };
 
-    // Fetch shift options from API
     const fetchShifts = async () => {
       try {
-        const res = await getRequest("/Shift/getAllShifts"); // API này bạn sẽ sửa đường dẫn
+        const res = await getRequest("/Shift/getAllShifts");
         if (res.status) {
           const formattedShifts = res.data.map(shift => {
             const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const days = shift.dayOfWeeks.map(day => dayNames[day - 1]); // Chuyển từ số thành tên ngày
+            const days = shift.dayOfWeeks.map(day => dayNames[day - 1]);
             return {
-              value: shift.id, // Sử dụng shift id làm giá trị của dropdown
-              label: `From: ${shift.fromTime} To: ${shift.toTime} - Days: ${days.join(', ')}`, // Hiển thị thông tin đầy đủ
+              value: shift.id,
+              label: `From: ${shift.fromTime} To: ${shift.toTime} - Days: ${days.join(', ')}`,
             };
           });
           setShifts(formattedShifts);
-          
         } else {
           setFeedback({ type: 'warn', message: 'No shifts found' });
         }
@@ -126,22 +85,53 @@ const ClassroomFormPage = () => {
     };
 
     fetchTeachers();
+    console.log(1)
     fetchCourses();
-    fetchShifts(); // Gọi API lấy shifts
+    console.log(2)
+    fetchShifts();
+    console.log(3)
+
+    if (id) {
+      const fetchClassroom = async () => {
+        try {
+          const res = await getRequest(`/classroom/${id}`);
+          console.log(res)
+          if (res && res.status && res.data) {
+            const classroom = res.data;
+            setForm(prev => ({
+              ...prev,
+              id: id,
+              teacher1Id: classroom.teacher1.id,
+              teacher2Id: classroom.teacher2.id,
+              courseId: classroom.course.id,
+              startDate: classroom.startDate ? new Date(classroom.startDate) : null,
+              status: 'Active',
+              shift: classroom.shift,
+            }));
+            console.log(form)
+          } else {
+            setFeedback({ type: 'error', message: 'Cannot load classroom data' });
+          }
+        } catch (error) {
+          console.error('Error fetching classroom:', error);
+          setFeedback({ type: 'error', message: 'Error fetching classroom data' });
+        }
+      };
+      fetchClassroom();
+    }
   }, [id]);
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const payload = {
-      teacher1Id: values.teacher1Id,
-      teacher2Id: values.teacher2Id,
-      courseId: values.courseId,
+      teacher1Id: form.teacher1Id,
+      teacher2Id: form.teacher2Id,
+      courseId: form.courseId,
       creatorId: getUserIdFromToken(localStorage.getItem('token')),
-      startDate: values.startDate ? values.startDate.toISOString().split('T')[0] : null,
-     // endDate: values.endDate ? values.endDate.toISOString().split('T')[0] : null,
-      status:1,
-      shift: values.shift,
+      startDate: form.startDate ? form.startDate.toISOString().split('T')[0] : null,
+      status: 1,
+      shift: form.shift,
     };
-    console.log(payload)
     try {
       let result;
       if (id) {
@@ -149,7 +139,6 @@ const ClassroomFormPage = () => {
       } else {
         result = await postRequest('/classroom/create', payload);
       }
-
       if (result.status) {
         setFeedback({ type: 'success', message: result.statusMessage });
         setTimeout(() => {
@@ -172,7 +161,7 @@ const ClassroomFormPage = () => {
           className='!bg-transparent !text-black'
           size='xl'
           p='xs'
-          onClick={() => window.location.replace("/admin/classroom")}
+          onClick={() => window.location.replace("/admin/classrooms")}
         >
           <FontAwesomeIcon icon={faArrowLeft} />
         </Button>
@@ -194,7 +183,7 @@ const ClassroomFormPage = () => {
           </Notification>
         )}
 
-        <form onSubmit={form.onSubmit(handleSubmit)} className='flex flex-col gap-5'>
+        <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
           <div className="p-field">
             <label htmlFor="teacher1Id">Teacher 1</label>
             <Dropdown
@@ -202,12 +191,11 @@ const ClassroomFormPage = () => {
               options={teachers}
               optionLabel="fullname"
               optionValue="id"
-              value={form.values.teacher1Id}
-              onChange={(e) => form.setFieldValue('teacher1Id', e.value)}
+              value={form.teacher1Id}
+              onChange={(e) => setForm(prev => ({ ...prev, teacher1Id: e.value }))}
               placeholder="Select Teacher 1"
               filter
               showClear
-              className={feedback && feedback.type === 'error' ? "p-invalid" : ""}
             />
           </div>
 
@@ -218,12 +206,11 @@ const ClassroomFormPage = () => {
               options={teachers}
               optionLabel="fullname"
               optionValue="id"
-              value={form.values.teacher2Id}
-              onChange={(e) => form.setFieldValue('teacher2Id', e.value)}
+              value={form.teacher2Id}
+              onChange={(e) => setForm(prev => ({ ...prev, teacher2Id: e.value }))}
               placeholder="Select Teacher 2"
               filter
               showClear
-              className={feedback && feedback.type === 'error' ? "p-invalid" : ""}
             />
           </div>
 
@@ -234,12 +221,11 @@ const ClassroomFormPage = () => {
               options={courses}
               optionLabel="name"
               optionValue="id"
-              value={form.values.courseId}
-              onChange={(e) => form.setFieldValue('courseId', e.value)}
+              value={form.courseId}
+              onChange={(e) => setForm(prev => ({ ...prev, courseId: e.value }))}
               placeholder="Select Course"
               filter
               showClear
-              className={feedback && feedback.type === 'error' ? "p-invalid" : ""}
             />
           </div>
 
@@ -247,7 +233,6 @@ const ClassroomFormPage = () => {
             label="Creator"
             value={getUsernameFromToken(localStorage.getItem('token')) || ''}
             disabled
-            
             className="custom-disabled-input select-none"
           />
 
@@ -255,34 +240,31 @@ const ClassroomFormPage = () => {
             <label>Start Date</label>
             <br />
             <DatePicker
-              selected={form.values.startDate}
-              onChange={(date) => {
-                form.setFieldValue('startDate', date);
-                form.setFieldValue('endDate', null);
-              }}
+              selected={form.startDate}
+              onChange={(date) => setForm(prev => ({ ...prev, startDate: date, endDate: null }))}
               dateFormat="dd/MM/yyyy"
               placeholderText="Select start date"
               className="form-control"
             />
           </div>
+
           <div className="p-field">
             <label htmlFor="shift">Shift</label>
             <Dropdown
               label="Shift"
               placeholder="Select Shift"
-              options={shifts} // Hiển thị các shift đã chuyển đổi
-              optionLabel="label" // Chỉ định thuộc tính dùng để hiển thị trong dropdown
-              optionValue="value" // Chỉ định giá trị của mỗi mục trong dropdown
-              value={form.values.shift} // Gán giá trị từ form vào dropdown
-              onChange={(e) => form.setFieldValue('shift', e.value)} // Lấy giá trị khi thay đổi
+              options={shifts}
+              optionLabel="label"
+              optionValue="value"
+              value={form.shift}
+              onChange={(e) => setForm(prev => ({ ...prev, shift: e.value }))}
               filter
               showClear
-              className={feedback && feedback.type === 'error' ? "p-invalid" : ""}
               required
               mt="sm"
             />
           </div>
-           
+
           <Group position="right" mt="md">
             <Button type="submit">{id ? 'Update Classroom' : 'Create New Classroom'}</Button>
           </Group>

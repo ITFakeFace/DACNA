@@ -68,6 +68,7 @@ namespace EVOLEC_Server.Controllers
                 Data = results
             });
         }
+        
 
         [HttpGet("teachers")]
         public async Task<IActionResult> GetAllTeachers()
@@ -84,6 +85,42 @@ namespace EVOLEC_Server.Controllers
                     Email = user.Email,
                     Fullname = user.Fullname,
                     Gender = user.Gender
+
+                });
+            }
+
+            return Ok(new ResponseEntity<List<ShortInformationTeacher>>
+            {
+                Status = true,
+                ResponseCode = 200,
+                StatusMessage = "Success",
+                Data = results
+            });
+        }        
+        [HttpGet("students")]
+        public async Task<IActionResult> GetAllStudents()
+        {
+            var users = await _userService.GetTeachersAsync();
+            var results = new List<ShortInformationUser>();
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                results.Add(new ShortInformationTeacher
+                {
+                    Id = user.Id,
+                    Username = user.UserName,
+                    Email = user.Email,
+                    Fullname = user.Fullname,
+                    Gender = user.Gender
+
+
+                    //public string Username { get; set; }
+                    //public string Email { get; set; }
+                    //public string Fullname { get; set; }
+                    //public string PID { get; set; }
+                    //public string Phone { get; set; }
+                    //public int Gender { get; set; }
+
 
                 });
             }

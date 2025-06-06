@@ -8,6 +8,9 @@ import { useDisclosure } from "@mantine/hooks";
 const StudentLayout = () => {
   const [opened, { toggle }] = useDisclosure();
   const [navOpened, setNavOpened] = useState(true);
+  useEffect(()=>{
+    console.log(1)
+  })
   return (
     <AppShell
       layout="alt"
@@ -17,12 +20,12 @@ const StudentLayout = () => {
       //aside={{ width: 300, breakpoint: 'md', collapsed: { desktop: false, mobile: true } }}
       padding="md"
     >
-      <AppShell.Header>
+      {/* <AppShell.Header>
         <Group h="100%" px="md">
           <Burger onClick={toggle} hiddenFrom="sm" size="sm" />
           <MantineLogo size={30} />
         </Group>
-      </AppShell.Header>
+      </AppShell.Header> */}
       <AppShell.Navbar>
         <StudentNavbar isOpened={navOpened} setOpened={setNavOpened} />
       </AppShell.Navbar>

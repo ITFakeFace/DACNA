@@ -18,8 +18,12 @@ namespace EVOLEC_Server.Repositories
         }
 
         public async Task<IEnumerable<Enrollment>> GetAllEnrollmentsAsync()
-        {
-            return await _ctx.Enrollments.ToListAsync();
+            {
+            return await _ctx.Enrollments
+                            .Include(e => e.ClassRoom)
+                            .Include(e => e.Student)
+                            .Include(e => e.Creator)
+                            .ToListAsync();
         }
 
         public async Task<Enrollment> AddEnrollmentAsync(Enrollment enrollment)
@@ -43,5 +47,12 @@ namespace EVOLEC_Server.Repositories
             _ctx.Enrollments.Remove(enrollment);
             return await _ctx.SaveChangesAsync() > 0;
         }
+
+        public async Task UpdateAsync(Enrollment entity)
+        {
+            _ctx.Enrollments.Update(entity);
+            await _ctx.SaveChangesAsync();
+        }
+
     }
 }

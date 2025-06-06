@@ -46,9 +46,11 @@ namespace EVOLEC_Server.Utils
 
 
             CreateMap<EnrollmentDto, Enrollment>();
+            CreateMap<EnrollmentCreateDTO, Enrollment>();
 
             CreateMap<Enrollment, EnrollmentDto>();
-               
+
+            CreateMap<ClassRoom, ClassRoomShortInfomation>();
         }
     }
 }

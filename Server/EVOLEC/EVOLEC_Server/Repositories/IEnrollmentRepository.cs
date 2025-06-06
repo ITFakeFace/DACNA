@@ -9,5 +9,6 @@ namespace EVOLEC_Server.Repositories
         Task<Enrollment> AddEnrollmentAsync(Enrollment enrollment);
         Task<bool> UpdateEnrollmentAsync(Enrollment enrollment);
         Task<bool> DeleteEnrollmentAsync(int id);
+        Task UpdateAsync(Enrollment enrollment);
     }
 }

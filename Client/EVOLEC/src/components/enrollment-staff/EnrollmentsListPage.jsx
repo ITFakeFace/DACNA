@@ -148,7 +148,7 @@ const EnrollmentsListPage = () => {
             <Column field="creatorId" header="Creator ID" sortable style={{ minWidth: '15rem' }} />
             <Column field="enrollDate" header="Enroll Date" sortable style={{ minWidth: '15rem' }} />
             {/* <Column
-              field="status"
+              field="   status"
               header="Status"
               body={(rowData) => renderStatus(rowData.status)}
               style={{ minWidth: '10rem' }}

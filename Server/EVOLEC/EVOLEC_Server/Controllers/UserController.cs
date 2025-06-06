@@ -96,43 +96,31 @@ namespace EVOLEC_Server.Controllers
                 StatusMessage = "Success",
                 Data = results
             });
-        }        
-        [HttpGet("students")]
-        public async Task<IActionResult> GetAllStudents()
-        {
-            var users = await _userService.GetTeachersAsync();
-            var results = new List<ShortInformationUser>();
-            foreach (var user in users)
-            {
-                var roles = await _userManager.GetRolesAsync(user);
-                results.Add(new ShortInformationTeacher
-                {
-                    Id = user.Id,
-                    Username = user.UserName,
-                    Email = user.Email,
-                    Fullname = user.Fullname,
-                    Gender = user.Gender
-
-
-                    //public string Username { get; set; }
-                    //public string Email { get; set; }
-                    //public string Fullname { get; set; }
-                    //public string PID { get; set; }
-                    //public string Phone { get; set; }
-                    //public int Gender { get; set; }
-
-
-                });
-            }
-
-            return Ok(new ResponseEntity<List<ShortInformationTeacher>>
-            {
-                Status = true,
-                ResponseCode = 200,
-                StatusMessage = "Success",
-                Data = results
-            });
         }
+        //[HttpGet("students")]
+        //public async Task<IActionResult> GetAllStudents()
+        //{
+        //    var users = await _userService.GetTeachersAsync();
+        //    var results = new List<ShortInformationUser>();
+        //    foreach (var user in users)
+        //    {
+        //        var roles = await _userManager.GetRolesAsync(user);
+        //        results.Add(new ShortInformationTeacher
+        //        {
+
+
+
+        //        });
+        //    }
+
+        //    return Ok(new ResponseEntity<List<ShortInformationTeacher>>
+        //    {
+        //        Status = true,
+        //        ResponseCode = 200,
+        //        StatusMessage = "Success",
+        //        Data = results
+        //    });
+        //}
 
         // Lấy thông tin người dùng theo Id
         [HttpGet("{id}")]

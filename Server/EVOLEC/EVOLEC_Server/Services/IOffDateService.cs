@@ -1,5 +1,6 @@
 ﻿using EVOLEC_Server.Dtos;
 using EVOLEC_Server.DTOs.Lesson;
+using EVOLEC_Server.Models;
 
 namespace EVOLEC_Server.Services
 {
@@ -11,5 +12,6 @@ namespace EVOLEC_Server.Services
         Task<bool> UpdateOffDateAsync(int id, OffDateUpdateDto dto);
         Task<bool> DeleteOffDateAsync(int id);
         Task<List<ClassRoomDTO>> GetAffectedClassByOffDateId(int id);
+        Task<List<OffDate>> GetOffHolidaysInRangeAsync(DateOnly minDate, DateOnly maxDate);
     }
 }

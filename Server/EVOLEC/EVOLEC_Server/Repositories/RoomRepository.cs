@@ -56,5 +56,16 @@ namespace EVOLEC_Server.Repositories
             return !await _ctx.Rooms
                 .AnyAsync(r => r.Name == name && (excludeId == null || r.ID != excludeId));
         }
+
+        public async Task<List<Room>> GetAvailableRoomsInTime(DateOnly date, TimeOnly startTime, TimeOnly endTime)
+        {
+            return await _ctx.Rooms
+                .Include(r => r.LessonDates)
+                .Where(r => !r.LessonDates.Any(ld =>
+                    ld.Date == date &&
+                    ((ld.StartTime < endTime && ld.EndTime > startTime) ||
+                     (ld.StartTime >= startTime && ld.EndTime <= endTime))))
+                .ToListAsync();
+        }
     }
 }

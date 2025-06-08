@@ -2,18 +2,31 @@
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Repositories;
+using Microsoft.IdentityModel.Tokens;
+using System.CodeDom.Compiler;
 
 namespace EVOLEC_Server.Services
 {
     public class LessonDateService : ILessonDateService
     {
         private readonly ILessonDateRepository _lessonDateRepository;
+        private readonly ILessonOffDateService _lessonOffDateService;
+        private readonly IOffDateService _offDateService;
+        private readonly ILessonService _lessonService;
         private readonly IMapper _mapper;
 
-        public LessonDateService(ILessonDateRepository lessonDateRepository, IMapper mapper)
+        public LessonDateService(
+                ILessonDateRepository lessonDateRepository, 
+                ILessonOffDateService lessonOffDateService,
+                IOffDateService offDateService,
+                ILessonService lessonService,
+                IMapper mapper)
         {
-            _lessonDateRepository = lessonDateRepository;
-            _mapper = mapper;
+            _lessonDateRepository   = lessonDateRepository;
+            _lessonOffDateService   = lessonOffDateService;
+            _offDateService         = offDateService;
+            _lessonService          = lessonService;
+            _mapper                 = mapper;
         }
 
         public async Task<LessonDateDto> GetLessonDateByIdAsync(int id)
@@ -95,7 +108,19 @@ namespace EVOLEC_Server.Services
 
             return lessonDateDtos;
         }
+        public async Task<bool> AddLessonDatesToClassRoom(ClassRoom addedClassroom)
+        {
+            List<LessonDate>? lessonDates = new List<LessonDate>();
+            lessonDates = await _lessonDateRepository.AddLessonDateByClassRoom(addedClassroom)!;
+            lessonDates = await _lessonOffDateService.HandleHolidays(lessonDates);
+            if (lessonDates == null)
+            {
+                return false; // Không có lessonDates hợp lệ
+            }
+            lessonDates = await _lessonDateRepository.AssignTeacherToLessonDateInitFunc(lessonDates, (int)addedClassroom.Shift!, lessonDates[0].ClassRoom);
+            return lessonDates.IsNullOrEmpty() ? false : true;
 
+        }
 
-    }
+     }
 }

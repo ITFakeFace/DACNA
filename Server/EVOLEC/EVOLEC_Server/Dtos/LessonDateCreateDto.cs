@@ -1,4 +1,6 @@
-﻿namespace EVOLEC_Server.Dtos
+﻿using EVOLEC_Server.Models;
+
+namespace EVOLEC_Server.Dtos
 {
     public class LessonDateCreateDto
     {
@@ -9,6 +11,7 @@
         public DateOnly? Date { get; set; }
         public TimeOnly? StartTime { get; set; }
         public TimeOnly? EndTime { get; set; }
+        public List<LessonOffDateCreateDto>? LessonOffDates { get; set; } = new List<LessonOffDateCreateDto>();
     }
 
 }

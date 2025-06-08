@@ -28,22 +28,26 @@ namespace EVOLEC_Server.Services
                     ApplicationUser? teacher1 = await _userRepository.FindById(dto.Teacher1Id);
                     if (teacher1 == null)
                     {
-                        return -1;
+                        return -1; // TeacherID1 not exist
                     }
                     ApplicationUser? teacher2 = await _userRepository.FindById(dto.Teacher2Id);
                     if (teacher2 == null)
                     {
-                        return -2;
+                        return -2;// TeacherID2 not exits
                     }
                 }
                 var entity = _mapper.Map<ClassRoom>(dto);
                 ClassRoom addedClassroom = await _repository.AddClassRoomAsync(entity);
-
+                if (!await _lessonDateService.AddLessonDatesToClassRoom(addedClassroom))
+                {
+                    return 2;// cannot create lesson dates for this class room
+                } 
 
                 return addedClassroom.Id;
             }
             catch (Exception ex) 
             {
+
                 return -3;
             }
         }

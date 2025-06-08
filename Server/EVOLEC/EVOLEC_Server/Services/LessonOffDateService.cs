@@ -3,17 +3,20 @@ using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Repositories;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EVOLEC_Server.Services
 {
     public class LessonOffDateService : ILessonOffDateService
     {
         private readonly ILessonOffDateRepository _repository;
+        private readonly IOffDateRepository _offDateRepository;
         private readonly IMapper _mapper;
 
-        public LessonOffDateService(ILessonOffDateRepository repository, IMapper mapper)
+        public LessonOffDateService(ILessonOffDateRepository repository, IOffDateRepository offDateRepository, IMapper mapper)
         {
             _repository = repository;
+            _offDateRepository = offDateRepository;
             _mapper = mapper;
         }
 
@@ -57,5 +60,60 @@ namespace EVOLEC_Server.Services
         {
             return await _repository.DeleteAsync(lessonDateId, offDateId);
         }
+
+        public async Task<List<LessonDate>?> HandleHolidays(List<LessonDate> lessonDates)
+        {
+            if (lessonDates == null)
+                return null;
+
+            DateOnly minDate = (DateOnly)lessonDates.Min(ld => ld.Date)!;
+            DateOnly maxDate = (DateOnly)lessonDates.Max(ld => ld.Date)!;
+
+            // Lấy các ngày nghỉ trong khoảng ngày học
+            var holidays = await _offDateRepository.GetHolidaysInRangeAsync(minDate, maxDate);
+
+            for (int i = 0; i < lessonDates.Count; i++)
+            {
+                var lessonDate = lessonDates[i];
+
+                foreach (var holiday in holidays)
+                {
+                    // Nếu ngày học rơi vào ngày nghỉ
+                    while (lessonDate.Date >= holiday.FromDate && lessonDate.Date <= holiday.ToDate)
+                    {
+                        // Dời sang ngày học cuối cùng (giống logic gốc)
+                        DateOnly lastLessonDate = (DateOnly)lessonDates[lessonDates.Count - 1].Date!;
+
+                        LessonOffDate lessonOffDate = new LessonOffDate()
+                        {
+                            LessonDateId = lessonDate.Id,
+                            OffDateId = holiday.Id,
+                            InitDate = (DateOnly)lessonDate.Date!,
+                        };
+                        lessonDate.Date = ShiftSchedule.GetDateFromShift(((DateOnly)lessonDates.Last().Date!).AddDays(1), (int)lessonDate.ClassRoom.Shift!, 1)[0];
+                        await _repository.AddAsync(lessonOffDate);
+                        break;
+                    }
+                }
+            }
+            // Bubble sort theo DateOnly tăng dần
+            for (int i = 0; i < lessonDates.Count - 1; i++)
+            {
+                for (int j = 0; j < lessonDates.Count - i - 1; j++)
+                {
+                    if (lessonDates[j].Date > lessonDates[j + 1].Date)
+                    {
+                        // Hoán đổi
+                        var temp = lessonDates[j].Date;
+                        lessonDates[j].Date = lessonDates[j + 1].Date;
+                        lessonDates[j + 1].Date = temp;
+                    }
+                }
+            }
+            await _repository.UpdateInRangeAsync(lessonDates);
+
+            return lessonDates;
+        }
+
     }
 }

@@ -77,5 +77,14 @@ namespace EVOLEC_Server.Services
             }
             return result;
         }
+        public async Task<List<OffDate>> GetOffHolidaysInRangeAsync(DateOnly minDate, DateOnly maxDate)
+        {
+            return await _offDateRepository.GetHolidaysInRangeAsync(minDate, maxDate);
+        }
+
+        public async Task<List<OffDate>> GetTeacherHolidaysInRangeAsync(DateOnly minDate, DateOnly maxDate, string TeacherID)
+        {
+            return await _offDateRepository.GetTeacherOffDatesInRangeAsync(minDate, maxDate, TeacherID);
+        }
     }
 }

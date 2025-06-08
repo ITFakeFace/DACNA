@@ -10,5 +10,7 @@ namespace EVOLEC_Server.Repositories
         Task<OffDate> AddOffDateAsync(OffDate offDate);
         Task<bool> UpdateOffDateAsync(OffDate offDate);
         Task<bool> DeleteOffDateAsync(int id);
+        Task<List<OffDate>> GetHolidaysInRangeAsync(DateOnly minDate, DateOnly maxDate);
+        Task<List<OffDate>> GetTeacherOffDatesInRangeAsync(DateOnly minDate, DateOnly maxDate, string TeacherID);
     }
 }

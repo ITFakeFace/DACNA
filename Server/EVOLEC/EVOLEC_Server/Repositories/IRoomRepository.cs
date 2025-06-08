@@ -12,5 +12,6 @@ namespace EVOLEC_Server.Repositories
 
         // Extra
         Task<bool> IsRoomNameUniqueAsync(string name, int? excludeId = null);
+        Task<List<Room>> GetAvailableRoomsInTime(DateOnly date, TimeOnly startTime, TimeOnly endTime);
     }
 }

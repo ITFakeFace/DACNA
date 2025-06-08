@@ -54,6 +54,48 @@ namespace EVOLEC_Server.Repositories
             return await _ctx.SaveChangesAsync() > 0;
         }
 
+        public async Task AddLessonOffDateAsync(LessonOffDate lessonOffDate)
+        {
+            // Thêm đối tượng LessonOffDate vào DbSet
+            await _ctx.LessonOffDates.AddAsync(lessonOffDate);
 
+            // Lưu thay đổi vào cơ sở dữ liệu
+            await _ctx.SaveChangesAsync();
+        }
+
+        public async Task UpdateInRangeAsync(List<LessonDate> lessonDates)
+        {
+            // Giả sử bạn muốn cập nhật tất cả LessonDate trong phạm vi ngày học
+            foreach (var lessonDate in lessonDates)
+            {
+
+
+                await UpdateAsync(lessonDate);
+            }
+
+            // Lưu các thay đổi vào cơ sở dữ liệu
+            await _ctx.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(LessonDate lessonDate)
+        {
+            // Tìm bản ghi theo Id
+            var existingLessonDate = await _ctx.LessonDates
+                .FirstOrDefaultAsync(ld => ld.Id == lessonDate.Id);
+
+            if (existingLessonDate != null)
+            {
+                // Cập nhật các trường của LessonDate
+                existingLessonDate.Date = lessonDate.Date;
+                existingLessonDate.StartTime = lessonDate.StartTime;
+                existingLessonDate.EndTime = lessonDate.EndTime;
+                existingLessonDate.RoomId = lessonDate.RoomId;
+                existingLessonDate.TeacherId = lessonDate.TeacherId;
+                // Cập nhật các trường khác nếu cần
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                await _ctx.SaveChangesAsync();
+            }
+        }
     }
 }

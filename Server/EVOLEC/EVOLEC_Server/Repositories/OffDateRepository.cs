@@ -1,5 +1,6 @@
 ﻿using EVOLEC_Server.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EVOLEC_Server.Repositories
 {
@@ -48,6 +49,32 @@ namespace EVOLEC_Server.Repositories
 
             _ctx.OffDates.Remove(offDate);
             return await _ctx.SaveChangesAsync() > 0;
+        }
+
+        public async Task<List<OffDate>> GetHolidaysInRangeAsync(DateOnly minDate, DateOnly maxDate)
+        {
+            try
+            {
+                return await _ctx.OffDates
+                .Where(offDate => offDate.FromDate > minDate && offDate.FromDate < maxDate &&
+                                  offDate.ToDate > minDate && offDate.ToDate < maxDate &&
+                                  (string.IsNullOrEmpty(offDate.TeacherId)))  // Kiểm tra TeacherId là null hoặc rỗng
+                .ToListAsync();
+
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Exception at offDateRepository.GetHolidaysInrangeAsync: " + e);
+                return new List<OffDate>();
+            }
+
+
+        }
+        public async Task<List<OffDate>> GetTeacherOffDatesInRangeAsync(DateOnly minDate, DateOnly maxDate,string TeacherID)
+        {
+            return await _ctx.OffDates
+                .Where(offDate => offDate.FromDate >= minDate && offDate.ToDate <= maxDate && offDate.TeacherId == TeacherID)
+                .ToListAsync();
         }
     }
 }

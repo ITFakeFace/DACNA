@@ -2,6 +2,7 @@
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Repositories;
+using Microsoft.IdentityModel.Tokens;
 using System.CodeDom.Compiler;
 
 namespace EVOLEC_Server.Services
@@ -107,52 +108,19 @@ namespace EVOLEC_Server.Services
 
             return lessonDateDtos;
         }
-        public async void AddLessonDatesToClassRoom(ClassRoom addedClassroom, DateOnly? startDate, int? shift)
+        public async Task<bool> AddLessonDatesToClassRoom(ClassRoom addedClassroom)
         {
-            List<LessonDate> lessonDates = new List<LessonDate>();
+            List<LessonDate>? lessonDates = new List<LessonDate>();
             lessonDates = await _lessonDateRepository.AddLessonDateByClassRoom(addedClassroom)!;
-            lessonDates = await _lessonDateRepository.HandleLessonDateOff(lessonDates, (int)addedClassroom.Shift!);
+            lessonDates = await _lessonOffDateService.HandleHolidays(lessonDates);
+            if (lessonDates == null)
+            {
+                return false; // Không có lessonDates hợp lệ
+            }
+            lessonDates = await _lessonDateRepository.AssignTeacherToLessonDateInitFunc(lessonDates, (int)addedClassroom.Shift!, lessonDates[0].ClassRoom);
+            return lessonDates.IsNullOrEmpty() ? false : true;
 
-            throw new NotImplementedException();
         }
 
-        private async Task<List<LessonDate>> AddDateToLessonDate(ClassRoom classRoom, List<LessonDateCreateDto> lessonDateDtos,int lessonNumber)
-        {
-            List<DateOnly> listDates = ShiftSchedule.GetDateFromShift((DateOnly)classRoom.StartDate!, (int)classRoom.Shift!, lessonNumber);
-            List<LessonDate> listLessonDates = new List<LessonDate>();
-            for (int i = 0; i< listDates.Count; i++)
-            {
-                var lessonDate = new LessonDateCreateDto
-                {
-                    ClassRoomId = classRoom.Id,
-                    Date = listDates[i],
-                    StartTime = ShiftSchedule.GetShiftById((int)classRoom.Shift!).FromTime,
-                    EndTime = ShiftSchedule.GetShiftById((int)classRoom.Shift!).ToTime,
-                };
-                lessonDateDtos.Add(lessonDate);
-            }
-
-            var offDates = await _offDateService.GetAllOffDatesAsync();
-            List<OffDateDto> _allOffDates = offDates.ToList();
-
-            for (int i = 0; i < listDates.Count; i++)
-            {
-                foreach (var offDate in _allOffDates.Where(o => o.Status == 1))
-                {
-
-                    if (listDates[i] >= offDate.FromDate && listDates[i] <= offDate.ToDate)
-                    {
-                        // Xóa ngày trùng
-                        listDates.RemoveAt(i);
-                        // Thêm ngày mới hợp lệ
-                        var newDate = ShiftSchedule.GetDateFromShift(listDates.Last(), (int)classRoom.Shift!, 1)[0];
-                        listDates.Add(newDate);
-                        break;
-                    }
-                }
-            }
-            throw new NotImplementedException();
-        }
-
-    }
+     }
 }

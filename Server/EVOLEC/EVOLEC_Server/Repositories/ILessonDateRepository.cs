@@ -12,5 +12,7 @@ namespace EVOLEC_Server.Repositories
         Task<List<LessonDate>>? AddLessonDateByClassRoom(ClassRoom classRoom);
         Task<int> AddLessonDates(IEnumerable<LessonDate> lessonDates);
         Task<List<LessonDate>?> AssignTeacherToLessonDateInitFunc(List<LessonDate> lessonDates, int ShiftId, ClassRoom classRoom);
+        Task<bool> DeleteLessonDatesAsync(IEnumerable<LessonDate> lessonDates);
+
     }
 }

@@ -95,20 +95,38 @@ namespace EVOLEC_Server.Controllers
             if (result > 0)
             {
                 bool isCreateLessonDate = (request.Shift.HasValue && !request.StartDate.ToString().IsNullOrEmpty());
-                return Ok(new ResponseEntity<object>
+                switch (result)
                 {
+                    case 1 :
+                        return Ok(new ResponseEntity<object>
+                        {
 
-                    Status = true,
-                    ResponseCode = isCreateLessonDate ? 200 : 201,
-                    StatusMessage = isCreateLessonDate
+                            Status = true,
+                            ResponseCode = isCreateLessonDate ? 200 : 201,
+                            StatusMessage = isCreateLessonDate
                     ? "Tạo lớp học thành công"
                     : "Vui lòng nhập ca học và ngày học để tạo lessonDate",
-                    Data = new
-                    {
-                        Id = result
-                    }
+                            Data = new
+                            {
+                                Id = result
+                            }
 
-                });
+                        });
+                    case 2:
+                        return Ok(new ResponseEntity<object>
+                        {
+
+                            Status = true,
+                            ResponseCode = isCreateLessonDate ? 200 : 201,
+                            StatusMessage = "Create LessonDate Failed. There is a lessonDate not having teacher or ClassRoom",
+                            Data = new
+                            {
+                                Id = result
+                            }
+
+                        });
+                }
+                
             }
             else
             {

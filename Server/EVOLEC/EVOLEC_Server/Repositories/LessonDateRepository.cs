@@ -139,42 +139,42 @@ namespace EVOLEC_Server.Repositories
             if (TeacherIDs.Count == 0)
                 return null;
 
-            bool isFullyAssigned = BacktrackAssignTeachers(
+            bool isFullyAssigned = await BacktrackAssignTeachers(
                 TeacherIDs,
                 teachers1NotAvailableTime,
                 teachers2NotAvailableTime,
                 teacher1TeachingTime,
                 teacher2TeachingTime,
-                lessonDates
+                lessonDates,
+                0
             );
 
             if (!isFullyAssigned)
             {
-                foreach (var lessonDate in lessonDates)
-                {
-                    await DeleteLessonDateAsync(lessonDate.Id);
-                }
+                _ctx.LessonDates.RemoveRange(lessonDates);
                 return null;
             }
             foreach (var lessonDate in lessonDates)
             {
                 await UpdateLessonDateAsync(lessonDate);
             }
+            await _ctx.SaveChangesAsync();
             return lessonDates;
         }
 
 
-        private bool BacktrackAssignTeachers(List<string> listTeacherIDs,
+        private async Task<bool> BacktrackAssignTeachers(List<string> listTeacherIDs,
                                       List<(DateTime, DateTime, int)> teachers1NotAvailableTime,
                                       List<(DateTime, DateTime, int)> teachers2NotAvailableTime,
                                       Dictionary<DateOnly, double> teacher1TeachingTime,
                                       Dictionary<DateOnly, double> teacher2TeachingTime,
-                                      List<LessonDate> lessonDates)
+                                      List<LessonDate> lessonDates,
+                                      int index)
         {
-            if (lessonDates.Count == 0)
-                return true;
+            if (lessonDates.Count == index+1)
+                return await Task.FromResult(true) ;
 
-            var currentLesson = lessonDates[0];
+            var currentLesson = lessonDates[index];
             DateOnly date = currentLesson.Date!.Value;
 
             bool canAssignT1 = listTeacherIDs.Count > 0 &&
@@ -184,25 +184,87 @@ namespace EVOLEC_Server.Repositories
                                CanAssignTeacher(currentLesson, teacher2TeachingTime, teachers2NotAvailableTime.Select(t => (t.Item1, t.Item2)).ToList());
 
             if (!canAssignT1 && !canAssignT2)
-                return false;
-
-            var remainingLessons = lessonDates.Skip(1).ToList();
-
-            if (canAssignT1 && (!canAssignT2 || (teacher1TeachingTime.GetValueOrDefault(date) <= teacher2TeachingTime.GetValueOrDefault(date))))
             {
-                currentLesson.TeacherId = listTeacherIDs[0];
-                return BacktrackAssignTeachers(listTeacherIDs, teachers1NotAvailableTime, teachers2NotAvailableTime,
-                                               teacher1TeachingTime, teacher2TeachingTime, remainingLessons);
+                Console.WriteLine($"False at index {index}");
+                Console.WriteLine($"Date {lessonDates[index].Date}");
+                return false;
+            }
+                
+
+            double currentDateTeacher1TeachingTime = 0;
+            double currentDateTeacher2TeachingTime = 0;
+            if (canAssignT1 && canAssignT2)
+            {
+                currentDateTeacher1TeachingTime = await GetTeachingHoursForTeacherOnDate(date, listTeacherIDs[0],currentLesson.ClassRoomId);
+                currentDateTeacher2TeachingTime = await GetTeachingHoursForTeacherOnDate(date, listTeacherIDs[1],currentLesson.ClassRoomId);
+                int prevIndex = index - 1;
+                int tempTeacherIDIdx = 0;
+                if (currentDateTeacher1TeachingTime == currentDateTeacher2TeachingTime)
+                {
+                    if (lessonDates[Math.Max(prevIndex,0)].TeacherId == listTeacherIDs[0])
+                    {
+                        tempTeacherIDIdx = 1;
+                        currentLesson.TeacherId = listTeacherIDs[1] ;
+                    }
+                    else
+                    {
+                        tempTeacherIDIdx = 0;
+                        currentLesson.TeacherId = listTeacherIDs[0];
+                    }
+                }
+                else if(currentDateTeacher1TeachingTime < currentDateTeacher2TeachingTime)
+                {
+                    tempTeacherIDIdx = 0;
+                    currentLesson.TeacherId = listTeacherIDs[0];
+                }
+                else
+                {
+                    tempTeacherIDIdx = 1;
+                    currentLesson.TeacherId = listTeacherIDs[1];
+                }
+                if( !(await BacktrackAssignTeachers(listTeacherIDs, teachers1NotAvailableTime, teachers2NotAvailableTime,
+                                               teacher1TeachingTime, teacher2TeachingTime, lessonDates, ++index)))
+                {
+                    currentLesson.TeacherId = listTeacherIDs[tempTeacherIDIdx = tempTeacherIDIdx ^1];
+                    return !(await BacktrackAssignTeachers(listTeacherIDs, teachers1NotAvailableTime, teachers2NotAvailableTime,
+                                               teacher1TeachingTime, teacher2TeachingTime, lessonDates, ++index));
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            if (canAssignT1 && (!canAssignT2 || (currentDateTeacher1TeachingTime <= currentDateTeacher2TeachingTime)))
+            {
+                int prevIndex = index - 1;
+                if (currentDateTeacher1TeachingTime == currentDateTeacher2TeachingTime)
+                {
+                    if (lessonDates[prevIndex].TeacherId == listTeacherIDs[0])
+                    {
+                        currentLesson.TeacherId = listTeacherIDs[1] ?? listTeacherIDs[0];
+                    }
+                    else
+                    {
+                        currentLesson.TeacherId = listTeacherIDs[0];
+                    }
+                }
+                else
+                {
+                    currentLesson.TeacherId = listTeacherIDs[0];
+                }
+                return !(await BacktrackAssignTeachers(listTeacherIDs, teachers1NotAvailableTime, teachers2NotAvailableTime,
+                                               teacher1TeachingTime, teacher2TeachingTime, lessonDates, ++index));
             }
 
             if (canAssignT2)
             {
-                currentLesson.TeacherId = listTeacherIDs.Count > 1 ? listTeacherIDs[1] : listTeacherIDs[0];
-                return BacktrackAssignTeachers(listTeacherIDs, teachers1NotAvailableTime, teachers2NotAvailableTime,
-                                               teacher1TeachingTime, teacher2TeachingTime, remainingLessons);
+                currentLesson.TeacherId = listTeacherIDs[1];
+
+                return !(await BacktrackAssignTeachers(listTeacherIDs, teachers1NotAvailableTime, teachers2NotAvailableTime,
+                                               teacher1TeachingTime, teacher2TeachingTime, lessonDates, ++index));
             }
 
-            return false;
+            return true;
         }
 
 
@@ -217,11 +279,6 @@ namespace EVOLEC_Server.Repositories
                 if (lessonStart < unavailableEnd && lessonEnd > unavailableStart)
                     return false;
             }
-
-            var date = lessonDate.Date.Value;
-            double lessonHours = GetLessonDuration(lessonDate.StartTime.Value, lessonDate.EndTime.Value);
-            if (teachingTime.TryGetValue(date, out double hours) && hours + lessonHours > 8)
-                return false;
 
             return true;
         }
@@ -274,12 +331,14 @@ namespace EVOLEC_Server.Repositories
             return lessonDateTimeRanges;
         }
 
-        public async Task<double> GetTeachingHoursForTeacherOnDate(DateOnly date, string TeacherID)
+        public async Task<double> GetTeachingHoursForTeacherOnDate(DateOnly date, string TeacherID,int classRoomID)
         {
             // Lọc các lớp học của Teacher2 trong ngày cụ thể
             var teachingSessions = await _ctx.LessonDates
                 .Where(ld => ld.TeacherId == TeacherID && ld.Date.HasValue
-                             && ld.Date == date)  // Lọc lớp học theo ngày
+                             && ld.Date == date
+                             && ld.ClassRoomId != classRoomID
+                             )  // Lọc lớp học theo ngày
                 .ToListAsync();
 
             // Tính tổng số giờ giảng dạy
@@ -295,7 +354,7 @@ namespace EVOLEC_Server.Repositories
                     totalHours += duration.TotalHours; // Thêm vào tổng số giờ
                 }
             }
-
+            
             return totalHours;
         }
 
@@ -315,6 +374,12 @@ namespace EVOLEC_Server.Repositories
         private async Task<List<Room>> GetAvailableRoomInTime(LessonDate lessonDate)
         {
            return await _roomRepository.GetAvailableRoomsInTime(lessonDate.Date!.Value, lessonDate.StartTime!.Value, lessonDate.EndTime!.Value);
+        }
+
+        public async Task<bool> DeleteLessonDatesAsync(IEnumerable<LessonDate> lessonDates)
+        {
+            _ctx.LessonDates.RemoveRange(lessonDates);
+            return await _ctx.SaveChangesAsync() > 0;
         }
     }
 }

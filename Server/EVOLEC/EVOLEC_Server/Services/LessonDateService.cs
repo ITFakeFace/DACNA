@@ -112,13 +112,18 @@ namespace EVOLEC_Server.Services
         {
             List<LessonDate>? lessonDates = new List<LessonDate>();
             lessonDates = await _lessonDateRepository.AddLessonDateByClassRoom(addedClassroom)!;
-            lessonDates = await _lessonOffDateService.HandleHolidays(lessonDates);
-            if (lessonDates == null)
+            List<LessonDate>? tmplessonDates = await _lessonOffDateService.HandleHolidays(lessonDates);
+            if (tmplessonDates == null)
+            {
+                await _lessonDateRepository.DeleteLessonDatesAsync(lessonDates);
+                return false;
+            }
+            lessonDates = await _lessonDateRepository.AssignTeacherToLessonDateInitFunc(tmplessonDates, (int)addedClassroom.Shift!, lessonDates[0].ClassRoom);
+            if(lessonDates.IsNullOrEmpty())
             {
                 return false; // Không có lessonDates hợp lệ
             }
-            lessonDates = await _lessonDateRepository.AssignTeacherToLessonDateInitFunc(lessonDates, (int)addedClassroom.Shift!, lessonDates[0].ClassRoom);
-            return lessonDates.IsNullOrEmpty() ? false : true;
+            return true;
 
         }
 

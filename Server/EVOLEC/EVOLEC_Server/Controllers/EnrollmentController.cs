@@ -23,16 +23,28 @@ namespace EVOLEC_Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllEnrollments()
         {
+            try { 
+            
+                var enrollments = await _enrollmentService.GetAllEnrollmentsAsync();
 
-            var enrollments = await _enrollmentService.GetAllEnrollmentsAsync();
-
-            return Ok(new ResponseEntity<IEnumerable<EnrollmentDto>>
+                return Ok(new ResponseEntity<IEnumerable<EnrollmentResponseDTO>>
+                {
+                    Status = true,
+                    ResponseCode = 200,
+                    StatusMessage = "Success",
+                    Data = enrollments,
+                });
+            }
+            catch(Exception ex)
             {
-                Status = true,
-                ResponseCode = 200,
-                StatusMessage = "Success",
-                Data = enrollments,
-            });
+                return StatusCode(500, new ResponseEntity<string>
+                {
+                    Status = false,
+                    ResponseCode = 500,
+                    StatusMessage = "Undefined Error",
+                    Data = ex.Message
+                });
+            }
         }
 
         [HttpPost("create")]

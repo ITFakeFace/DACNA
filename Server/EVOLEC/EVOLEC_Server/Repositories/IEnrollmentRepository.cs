@@ -1,11 +1,12 @@
-﻿using EVOLEC_Server.Models;
+﻿using EVOLEC_Server.Dtos;
+using EVOLEC_Server.Models;
 
 namespace EVOLEC_Server.Repositories
 {
     public interface IEnrollmentRepository
     {
         Task<Enrollment> GetEnrollmentByIdAsync(int id);
-        Task<IEnumerable<Enrollment>> GetAllEnrollmentsAsync();
+        Task<IEnumerable<EnrollmentResponseDTO>> GetAllEnrollmentsAsync();
         Task<Enrollment> AddEnrollmentAsync(Enrollment enrollment);
         Task<bool> UpdateEnrollmentAsync(Enrollment enrollment);
         Task<bool> DeleteEnrollmentAsync(int id);

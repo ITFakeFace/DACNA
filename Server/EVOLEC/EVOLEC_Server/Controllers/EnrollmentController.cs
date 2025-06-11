@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using AutoMapper;
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Repositories;
@@ -21,31 +23,28 @@ namespace EVOLEC_Server.Controllers
         }
         // Get all enrollments
         [HttpGet]
+        [HttpGet]
         public async Task<IActionResult> GetAllEnrollments()
         {
-            try { 
-            
-                var enrollments = await _enrollmentService.GetAllEnrollmentsAsync();
+            var enrollments = await _enrollmentService.GetAllEnrollmentsAsync();
 
-                return Ok(new ResponseEntity<IEnumerable<EnrollmentResponseDTO>>
-                {
-                    Status = true,
-                    ResponseCode = 200,
-                    StatusMessage = "Success",
-                    Data = enrollments,
-                });
-            }
-            catch(Exception ex)
+            var options = new JsonSerializerOptions
             {
-                return StatusCode(500, new ResponseEntity<string>
-                {
-                    Status = false,
-                    ResponseCode = 500,
-                    StatusMessage = "Undefined Error",
-                    Data = ex.Message
-                });
-            }
+                ReferenceHandler = ReferenceHandler.Preserve,
+                MaxDepth = 64
+            };
+
+            var jsonResponse = JsonSerializer.Serialize(new ResponseEntity<IEnumerable<EnrollmentDto>>
+            {
+                Status = true,
+                ResponseCode = 200,
+                StatusMessage = "Success",
+                Data = enrollments
+            }, options);
+
+            return Ok(jsonResponse);
         }
+
 
         [HttpPost("create")]
         public async Task<IActionResult> CreateEnrollment([FromBody] EnrollmentCreateDTO request)

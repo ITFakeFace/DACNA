@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Notification, TextInput } from '@mantine/core';
 import { Dropdown } from 'primereact/dropdown';
 import { postRequest, getRequest } from '../../services/APIService';
-import { getUserIdFromToken } from '../../services/authService';
+import { getUserIdFromToken, getUsernameFromToken } from '../../services/authService';
 
 const EnrollmentsCreateForm = () => {
   const [students, setStudents] = useState([]);
@@ -14,7 +14,7 @@ const EnrollmentsCreateForm = () => {
   const [loading, setLoading] = useState(false);
 
   const creatorId = getUserIdFromToken(localStorage.getItem('token'));  // Lấy Creator ID từ Token
-
+  const creatorName= getUsernameFromToken(localStorage.getItem('token'));
   // Fetch dữ liệu Student và Classroom
   useEffect(() => {
     const fetchStudents = async () => {
@@ -30,17 +30,19 @@ const EnrollmentsCreateForm = () => {
 
     const fetchClassrooms = async () => {
       const res = await getRequest('/ClassRoom');
-      console.log(res.Data.$values)
-      if (res.status) {
+      console.log("ClassRoom")
+     
+      if (res.Status) {
         console.log(res)
         const data = res.Data.$values.map((room) => ({
-          label: room.Id,   // Hiển thị classroom id
+         "label": room.Course.Name ,   // Hiển thị classroom id
           value: room.Id,     // Giá trị là classRoomId
         }));
         console.log("Data: ")
         console.log(data)
         setClassrooms(data);
       }
+      
     };
 
     fetchStudents();
@@ -50,7 +52,7 @@ const EnrollmentsCreateForm = () => {
   // Xử lý khi submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     // Kiểm tra các trường bắt buộc
     if (!studentId || !classRoomId || !creatorId || !enrollDate) {
       setFeedback({ type: 'error', message: 'All fields are required!' });
@@ -124,7 +126,7 @@ const EnrollmentsCreateForm = () => {
         {/* Creator Id */}
         <TextInput
           label="Creator"
-          value={creatorId}
+          value={creatorName}
           disabled
           className="custom-disabled-input select-none mb-3"
         />

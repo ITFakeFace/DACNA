@@ -91,7 +91,7 @@ export default function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="enrollments" element={<EnrollmentsListPage   />} />
             <Route path="enrollments/create" element={<EnrollmentsCreateForm />} />
-            
+            <Route path="enrollments/update/:id" element={<EnrollmentsCreateForm />} />
           </Route>
         </Route>
 

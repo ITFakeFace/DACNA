@@ -33,9 +33,9 @@ const EnrollmentsCreateForm = () => {
       console.log("ClassRoom")
      
       if (res.Status) {
-        console.log(res)
+        console.log(res.Data.$values)
         const data = res.Data.$values.map((room) => ({
-         "label": room.Course.Name ,   // Hiển thị classroom id
+         "label":room.$id  +" - "+ room.Course.Name,   // Hiển thị classroom id
           value: room.Id,     // Giá trị là classRoomId
         }));
         console.log("Data: ")
@@ -70,7 +70,7 @@ const EnrollmentsCreateForm = () => {
     };
 
     try {
-      const res = await postRequest('/enrollments', payload); // Gọi API để tạo enrollment
+      const res = await postRequest('/enrollment/create', payload); // Gọi API để tạo enrollment
       if (res.status) {
         setFeedback({ type: 'success', message: 'Enrollment created successfully!' });
       } else {
@@ -86,6 +86,16 @@ const EnrollmentsCreateForm = () => {
 
   return (
     <div style={{ maxWidth: '400px', margin: 'auto' }}>
+          {/* Back Button */}
+        <Button
+          type="button"
+          onClick={() => navigate("/enrollment-staff/enrollments/")} // Quay lại trang trước đó
+          variant="outline"
+          fullWidth
+          style={{ marginTop: '10px' }}
+        >
+          Back
+        </Button>
       <form onSubmit={handleSubmit}>
         {feedback && (
           <Notification

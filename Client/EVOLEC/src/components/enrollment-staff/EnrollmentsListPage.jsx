@@ -26,14 +26,12 @@ const EnrollmentsListPage = () => {
     try {
       setLoading(true);
       const res = await getRequest('/enrollment');
-      // console.log(1)
-      console.log(res.Data.$values)
+     
       
-      if (res.Status) {
-        setEnrollments(res.Data.$values); // Lưu dữ liệu vào state
+      if (res.status) {
+        setEnrollments(res.data); // Lưu dữ liệu vào state
       }
-      // console.log(2)
-      // console.log(enrollments)
+     
     } catch (error) {
       console.error('Error fetching enrollments:', error);
     } finally {
@@ -63,7 +61,8 @@ const EnrollmentsListPage = () => {
   };
 
   const renderStatus = (rowData) => {
-    return rowData.Status == 1 ? (
+    
+    return rowData.status == 1 ? (
       <Button size="xs" color="green">Active</Button>
     ) : (
       <Button size="xs" color="red">Inactive</Button>
@@ -96,11 +95,11 @@ const EnrollmentsListPage = () => {
 
   // Cấu hình các cột cho DataTable
   const columns = [
-    { name: 'ID', selector: row => row.$id, sortable: true },
-    { name: 'Student Name', selector: row => row.Student.Username, sortable: true },
-    // { name: 'Classroom ID', selector: row => row.ClassRoom.Course.id, sortable: true },
-    { name: 'Creator ID', selector: row => row.Creator.Username, sortable: true },
-    { name: 'Enroll Date', selector: row => row.EnrollDate, sortable: true },
+    { name: 'ID', selector: row => row.enrollmentId, sortable: true },
+    { name: 'Student Name', selector: row => row.studentName, sortable: true },
+    { name: 'Classroom ID', selector: row => row.classRoomName, sortable: true },
+    { name: 'Creator ID', selector: row => row.creatorName, sortable: true },
+    { name: 'Enroll Date', selector: row => row.enrollDate, sortable: true },
     {
       name: 'Status',
       selector: row => renderStatus(row),

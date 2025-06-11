@@ -1,4 +1,4 @@
-using EVOLEC_Server.Dtos;
+﻿using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,14 +18,31 @@ namespace EVOLEC_Server.Repositories
             return await _ctx.Enrollments.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Enrollment>> GetAllEnrollmentsAsync()
-            {
-            return await _ctx.Enrollments
-                            .Include(e => e.ClassRoom)
-                            .ThenInclude(c=>c.Course)
-                            .Include(e => e.Student)
-                            .Include(e => e.Creator)
-                            .ToListAsync();
+        public async Task<IEnumerable<EnrollmentResponseDTO>> GetAllEnrollmentsAsync()
+        {
+            var result = _ctx.Enrollments
+                 .Include(e => e.Student)
+                 .Include(e => e.Creator)
+                 .Include(e => e.ClassRoom)
+                     .ThenInclude(c => c.Course)
+                 .Select(e => new EnrollmentResponseDTO
+                 {
+                     EnrollmentId = e.Id,
+                     ClassRoomId = e.ClassRoomId,
+                     StudentId = e.StudentId,
+                     StudentName = e.Student.Fullname,
+                     CreatorId = e.CreatorId,
+                     CreatorName = e.Creator.Fullname,
+                     ClassRoomName = e.ClassRoom.Course.Name!,
+                     EnrollDate = e.EnrollDate,
+                     Status = e.Status,
+                     CreatedAt = e.CreatedAt,
+                     UpdatedAt = (DateTime)e.UpdatedAt!
+                 })
+                 .ToList();
+
+            return result;
+
         }
 
         public async Task<Enrollment> AddEnrollmentAsync(Enrollment enrollment)

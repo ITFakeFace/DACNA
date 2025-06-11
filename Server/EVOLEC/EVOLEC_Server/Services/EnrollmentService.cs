@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Repositories;
@@ -35,19 +35,8 @@ namespace EVOLEC_Server.Services
 
         public async Task<IEnumerable<EnrollmentResponseDTO>> GetAllEnrollmentsAsync()
         {
-            var enrollments = await _enrollmentRepository.GetAllEnrollmentsAsync();
-            var enrollmentDtos = enrollments.Select(
-                enrollment => new EnrollmentDto
-                {
-                    Id = enrollment.Id,
-                    ClassRoom = enrollment.ClassRoom,
-                    Student = _mapper.Map<ShortInformationUser>(enrollment.Student),
-                    Creator = _mapper.Map<ShortInformationUser>(enrollment.Creator),
-                    EnrollDate = enrollment.EnrollDate,
-                    Status = enrollment.Status
-                }
-                );
-            return enrollmentDtos;
+
+            return await _enrollmentRepository.GetAllEnrollmentsAsync();
         }
 
         public async Task<int> CreateAsync(EnrollmentCreateDTO dto)

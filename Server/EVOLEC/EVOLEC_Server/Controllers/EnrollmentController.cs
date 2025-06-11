@@ -1,6 +1,4 @@
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using AutoMapper;
+﻿using AutoMapper;
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Repositories;
@@ -23,28 +21,32 @@ namespace EVOLEC_Server.Controllers
         }
         // Get all enrollments
         [HttpGet]
-        [HttpGet]
         public async Task<IActionResult> GetAllEnrollments()
         {
-            var enrollments = await _enrollmentService.GetAllEnrollmentsAsync();
-
-            var options = new JsonSerializerOptions
+            try
             {
-                ReferenceHandler = ReferenceHandler.Preserve,
-                MaxDepth = 64
-            };
 
-            var jsonResponse = JsonSerializer.Serialize(new ResponseEntity<IEnumerable<EnrollmentDto>>
+                var enrollments = await _enrollmentService.GetAllEnrollmentsAsync();
+
+                return Ok(new ResponseEntity<IEnumerable<EnrollmentResponseDTO>>
+                {
+                    Status = true,
+                    ResponseCode = 200,
+                    StatusMessage = "Success",
+                    Data = enrollments,
+                });
+            }
+            catch (Exception ex)
             {
-                Status = true,
-                ResponseCode = 200,
-                StatusMessage = "Success",
-                Data = enrollments
-            }, options);
-
-            return Ok(jsonResponse);
+                return StatusCode(500, new ResponseEntity<string>
+                {
+                    Status = false,
+                    ResponseCode = 500,
+                    StatusMessage = "Undefined Error",
+                    Data = ex.Message
+                });
+            }
         }
-
 
         [HttpPost("create")]
         public async Task<IActionResult> CreateEnrollment([FromBody] EnrollmentCreateDTO request)
@@ -92,7 +94,7 @@ namespace EVOLEC_Server.Controllers
             }
         }
 
-    
+
 
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateEnrollment(int id, [FromBody] EnrollmentUpdateDTO request)
@@ -160,5 +162,5 @@ namespace EVOLEC_Server.Controllers
             }
         }
 
-    } 
+    }
 }

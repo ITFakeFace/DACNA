@@ -67,6 +67,11 @@ namespace EVOLEC_Server.Services
             // Lấy user có role "teacher"
             return await _userRepository.GetUsersByRoleAsync("teacher");
         }
+        public async Task<List<ApplicationUser>> GetStudentsAsync()
+        {
+            // Lấy user có role "student"
+            return await _userRepository.GetUsersByRoleAsync("student");
+        }
 
         public async Task<List<DateOnly>> GetTeacherTeachDayAsync(string id)
         {

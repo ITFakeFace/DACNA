@@ -18,6 +18,13 @@ const EnrollmentStaffNavbar = ({ isOpened, setOpened }) => {
         isOpened={isOpened}
         url={`${pathRoot}/dashboard`}
       ></NavItem>
+      
+      <NavItem
+        icon={<FontAwesomeIcon icon={faHome} />}
+        title="enrollment"
+        isOpened={isOpened}
+        url={`${pathRoot}/enrollments`}
+      ></NavItem>
     </NavbarTemplate>
   )
 };

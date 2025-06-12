@@ -181,6 +181,12 @@ internal class Program
         // Room Repository & Service
         builder.Services.AddScoped<IRoomRepository, RoomRepository>();
         builder.Services.AddScoped<IRoomService, RoomService>();
+
+
+        builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+        builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+
+
         // Jwt Service
         builder.Services.AddScoped<JwtHelper>();
         // Add services to the container.
@@ -188,7 +194,6 @@ internal class Program
         builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
-
         var app = builder.Build();
 
         using (var scope = app.Services.CreateScope())

@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.DTOs.Lesson;
 using EVOLEC_Server.Models;
@@ -43,6 +43,14 @@ namespace EVOLEC_Server.Utils
             CreateMap<Room, RoomDto>();
             CreateMap<RoomCreateDto, Room>();
             CreateMap<RoomUpdateDto, Room>();
+
+
+            CreateMap<EnrollmentDto, Enrollment>();
+            CreateMap<EnrollmentCreateDTO, Enrollment>();
+
+            CreateMap<Enrollment, EnrollmentDto>();
+
+            CreateMap<ClassRoom, ClassRoomShortInfomation>();
         }
     }
 }

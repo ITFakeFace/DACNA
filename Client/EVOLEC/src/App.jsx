@@ -23,7 +23,9 @@ import OffDateListPage from "./components/admin/off-date/OffDateListPage";
 import OffDateDetailsPage from "./components/admin/off-date/OffDateDetailsPage";
 import RoomListPage from "./components/admin/room/RoomListPage";
 import RoomDetailsPage from "./components/admin/room/RoomDetailsPage";
-
+import StudentProfile from "./components/student/StudentProfile"
+import EnrollmentsListPage from "./components/enrollment-staff/EnrollmentsListPage";
+import EnrollmentsCreateForm from "./components/enrollment-staff/EnrollmentsCreateForm";
 
 function Dashboard() {
   return <h2>Dashboard Page</h2>;
@@ -63,7 +65,11 @@ export default function App() {
             <Route path="courses/create" element={<CourseFormPage />} />
             <Route path="courses/update/:id" element={<CourseFormPage />} />
             <Route path="classrooms" element={<ClassroomListPage />} />
+            <Route path="classrooms/:id" element={<ClassroomDetailsPage />} />
+            
             <Route path="classrooms/create" element={<ClassroomFormPage />} />
+            <Route path="classrooms/update/:id" element={<ClassroomFormPage />} />
+
             <Route path="off-dates" element={<OffDateListPage />} />
             <Route path="off-dates/:id" element={<OffDateDetailsPage />} />
             <Route path="rooms" element={<RoomListPage />} />
@@ -83,6 +89,9 @@ export default function App() {
         <Route element={<ProtectedRoute requiredRole="ENROLLMENT_STAFF" />}>
           <Route path="/enrollment-staff" element={<EnrollmentStaffLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="enrollments" element={<EnrollmentsListPage   />} />
+            <Route path="enrollments/create" element={<EnrollmentsCreateForm />} />
+            <Route path="enrollments/update/:id" element={<EnrollmentsCreateForm />} />
           </Route>
         </Route>
 
@@ -97,6 +106,8 @@ export default function App() {
         <Route element={<ProtectedRoute requiredRole="STUDENT" />}>
           <Route path="/student" element={<StudentLayout />}>
             <Route path="home" element={<StudentHome />} />
+            <Route path="profile" element={<StudentProfile/>} />
+            
           </Route>
         </Route>
 

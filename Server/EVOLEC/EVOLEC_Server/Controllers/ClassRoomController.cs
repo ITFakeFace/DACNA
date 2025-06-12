@@ -104,8 +104,8 @@ namespace EVOLEC_Server.Controllers
                             Status = true,
                             ResponseCode = isCreateLessonDate ? 200 : 201,
                             StatusMessage = isCreateLessonDate
-                    ? "Tạo lớp học thành công"
-                    : "Vui lòng nhập ca học và ngày học để tạo lessonDate",
+                    ? "Success"
+                    : "Warning: Update Date Start And Shift to generate lessondays",
                             Data = new
                             {
                                 Id = result
@@ -124,6 +124,14 @@ namespace EVOLEC_Server.Controllers
                                 Id = result
                             }
 
+                        });
+                     default:
+                        return BadRequest(new ResponseEntity<object>
+                        {
+                            Status = false,
+                            ResponseCode = 400,
+                            StatusMessage = "Success",
+                            Data = null!
                         });
                 }
                 

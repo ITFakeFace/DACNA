@@ -1,4 +1,4 @@
-﻿using EVOLEC_Server.Models;
+using EVOLEC_Server.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EVOLEC_Server.Repositories
@@ -28,6 +28,8 @@ namespace EVOLEC_Server.Repositories
         {
             return await _ctx.LessonOffDates
                 .Include(l => l.LessonDate)
+                    .ThenInclude(l => l.ClassRoom)
+                        .ThenInclude(c => c.Course)
                 .Include(o => o.OffDate)
                 .Where(lod => lod.OffDateId == offDateId)
                 .ToListAsync();

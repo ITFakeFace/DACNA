@@ -51,6 +51,8 @@ namespace EVOLEC_Server.Utils
             CreateMap<Enrollment, EnrollmentDto>();
 
             CreateMap<ClassRoom, ClassRoomShortInfomation>();
+
+            CreateMap<LessonOffDate, lessonOffDateClassResp>();
         }
     }
 }

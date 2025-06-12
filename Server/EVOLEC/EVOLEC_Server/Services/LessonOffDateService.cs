@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Repositories;
@@ -32,10 +32,27 @@ namespace EVOLEC_Server.Services
             return _mapper.Map<IEnumerable<LessonOffDateDto>>(list);
         }
 
-        public async Task<IEnumerable<LessonOffDateDto>> GetAllByOffDateIdAsync(int offDateId)
+        public async Task<lessonOffDateClassResp> GetAllByOffDateIdAsync(int offDateId)
         {
             var list = await _repository.GetAllByOffDateIdAsync(offDateId);
-            return _mapper.Map<IEnumerable<LessonOffDateDto>>(list);
+            List<LessonOffDate> lessonOffDates = list.ToList();
+            List<ClassRoomDTO> classRoomDTOs = new List<ClassRoomDTO>();
+            OffDateDto offDateDto = _mapper.Map<OffDateDto>(lessonOffDates[0].OffDate);
+
+            foreach (var item in lessonOffDates)
+            {
+                ClassRoomDTO classRoomDTO = _mapper.Map<ClassRoomDTO>(item.LessonDate.ClassRoom);
+                if (!classRoomDTOs.Any(c => c.Id == classRoomDTO.Id))
+                {
+                    classRoomDTOs.Add(classRoomDTO);
+                }
+
+            }
+            return new lessonOffDateClassResp() 
+            {
+                OffDate = offDateDto,
+                ClassRooms = classRoomDTOs
+            };
         }
 
         public async Task<LessonOffDateDto> CreateAsync(LessonOffDateCreateDto createDto)
@@ -58,6 +75,8 @@ namespace EVOLEC_Server.Services
 
         public async Task<bool> DeleteAsync(int lessonDateId, int offDateId)
         {
+            var existing = await _repository.GetAsync(lessonDateId, offDateId);
+            if (existing == null) return false;
             return await _repository.DeleteAsync(lessonDateId, offDateId);
         }
 

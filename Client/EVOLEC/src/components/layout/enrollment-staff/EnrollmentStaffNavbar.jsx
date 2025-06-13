@@ -21,7 +21,7 @@ const EnrollmentStaffNavbar = ({ isOpened, setOpened }) => {
       
       <NavItem
         icon={<FontAwesomeIcon icon={faHome} />}
-        title="enrollment"
+        title="Enrollment"
         isOpened={isOpened}
         url={`${pathRoot}/enrollments`}
       ></NavItem>

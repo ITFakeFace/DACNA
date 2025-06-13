@@ -1,100 +1,169 @@
 import React, { useEffect, useState } from 'react';
-import { Button, LoadingOverlay, Title } from '@mantine/core';
-import DataTable from 'react-data-table-component';
+import { Title } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-import { getRequest } from '../../../services/APIService'; // Giả sử có các hàm API
-
+import { getRequest } from '../../../services/APIService';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import './ClassroomListPage.css';
 
 const ClassroomListPage = () => {
   const navigate = useNavigate();
+
   const [classrooms, setClassrooms] = useState([]);
+  const [selectedClassroom, setSelectedClassroom] = useState(null);
+  const [deleteDialog, setDeleteDialog] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState(null);
+  const [globalFilterValue, setGlobalFilterValue] = useState('');
 
-  const fetchClassroom = async () => {
+  const fetchClassrooms = async () => {
     try {
-      const data = await getRequest("/classroom"); // Gọi API lấy danh sách khóa học
-      
-      // console.log("----------------------------------");
-      // console.log("API Response:", data);
-      // console.log("ID API Response:", data.$id);
-      // console.log("Data API Response:", data.Data);
-      // console.log("Data value API Response:", data.Data.$values);
-      // console.log("satus API Response:", data.Status);
-      // console.log("----------------------------------");
-
-      
+      setLoading(true);
+      const data = await getRequest("/classroom");
       if (data.Status) {
         setClassrooms(data.Data.$values);
-        // console.log("------------------11111111111111111111")
-        // console.log(data.Data.$values)
       }
     } catch (error) {
-      console.error("Error fetching courses:", error);
+      console.error("Error fetching classrooms:", error);
+    } finally {
+      setLoading(false);
     }
   };
-  // Fetch courses data when component mounts
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        await fetchClassroom();
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
 
-    fetchData();
+  useEffect(() => {
+    fetchClassrooms();
+    initFilters();
   }, []);
 
+  const initFilters = () => {
+    setFilters({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+      Id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+      'Course.Name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+      'Teacher1.Username': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+      'Teacher2.Username': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    });
+    setGlobalFilterValue('');
+  };
 
-  // Cấu hình các cột cho DataTable
-  const columns = [
-    { name: 'Classroom ID', selector: row => row.Id, sortable: true },
-    { name: 'Teacher 1', selector: row => row.Teacher1.Username, sortable: true },
-    { name: 'Teacher 2', selector: row => row.Teacher2.Username, sortable: true },
-    { name: 'Course ID', selector: row => row.Course.Name, sortable: true },
-    // { name: 'Status', selector: row => row.Status, sortable: true },
-     {
-          name: 'Status',
-          selector: row => {
-            return row.Status == 1
-              ? <Button color='green'>Active</Button>
-              : <Button color='red'>Inactive</Button>;
-          },
-          sortable: true,
-          center: true,
-        },
-    {
-      name: 'Actions',
-      selector: row => (
-        <div className="flex gap-2 justify-center">
-           
-          <Button size="xs" onClick={() => navigate(`/admin/classrooms/${row.Id}`)}>Details</Button>
-          <Button size="xs" onClick={() => navigate(`/admin/classrooms/update/${row.Id}`)}>Edit</Button>
-          <Button size="xs" color="red">Delete</Button>
-        </div>
-      ),
-      sortable: false,
-      center: true,
-      minWidth: '280px',
-    },
-  ];
+  const clearFilter = () => {
+    initFilters();
+  };
+
+  const onGlobalFilterChange = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+    _filters['global'].value = value;
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+
+  const statusBodyTemplate = (rowData) => {
+    return rowData.Status === 1
+      ? <Button severity="success">Active</Button>
+      : <Button severity="danger">Inactive</Button>;
+  };
+
+  const actionBody = (rowData) => {
+    return (
+      <>
+        <Button icon="pi pi-info-circle" rounded outlined className="mr-2"
+          onClick={() => navigate(`/admin/classrooms/${rowData.Id}`)} />
+        <Button icon="pi pi-pencil" rounded outlined className="mr-2" severity="success"
+          onClick={() => navigate(`/admin/classrooms/update/${rowData.Id}`)} />
+        <Button icon="pi pi-trash" rounded outlined severity="danger"
+          onClick={() => confirmDelete(rowData)} />
+      </>
+    );
+  };
+
+  const confirmDelete = (classroom) => {
+    setSelectedClassroom(classroom);
+    setDeleteDialog(true);
+  };
+
+  const hideDeleteDialog = () => {
+    setDeleteDialog(false);
+  };
+
+  const deleteDialogFooter = (
+    <>
+      <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteDialog} />
+      <Button label="Yes" icon="pi pi-check" severity="danger" onClick={() => deleteClassroom()} />
+    </>
+  );
+
+  const deleteClassroom = () => {
+    const _list = classrooms.filter((val) => val.Id !== selectedClassroom.Id);
+    // Gọi API xóa nếu có
+    setClassrooms(_list);
+    setDeleteDialog(false);
+    setSelectedClassroom(null);
+  };
+
+  const renderTableHeader = () => {
+    return (
+      <div className="flex justify-content-between">
+        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined onClick={clearFilter} />
+        <IconField iconPosition="left">
+          <InputIcon className="pi pi-search" />
+          <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
+        </IconField>
+      </div>
+    );
+  };
+
   return (
     <div className="container">
       <Title mb={20}>Classroom List</Title>
       <div>
         <Button onClick={() => navigate("/admin/classrooms/create")}>Create new Classroom</Button>
       </div>
-      {loading ? <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} /> :
-        <DataTable
-          columns={columns}
-          data={classrooms}
-          pagination
-          highlightOnHover
-          responsive
-          fixedHeader
-        />}
+      <DataTable
+        className="w-full"
+        value={classrooms}
+        paginator
+        rows={10}
+        showGridlines
+        loading={loading}
+        dataKey="Id"
+        filters={filters}
+        globalFilterFields={['Id', 'Course.Name', 'Teacher1.Username', 'Teacher2.Username']}
+        header={renderTableHeader()}
+        emptyMessage="No classrooms found."
+        onFilter={(e) => setFilters(e.filters)}
+      >
+        <Column header="Classroom ID" field="Id" filter sortable style={{ minWidth: '10rem' }} />
+        <Column header="Course" field="Course.Name" filter sortable style={{ minWidth: '12rem' }} />
+        <Column header="Teacher 1" field="Teacher1.Username" filter sortable style={{ minWidth: '10rem' }} />
+        <Column header="Teacher 2" field="Teacher2.Username" filter sortable style={{ minWidth: '10rem' }} />
+        <Column header="Status" body={statusBodyTemplate} style={{ minWidth: '10rem' }} />
+        <Column body={actionBody} exportable={false} style={{ minWidth: '12rem' }} />
+      </DataTable>
+
+      <Dialog
+        visible={deleteDialog}
+        style={{ width: '32rem' }}
+        header="Confirm"
+        modal
+        footer={deleteDialogFooter}
+        onHide={hideDeleteDialog}
+      >
+        <div className="confirmation-content">
+          <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+          {selectedClassroom && (
+            <span>
+              Are you sure you want to delete <b>Classroom #{selectedClassroom.Id}</b>?
+            </span>
+          )}
+        </div>
+      </Dialog>
     </div>
   );
 };

@@ -97,21 +97,6 @@ namespace EVOLEC_Server.Controllers
                 bool isCreateLessonDate = (request.Shift.HasValue && !request.StartDate.ToString().IsNullOrEmpty());
                 switch (result)
                 {
-                    case 1 :
-                        return Ok(new ResponseEntity<object>
-                        {
-
-                            Status = true,
-                            ResponseCode = isCreateLessonDate ? 200 : 201,
-                            StatusMessage = isCreateLessonDate
-                    ? "Tạo lớp học thành công"
-                    : "Vui lòng nhập ca học và ngày học để tạo lessonDate",
-                            Data = new
-                            {
-                                Id = result
-                            }
-
-                        });
                     case 2:
                         return Ok(new ResponseEntity<object>
                         {
@@ -126,12 +111,19 @@ namespace EVOLEC_Server.Controllers
 
                         });
                     default:
-                        return BadRequest(new ResponseEntity<object>
+                        return Ok(new ResponseEntity<object>
                         {
-                            Status = false,
-                            ResponseCode = 400,
-                            StatusMessage = "Unidentified error",
-                            Data = null!
+
+                            Status = true,
+                            ResponseCode = isCreateLessonDate ? 200 : 201,
+                            StatusMessage = isCreateLessonDate
+                    ? "Tạo lớp học thành công"
+                    : "Vui lòng nhập ca học và ngày học để tạo lessonDate",
+                            Data = new
+                            {
+                                Id = result
+                            }
+
                         });
                 }
                 

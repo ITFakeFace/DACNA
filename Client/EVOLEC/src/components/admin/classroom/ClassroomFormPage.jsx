@@ -17,7 +17,7 @@ const ClassroomFormPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [feedback, setFeedback] = useState(null);
-
+  const [rooms, setRooms] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [courses, setCourses] = useState([]);
   const [shifts, setShifts] = useState([]);
@@ -31,6 +31,7 @@ const ClassroomFormPage = () => {
     endDate: null,
     status: 'Active',
     shift: '',
+    RoomId:'',
   });
 
   useEffect(() => {
@@ -83,6 +84,19 @@ const ClassroomFormPage = () => {
         setFeedback({ type: 'error', message: 'Failed to load shifts' });
       }
     };
+    const fetchRooms = async () => {
+      try {
+        const res = await getRequest("/room"); // Đường dẫn giả định, sửa lại nếu khác
+        if (res.status) {
+          setRooms(res.data);
+        } else {
+          setFeedback({ type: 'warn', message: 'No rooms found' });
+        }
+      } catch (err) {
+        console.error("Error fetching rooms:", err);
+        setFeedback({ type: 'error', message: 'Failed to load rooms' });
+      }
+    };
 
     fetchTeachers();
     console.log(1)
@@ -90,7 +104,7 @@ const ClassroomFormPage = () => {
     console.log(2)
     fetchShifts();
     console.log(3)
-
+    fetchRooms();
     if (id) {
       const fetchClassroom = async () => {
         try {
@@ -131,7 +145,9 @@ const ClassroomFormPage = () => {
       startDate: form.startDate ? form.startDate.toISOString().split('T')[0] : null,
       status: 1,
       shift: form.shift,
+      RoomId:form.RoomId,
     };
+    console.log(payload)
     try {
       let result;
       if (id) {
@@ -183,7 +199,9 @@ const ClassroomFormPage = () => {
           </Notification>
         )}
 
-        <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
+        {/* <form onSubmit={handleSubmit} className='flex flex-col gap-5'> */}
+        <form onSubmit={handleSubmit} className='classroom-form'>
+
           <div className="p-field">
             <label htmlFor="teacher1Id">Teacher 1</label>
             <Dropdown
@@ -226,6 +244,22 @@ const ClassroomFormPage = () => {
               placeholder="Select Course"
               filter
               showClear
+            />
+          </div>
+
+          <div className="p-field">
+            <label htmlFor="roomId">Room</label>
+            <Dropdown
+              id="roomId"
+              options={rooms}
+              optionLabel="name"
+              optionValue="id"
+              value={form.RoomId}
+              onChange={(e) => setForm(prev => ({ ...prev, RoomId: e.value }))}
+              placeholder="Select Room"
+              filter
+              showClear
+              required
             />
           </div>
 

@@ -116,20 +116,29 @@ namespace EVOLEC_Server.Services
         }
         public async Task<bool> AddLessonDatesToClassRoom(ClassRoom addedClassroom)
         {
-            List<LessonDate>? lessonDates = new List<LessonDate>();
-            lessonDates = await _lessonDateRepository.AddLessonDateByClassRoom(addedClassroom)!;
-            List<LessonDate>? tmplessonDates = await _lessonOffDateService.HandleHolidays(lessonDates);
-            if (tmplessonDates == null)
+            try
             {
-                await _lessonDateRepository.DeleteLessonDatesAsync(lessonDates);
-                return false;
+                List<LessonDate>? lessonDates = new List<LessonDate>();
+                lessonDates = await _lessonDateRepository.AddLessonDateByClassRoom(addedClassroom)!;
+                List<LessonDate>? tmplessonDates = await _lessonOffDateService.HandleHolidays(lessonDates);
+                if (tmplessonDates.IsNullOrEmpty())
+                {
+                    await _lessonDateRepository.DeleteLessonDatesAsync(lessonDates);
+                    return false;
+                }
+                lessonDates = await _lessonDateRepository.AssignTeacherToLessonDateInitFunc(tmplessonDates, (int)addedClassroom.Shift!, lessonDates[0].ClassRoom);
+                if (lessonDates.IsNullOrEmpty())
+                {
+                    return false; // Không có lessonDates hợp lệ
+                }
+                return true;
+
             }
-            lessonDates = await _lessonDateRepository.AssignTeacherToLessonDateInitFunc(tmplessonDates, (int)addedClassroom.Shift!, lessonDates[0].ClassRoom);
-            if(lessonDates.IsNullOrEmpty())
+            catch(Exception ex)
             {
-                return false; // Không có lessonDates hợp lệ
+                await _lessonDateRepository.DeleteLessonDatesAsync(addedClassroom.LessonDates);
+                return false; // Xử lý lỗi nếu cần
             }
-            return true;
 
         }
 

@@ -14,12 +14,14 @@ namespace EVOLEC_Server.Services
         private readonly IOffDateService _offDateService;
         private readonly ILessonService _lessonService;
         private readonly IMapper _mapper;
+        private readonly IEnrollmentRepository _enrollmentRepository;
 
         public LessonDateService(
                 ILessonDateRepository lessonDateRepository, 
                 ILessonOffDateService lessonOffDateService,
                 IOffDateService offDateService,
                 ILessonService lessonService,
+                IEnrollmentRepository enrollmentRepository,
                 IMapper mapper)
         {
             _lessonDateRepository   = lessonDateRepository;
@@ -27,11 +29,13 @@ namespace EVOLEC_Server.Services
             _offDateService         = offDateService;
             _lessonService          = lessonService;
             _mapper                 = mapper;
+            _enrollmentRepository = enrollmentRepository;
         }
 
         public async Task<LessonDateDto> GetLessonDateByIdAsync(int id)
         {
             var lessonDate = await _lessonDateRepository.GetLessonDateByIdAsync(id);
+
             if (lessonDate == null) return null;
 
             var lessonDateDto = new LessonDateDto
@@ -40,12 +44,14 @@ namespace EVOLEC_Server.Services
                 Teacher = _mapper.Map<ShortInformationTeacher>(lessonDate.Teacher),
                 ClassRoom = _mapper.Map<ClassRoomDTO>(lessonDate.ClassRoom),
                 Lesson = _mapper.Map<LessonDto>(lessonDate.Lesson),
+                Room = _mapper.Map<RoomDto>(lessonDate.Room),
                 Date = lessonDate.Date,
                 StartTime = lessonDate.StartTime,
                 EndTime = lessonDate.EndTime,
                 Note = lessonDate.Note,
             };
-
+            var students = await _enrollmentRepository.GetStudentsByLessonDateIdAsync(lessonDate.ClassRoomId);
+            lessonDateDto.Students = students;
             return lessonDateDto;
         }
 

@@ -73,5 +73,18 @@ namespace EVOLEC_Server.Repositories
             await _ctx.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<ShortInfomationStudent>> GetStudentsByLessonDateIdAsync(int classRoomId)
+        {
+            return await _ctx.Enrollments
+                .Where(e => e.ClassRoomId == classRoomId)
+                .Select(e => new ShortInfomationStudent
+                {
+                    Id = e.StudentId,
+                    Fullname = e.Student.Fullname,
+                    Email = e.Student.Email ,
+                    Username = e.Student.UserName ,
+                })
+                .ToListAsync();
+        }
     }
 }

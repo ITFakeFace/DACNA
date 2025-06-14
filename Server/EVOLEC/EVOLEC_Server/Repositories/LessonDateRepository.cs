@@ -26,6 +26,7 @@ namespace EVOLEC_Server.Repositories
                               .Include(lsd => lsd.ClassRoom)
                               .Include(lsd => lsd.Teacher)
                               .Include(lsd => lsd.Lesson)
+                              .Include(lsd => lsd.Room)
                               .FirstOrDefaultAsync(); // Dùng FirstOrDefaultAsync thay vì FirstOrDefault
         }
 

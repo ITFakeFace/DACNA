@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Repositories;
@@ -17,7 +17,7 @@ namespace EVOLEC_Server.Services
         private readonly IEnrollmentRepository _enrollmentRepository;
 
         public LessonDateService(
-                ILessonDateRepository lessonDateRepository, 
+                ILessonDateRepository lessonDateRepository,
                 ILessonOffDateService lessonOffDateService,
                 IOffDateService offDateService,
                 ILessonService lessonService,
@@ -70,7 +70,7 @@ namespace EVOLEC_Server.Services
                 return _mapper.Map<LessonDateDto>(createdLessonDate);
 
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return null!;
             }
@@ -85,7 +85,7 @@ namespace EVOLEC_Server.Services
                 _mapper.Map(lessonDateUpdateDto, lessonDate);
                 return await _lessonDateRepository.UpdateLessonDateAsync(lessonDate);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return -1;
             }
@@ -142,5 +142,5 @@ namespace EVOLEC_Server.Services
 
         }
 
-     }
+    }
 }

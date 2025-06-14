@@ -13,6 +13,7 @@ namespace EVOLEC_Server.Services
         Task<bool> Update(string userId, UserUpdateDto model);
         Task<bool> Delete(string userId);
         Task<bool> ToggleStatus(string userId, bool status);
-
+        Task<List<LessonDateScheduleDto>> GetStudyingLessonDatesAsync(string studentId);
+        Task<List<LessonDateScheduleDto>> GetTeachingLessonDatesAsync(string teacherId);
     }
 }

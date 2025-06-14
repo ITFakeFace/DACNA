@@ -53,5 +53,30 @@ namespace EVOLEC_Server.Services
         {
             return await _roomRepository.IsRoomNameUniqueAsync(name, excludeId);
         }
+
+        public async Task<List<LessonDateScheduleDto>> GetRoomScheduleAsync(int id)
+        {
+            var lessonDates = await _roomRepository.GetRoomScheduleAsync(id);
+
+            return lessonDates.Select(ld => new LessonDateScheduleDto
+            {
+                Id = ld.Id,
+                TeacherId = ld.TeacherId,
+                TeacherName = ld.Teacher?.Fullname,
+                ClassRoomId = ld.ClassRoomId,
+                LessonId = ld.LessonId,
+                LessonName = ld.Lesson?.Name,
+                Note = ld.Note,
+                Start = CombineDateTime(ld.Date, ld.StartTime),
+                End = CombineDateTime(ld.Date, ld.EndTime)
+            }).ToList();
+        }
+
+        private DateTime? CombineDateTime(DateOnly? date, TimeOnly? time)
+        {
+            if (date.HasValue && time.HasValue)
+                return new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, time.Value.Hour, time.Value.Minute, 0);
+            return null;
+        }
     }
 }

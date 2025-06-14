@@ -1,4 +1,4 @@
-﻿using EVOLEC_Server.CustomException;
+using EVOLEC_Server.CustomException;
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 using EVOLEC_Server.Repositories;
@@ -72,6 +72,65 @@ namespace EVOLEC_Server.Services
             // Lấy user có role "student"
             return await _userRepository.GetUsersByRoleAsync("student");
         }
-       
+
+        public async Task<List<DateOnly>> GetTeacherTeachDayAsync(string id)
+        {
+            var teachers = await _userRepository.GetUsersByRoleAsync("TEACHER");
+            var teacherList = teachers.Where(teacher => teacher.Id == id).ToList();
+            var resultTeacher = teacherList.Count > 0 ? teacherList[0] : null;
+            if (resultTeacher == null)
+                return new List<DateOnly>();
+
+            var result = new List<DateOnly>();
+            foreach (var lessonDate in resultTeacher.TeachedDates)
+            {
+                if (lessonDate.Date != null)
+                    result.Add((DateOnly)lessonDate.Date);
+            }
+            return result;
+        }
+
+        public async Task<List<LessonDateScheduleDto>> GetStudyingLessonDatesAsync(string studentId)
+        {
+            var lessonDates = await _userRepository.GetStudyingLessonDate(studentId);
+
+            return lessonDates.Select(ld => new LessonDateScheduleDto
+            {
+                Id = ld.Id,
+                TeacherId = ld.TeacherId,
+                TeacherName = ld.Teacher?.Fullname,
+                ClassRoomId = ld.ClassRoomId,
+                LessonId = ld.LessonId,
+                LessonName = ld.Lesson?.Name,
+                Note = ld.Note,
+                Start = CombineDateTime(ld.Date, ld.StartTime),
+                End = CombineDateTime(ld.Date, ld.EndTime)
+            }).ToList();
+        }
+
+        public async Task<List<LessonDateScheduleDto>> GetTeachingLessonDatesAsync(string teacherId)
+        {
+            var lessonDates = await _userRepository.GetTeachingLessonDate(teacherId);
+
+            return lessonDates.Select(ld => new LessonDateScheduleDto
+            {
+                Id = ld.Id,
+                TeacherId = ld.TeacherId,
+                TeacherName = ld.Teacher?.Fullname,
+                ClassRoomId = ld.ClassRoomId,
+                LessonId = ld.LessonId,
+                LessonName = ld.Lesson?.Name,
+                Note = ld.Note,
+                Start = CombineDateTime(ld.Date, ld.StartTime),
+                End = CombineDateTime(ld.Date, ld.EndTime)
+            }).ToList();
+        }
+
+        private DateTime? CombineDateTime(DateOnly? date, TimeOnly? time)
+        {
+            if (date.HasValue && time.HasValue)
+                return new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, time.Value.Hour, time.Value.Minute, 0);
+            return null;
+        }
     }
 }

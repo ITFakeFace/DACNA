@@ -26,6 +26,11 @@ import RoomDetailsPage from "./components/admin/room/RoomDetailsPage";
 import StudentProfile from "./components/student/StudentProfile"
 import EnrollmentsListPage from "./components/enrollment-staff/EnrollmentsListPage";
 import EnrollmentsCreateForm from "./components/enrollment-staff/EnrollmentsCreateForm";
+import StudentDashboard from "./components/student/dashboard/StudentDashboard";
+import StudentLessonDateDetails from "./components/student/lesson-date/StudentLessonDateDetails";
+import TeacherDashboard from "./components/teacher/dashboard/TeacherDashboard";
+import TeacherLessonDateDetails from "./components/teacher/lesson-date/TeacherLessonDateDetails";
+import LessonDateDetailsPage from "./components/admin/lesson-date/LessonDateDetailsPage";
 
 function Dashboard() {
   return <h2>Dashboard Page</h2>;
@@ -66,7 +71,7 @@ export default function App() {
             <Route path="courses/update/:id" element={<CourseFormPage />} />
             <Route path="classrooms" element={<ClassroomListPage />} />
             <Route path="classrooms/:id" element={<ClassroomDetailsPage />} />
-            
+
             <Route path="classrooms/create" element={<ClassroomFormPage />} />
             <Route path="classrooms/update/:id" element={<ClassroomFormPage />} />
 
@@ -74,6 +79,7 @@ export default function App() {
             <Route path="off-dates/:id" element={<OffDateDetailsPage />} />
             <Route path="rooms" element={<RoomListPage />} />
             <Route path="rooms/:id" element={<RoomDetailsPage />} />
+            <Route path="lesson-dates/:id" element={<LessonDateDetailsPage />} />
           </Route>
         </Route>
 
@@ -89,7 +95,7 @@ export default function App() {
         <Route element={<ProtectedRoute requiredRole="ENROLLMENT_STAFF" />}>
           <Route path="/enrollment-staff" element={<EnrollmentStaffLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="enrollments" element={<EnrollmentsListPage   />} />
+            <Route path="enrollments" element={<EnrollmentsListPage />} />
             <Route path="enrollments/create" element={<EnrollmentsCreateForm />} />
             <Route path="enrollments/update/:id" element={<EnrollmentsCreateForm />} />
           </Route>
@@ -98,16 +104,19 @@ export default function App() {
         {/* Teacher */}
         <Route element={<ProtectedRoute requiredRole="TEACHER" />}>
           <Route path="/teacher" element={<TeacherLayout />}>
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="" element={<TeacherDashboard />} />
+            <Route path="dashboard" element={<TeacherDashboard />} />
+            <Route path="lesson-date/:id" element={<TeacherLessonDateDetails />} />
           </Route>
         </Route>
 
         {/* Student */}
         <Route element={<ProtectedRoute requiredRole="STUDENT" />}>
           <Route path="/student" element={<StudentLayout />}>
-            <Route path="home" element={<StudentHome />} />
-            <Route path="profile" element={<StudentProfile/>} />
-            
+            <Route path="" element={<StudentDashboard />} />
+            <Route path="dashboard" element={<StudentDashboard />} />
+            <Route path="profile" element={<StudentProfile />} />
+            <Route path="lesson-date/:id" element={<StudentLessonDateDetails />} />
           </Route>
         </Route>
 

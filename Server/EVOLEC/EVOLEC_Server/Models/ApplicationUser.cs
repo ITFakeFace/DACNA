@@ -16,7 +16,7 @@ namespace EVOLEC_Server.Models
         public int Gender { get; set; }
         public string? Address { get; set; }
 
-
+        public virtual ICollection<IdentityUserRole<string>> UserRoles { get; set; }
         public ICollection<StudentAttendance> StudentAttendances { get; set; } = new List<StudentAttendance>();
         public ICollection<LessonDate> TeachedDates { get; set; } = new List<LessonDate>();
 

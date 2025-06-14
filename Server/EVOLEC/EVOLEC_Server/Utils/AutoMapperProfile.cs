@@ -14,6 +14,7 @@ namespace EVOLEC_Server.Utils
             CreateMap<Course, CourseDto>();
 
             CreateMap<ApplicationUser, ShortInformationUser>();
+            CreateMap<ApplicationUser, UserDto>();
 
             CreateMap<Lesson, LessonDto>();
             CreateMap<LessonCreateDto, Lesson>();

@@ -11,7 +11,7 @@ namespace EVOLEC_Server.Services
         private readonly IUserRepository _userRepository;
         private readonly ILessonDateService _lessonDateService;
         private readonly IMapper _mapper;
-        public ClassRoomService(IClassRoomRepository repository, IMapper mapper,IUserRepository userRepository, ILessonDateService lessonDateService)
+        public ClassRoomService(IClassRoomRepository repository, IMapper mapper, IUserRepository userRepository, ILessonDateService lessonDateService)
         {
             _repository = repository;
             _mapper = mapper;
@@ -42,11 +42,11 @@ namespace EVOLEC_Server.Services
                 if (!await _lessonDateService.AddLessonDatesToClassRoom(addedClassroom))
                 {
                     return 2;// cannot create lesson dates for this class room
-                } 
+                }
 
                 return classRoomId;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
 
                 return -3;
@@ -109,16 +109,25 @@ namespace EVOLEC_Server.Services
                 bool IsShiftHasValue = classRoom.Shift.HasValue;
                 bool IsStartDateHasValue = classRoom.StartDate.HasValue;
                 await _repository.UpdateClassRoomAsync(classRoom);
-                if (IsShiftHasValue && IsStartDateHasValue) { return 1; };
-                if (!IsShiftHasValue) { return 2; };
+                if (IsShiftHasValue && IsStartDateHasValue) { return 1; }
+                ;
+                if (!IsShiftHasValue) { return 2; }
+                ;
                 if (!IsStartDateHasValue) { return 3; }
                 return 4;
 
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return -2;
             }
-            }
+        }
+
+        public async Task<IEnumerable<UserDto>> GetStudentsByIdAsync(int id)
+        {
+            var result = await _repository.GetStudentsByClassIdAsync(id);
+            return _mapper.Map<IEnumerable<UserDto>>(result);
+        }
+
     }
 }

@@ -3,6 +3,7 @@ import NavItem from '../components/NavItem';
 import { Button } from '@mantine/core';
 import { faCompress, faHome } from '@fortawesome/free-solid-svg-icons';
 import './TeacherNavbar.css'
+import NavbarTemplate from '../components/NavbarTemplate';
 
 const TeacherNavbar = ({ isOpened, setOpened }) => {
   const pathRoot = "/teacher"

@@ -101,8 +101,7 @@ const AccountFormPage = () => {
       if (result.status) {
         setFeedback({ type: 'success', message: result.statusMessage });
         setTimeout(() => {
-          navigate("/admin/accounts");
-          window.location.reload();
+          navigate("/admin/accounts", { state: { refresh: true } });
         }, 1500);
       } else {
         setFeedback({ type: 'error', message: result.statusMessage || (id ? 'Failed to Update Account' : 'Failed to Create Account') });
@@ -119,9 +118,7 @@ const AccountFormPage = () => {
           className='!bg-transparent !text-black'
           size='xl'
           p='xs'
-          onClick={() => {
-            window.location.replace("/admin/accounts");
-          }}
+          onClick={() => navigate('/admin/accounts', { state: { refresh: true } })}
         >
           <FontAwesomeIcon icon={faArrowLeft} />
         </Button>

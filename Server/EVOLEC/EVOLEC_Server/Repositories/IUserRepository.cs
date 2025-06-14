@@ -13,6 +13,7 @@ namespace EVOLEC_Server.Repositories
         Task<bool> Delete(string userId);
         Task<bool> ToggleStatus(string userId, bool status);
         Task<List<ApplicationUser>> GetUsersByRoleAsync(string roleName);
-        
+        Task<List<LessonDate>> GetStudyingLessonDate(string studentId);
+        Task<List<LessonDate>> GetTeachingLessonDate(string teacherId);
     }
 }

@@ -123,5 +123,27 @@ namespace EVOLEC_Server.Repositories
             var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
             return usersInRole.ToList();
         }
+
+        public async Task<List<LessonDate>> GetStudyingLessonDate(string studentId)
+        {
+            var student = await _userManager.FindByIdAsync(studentId);
+            if (student == null)
+                return new List<LessonDate>();
+
+            var lessonDates = await _ctx.Enrollments
+                .Where(e => e.StudentId == studentId)
+                .SelectMany(e => e.ClassRoom.LessonDates)
+                .Include(ld => ld.Teacher)
+                .Include(ld => ld.Lesson)
+                .ToListAsync();
+
+            return lessonDates;
+        }
+
+        public async Task<List<LessonDate>> GetTeachingLessonDate(string teacherId)
+        {
+            var lessonDates = await _ctx.LessonDates.Include(ld => ld.Teacher).Include(ld => ld.Lesson).Where(ld => ld.TeacherId == teacherId).ToListAsync();
+            return lessonDates;
+        }
     }
 }

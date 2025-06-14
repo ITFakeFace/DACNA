@@ -10,5 +10,6 @@ namespace EVOLEC_Server.Services
         Task<bool> UpdateRoomAsync(int id, RoomUpdateDto dto);
         Task<bool> DeleteRoomAsync(int id);
         Task<bool> IsRoomNameUniqueAsync(string name, int? excludeId = null);
+        Task<List<LessonDateScheduleDto>> GetRoomScheduleAsync(int id);
     }
 }

@@ -2,6 +2,7 @@ using EVOLEC_Server.Models;
 using EVOLEC_Server.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace EVOLEC_Server.Repositories
 {
@@ -42,7 +43,7 @@ namespace EVOLEC_Server.Repositories
 
         public async Task<ClassRoom> AddClassRoomAsync(ClassRoom classRoom)
         {
-           int result = 0;
+            int result = 0;
             var course = await _ctx.Courses
                 .Include(c => c.Lessons)
                 .FirstOrDefaultAsync(c => c.Id == classRoom.CourseId);
@@ -66,13 +67,24 @@ namespace EVOLEC_Server.Repositories
                 .ToListAsync();
 
             _ctx.LessonDates.RemoveRange(oldLessonDates);
-            return await _ctx.SaveChangesAsync() ;
+            return await _ctx.SaveChangesAsync();
         }
 
 
         public Task<bool> DeleteClassRoomAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<ApplicationUser>> GetStudentsByClassIdAsync(int classId)
+        {
+            var students = await _ctx.Enrollments
+                .Include(e => e.Student)
+                .Where(e => e.ClassRoomId == classId)
+                .Select(e => e.Student)
+                .ToListAsync();
+
+            return students;
         }
     }
 }

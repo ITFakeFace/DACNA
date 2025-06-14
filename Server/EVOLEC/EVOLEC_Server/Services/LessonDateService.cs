@@ -16,17 +16,17 @@ namespace EVOLEC_Server.Services
         private readonly IMapper _mapper;
 
         public LessonDateService(
-                ILessonDateRepository lessonDateRepository, 
+                ILessonDateRepository lessonDateRepository,
                 ILessonOffDateService lessonOffDateService,
                 IOffDateService offDateService,
                 ILessonService lessonService,
                 IMapper mapper)
         {
-            _lessonDateRepository   = lessonDateRepository;
-            _lessonOffDateService   = lessonOffDateService;
-            _offDateService         = offDateService;
-            _lessonService          = lessonService;
-            _mapper                 = mapper;
+            _lessonDateRepository = lessonDateRepository;
+            _lessonOffDateService = lessonOffDateService;
+            _offDateService = offDateService;
+            _lessonService = lessonService;
+            _mapper = mapper;
         }
 
         public async Task<LessonDateDto> GetLessonDateByIdAsync(int id)
@@ -64,7 +64,7 @@ namespace EVOLEC_Server.Services
                 return _mapper.Map<LessonDateDto>(createdLessonDate);
 
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return null!;
             }
@@ -79,7 +79,7 @@ namespace EVOLEC_Server.Services
                 _mapper.Map(lessonDateUpdateDto, lessonDate);
                 return await _lessonDateRepository.UpdateLessonDateAsync(lessonDate);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return -1;
             }
@@ -119,7 +119,7 @@ namespace EVOLEC_Server.Services
                 return false;
             }
             lessonDates = await _lessonDateRepository.AssignTeacherToLessonDateInitFunc(tmplessonDates, (int)addedClassroom.Shift!, lessonDates[0].ClassRoom);
-            if(lessonDates.IsNullOrEmpty())
+            if (lessonDates.IsNullOrEmpty())
             {
                 return false; // Không có lessonDates hợp lệ
             }
@@ -127,5 +127,5 @@ namespace EVOLEC_Server.Services
 
         }
 
-     }
+    }
 }

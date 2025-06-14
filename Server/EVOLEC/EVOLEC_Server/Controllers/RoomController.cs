@@ -124,5 +124,18 @@ namespace EVOLEC_Server.Controllers
                 Data = isUnique,
             });
         }
+
+        [HttpGet("get-schedule/{id}")]
+        public async Task<IActionResult> GetRoomSchedule(int id)
+        {
+            var result = await _roomService.GetRoomScheduleAsync(id);
+            return Ok(new ResponseEntity<IEnumerable<LessonDateScheduleDto>>
+            {
+                Status = true,
+                ResponseCode = 200,
+                StatusMessage = "Success",
+                Data = result,
+            });
+        }
     }
 }

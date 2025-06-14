@@ -89,5 +89,48 @@ namespace EVOLEC_Server.Services
             }
             return result;
         }
+
+        public async Task<List<LessonDateScheduleDto>> GetStudyingLessonDatesAsync(string studentId)
+        {
+            var lessonDates = await _userRepository.GetStudyingLessonDate(studentId);
+
+            return lessonDates.Select(ld => new LessonDateScheduleDto
+            {
+                Id = ld.Id,
+                TeacherId = ld.TeacherId,
+                TeacherName = ld.Teacher?.Fullname,
+                ClassRoomId = ld.ClassRoomId,
+                LessonId = ld.LessonId,
+                LessonName = ld.Lesson?.Name,
+                Note = ld.Note,
+                Start = CombineDateTime(ld.Date, ld.StartTime),
+                End = CombineDateTime(ld.Date, ld.EndTime)
+            }).ToList();
+        }
+
+        public async Task<List<LessonDateScheduleDto>> GetTeachingLessonDatesAsync(string teacherId)
+        {
+            var lessonDates = await _userRepository.GetTeachingLessonDate(teacherId);
+
+            return lessonDates.Select(ld => new LessonDateScheduleDto
+            {
+                Id = ld.Id,
+                TeacherId = ld.TeacherId,
+                TeacherName = ld.Teacher?.Fullname,
+                ClassRoomId = ld.ClassRoomId,
+                LessonId = ld.LessonId,
+                LessonName = ld.Lesson?.Name,
+                Note = ld.Note,
+                Start = CombineDateTime(ld.Date, ld.StartTime),
+                End = CombineDateTime(ld.Date, ld.EndTime)
+            }).ToList();
+        }
+
+        private DateTime? CombineDateTime(DateOnly? date, TimeOnly? time)
+        {
+            if (date.HasValue && time.HasValue)
+                return new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, time.Value.Hour, time.Value.Minute, 0);
+            return null;
+        }
     }
 }

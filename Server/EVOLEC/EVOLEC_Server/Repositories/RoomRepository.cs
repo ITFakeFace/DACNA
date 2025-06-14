@@ -67,5 +67,16 @@ namespace EVOLEC_Server.Repositories
                      (ld.StartTime >= startTime && ld.EndTime <= endTime))))
                 .ToListAsync();
         }
+
+        public async Task<List<LessonDate>> GetRoomScheduleAsync(int id)
+        {
+            var result = await _ctx.LessonDates
+                .Include(ld => ld.Room)
+                .Include(ld => ld.Teacher)
+                .Include(ld => ld.Lesson)
+                .Where(ld => ld.RoomId == id)
+                .ToListAsync();
+            return result;
+        }
     }
 }

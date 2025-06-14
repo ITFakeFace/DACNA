@@ -4,7 +4,7 @@ import { MantineLogo } from '@mantinex/mantine-logo';
 import './GeneralLayout.css';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getRoleFromToken, getUsernameFromToken } from '../../../services/authService';
+import { getRoleFromToken, getUsernameFromToken, isTokenValid } from '../../../services/authService';
 import EVOLEC_LogoRectangleLandscape from '../../../assets/web_logo/EVOLEC_LogoRectangle.png';
 import EVOLEC_LogoSquare from '../../../assets/web_logo/EVOLEC_LogoSquare.jpg';
 import EVOLEC_LogoNoBackground_Landscape from '../../../assets/web_logo/EVOLEC_LogoNoBackground_Landscape.png';
@@ -24,7 +24,7 @@ const GeneralLayout = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (token) {
+    if (token && isTokenValid(token)) {
       const userRole = getRoleFromToken(token);
       const userUsername = getUsernameFromToken(token);
 

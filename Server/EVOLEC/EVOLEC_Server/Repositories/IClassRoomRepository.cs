@@ -10,5 +10,6 @@ namespace EVOLEC_Server.Repositories
         Task<ClassRoom> AddClassRoomAsync(ClassRoom classRoom);
         Task<int> UpdateClassRoomAsync(ClassRoom classRoom);
         Task<bool> DeleteClassRoomAsync(int id);
+        Task<List<ApplicationUser>> GetStudentsByClassIdAsync(int classId);
     }
 }

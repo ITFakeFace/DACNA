@@ -68,7 +68,7 @@ namespace EVOLEC_Server.Controllers
                 Data = results
             });
         }
-        
+
 
         [HttpGet("teachers")]
         public async Task<IActionResult> GetAllTeachers()
@@ -264,7 +264,7 @@ namespace EVOLEC_Server.Controllers
         }
 
         // Thay đổi trạng thái người dùng (ban/unban)
-        [HttpPut("{id}/ban")]
+        [HttpPut("ban/{id}")]
         [Authorize(Roles = "ADMIN")] // Chỉ admin mới có quyền thay đổi trạng thái
         public async Task<IActionResult> ToggleBan(string id, [FromQuery] bool enable)
         {
@@ -286,7 +286,7 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = true,
                     ResponseCode = 200,
-                    StatusMessage = enable ? "Khóa tài khoản thành công" : "Gỡ khóa tài khoản thành công",
+                    StatusMessage = !enable ? "Khóa tài khoản thành công" : "Gỡ khóa tài khoản thành công",
                     Data = null
                 });
             }
@@ -310,6 +310,32 @@ namespace EVOLEC_Server.Controllers
                     Data = ex.Message
                 });
             }
+        }
+
+        [HttpGet("studying-lesson-dates/{studentId}")]
+        public async Task<IActionResult> GetStudyingLessonDates(string studentId)
+        {
+            var result = await _userService.GetStudyingLessonDatesAsync(studentId);
+            return Ok(new ResponseEntity<List<LessonDateScheduleDto>>
+            {
+                Status = true,
+                ResponseCode = 200,
+                StatusMessage = "",
+                Data = result,
+            });
+        }
+
+        [HttpGet("teaching-lesson-dates/{teacherId}")]
+        public async Task<IActionResult> GetTeachingLessonDates(string teacherId)
+        {
+            var result = await _userService.GetTeachingLessonDatesAsync(teacherId);
+            return Ok(new ResponseEntity<List<LessonDateScheduleDto>>
+            {
+                Status = true,
+                ResponseCode = 200,
+                StatusMessage = "",
+                Data = result,
+            });
         }
     }
 }

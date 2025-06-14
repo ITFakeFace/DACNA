@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using EVOLEC_Server.Services;
-using EVOLEC_Server.Dtos;
+﻿using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models; // Namespace chứa ResponseEntity<T>
+using EVOLEC_Server.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.IdentityModel.Tokens;
 
 
 namespace EVOLEC_Server.Controllers
@@ -76,7 +76,7 @@ namespace EVOLEC_Server.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var errors = ModelState.Values  
+                var errors = ModelState.Values
                     .SelectMany(v => v.Errors)
                     .Select(e => e.ErrorMessage)
                     .ToList();
@@ -97,7 +97,7 @@ namespace EVOLEC_Server.Controllers
                 bool isCreateLessonDate = (request.Shift.HasValue && !request.StartDate.ToString().IsNullOrEmpty());
                 switch (result)
                 {
-                    case 1 :
+                    case 1:
                         return Ok(new ResponseEntity<object>
                         {
 
@@ -126,7 +126,7 @@ namespace EVOLEC_Server.Controllers
 
                         });
                 }
-                
+
             }
             else
             {
@@ -158,6 +158,13 @@ namespace EVOLEC_Server.Controllers
                         });
                 }
             }
+            return BadRequest(new ResponseEntity<object>
+            {
+                Status = false,
+                ResponseCode = 400,
+                StatusMessage = "Unidentified error",
+                Data = null!
+            });
         }
 
         [HttpPut("{id}")]
@@ -210,6 +217,17 @@ namespace EVOLEC_Server.Controllers
 
         }
 
+        [HttpGet("get-students/{id}")]
+        public async Task<IActionResult> GetStudentsById(int id)
+        {
+            return Ok(new ResponseEntity<IEnumerable<UserDto>>
+            {
+                Status = true,
+                ResponseCode = 200,
+                StatusMessage = "Success",
+                Data = await _classRoomService.GetStudentsByIdAsync(id),
+            });
+        }
 
     }
 }

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Loader, LoadingOverlay, Title, UnstyledButton } from '@mantine/core';
-import { getRequest } from '../../../services/APIService';
+import { getRequest, putRequest } from '../../../services/APIService';
 import './AccountListPage.css';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Dialog } from 'primereact/dialog';
@@ -37,6 +37,9 @@ const AccountListPage = () => {
   const [deleteUserDialog, setDeleteUserDialog] = useState(false);
   const [filters, setFilters] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState('');
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const shouldRefresh = queryParams.get('refresh') === 'true';
   const [status] = useState([
     { name: 'Inactive', value: 0 },
     { name: 'Active', value: 1 },
@@ -55,7 +58,7 @@ const AccountListPage = () => {
   ]);
   const getLockoutSeverity = (status) => {
     if (status == null || status == false) return 'success';
-    if (status == true) return 'danger';
+    if (status != null || status == true) return 'danger';
     return 'secondary';
   };
   const getStatusSeverity = (status) => {
@@ -82,9 +85,20 @@ const AccountListPage = () => {
         setLoading(false);
       }
     };
-    fetchUsers();
+
+    if (shouldRefresh) {
+      fetchUsers();
+      // Sau khi fetch xong, xóa `refresh` khỏi URL nếu muốn
+      const cleanUrl = location.pathname;
+      window.history.replaceState({}, '', cleanUrl);
+    } else {
+      // Lần đầu load trang không có refresh, vẫn nên load data
+      fetchUsers();
+    }
+
     initFilters();
-  }, []);
+  }, [location.search]);
+
 
   // Fullname, Gender, Dob, Email, Phone, Role, Status, Action
   const initFilters = () => {
@@ -194,9 +208,36 @@ const AccountListPage = () => {
     );
   };
 
+  const userStatusOnClick = async (rowData) => {
+    try {
+      const enable = rowData.status === 1 ? false : true;
+      const result = await putRequest(`/user/ban/${rowData.id}?enable=${enable}`);
+
+      if (result.status === true) {
+        // Cập nhật danh sách users bằng cách tạo mảng mới
+        setUsers(prevUsers =>
+          prevUsers.map(user =>
+            user.id === rowData.id
+              ? {
+                ...user,
+                status: enable ? 1 : 0,
+                lockout: enable ? false : true, // hoặc dùng logic khác tùy bạn định nghĩa "bị khóa"
+              }
+              : user
+          )
+        );
+
+        console.log("userStatusOnClick: Successfully ban/unban user");
+      }
+    } catch (ex) {
+      console.error("userStatusOnClick: Error when ban user", ex);
+    }
+  };
+
+
   // Status Render & Event
   const statusBodyTemplate = (rowData) => {
-    return <Button severity={getLockoutSeverity(rowData.lockout)}>{rowData.lockout == null ? 'Active' : 'Inactive'}</Button>;
+    return <Button severity={getLockoutSeverity(rowData.lockout)} onClick={() => userStatusOnClick(rowData)}>{rowData.lockout == null || rowData.lockout == false ? 'Active' : 'Inactive'}</Button>;
   };
 
   const statusFilterTemplate = (options) => {

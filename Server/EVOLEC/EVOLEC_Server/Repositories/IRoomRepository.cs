@@ -1,4 +1,5 @@
-﻿using EVOLEC_Server.Models;
+﻿using EVOLEC_Server.Dtos;
+using EVOLEC_Server.Models;
 
 namespace EVOLEC_Server.Repositories
 {
@@ -13,5 +14,7 @@ namespace EVOLEC_Server.Repositories
         // Extra
         Task<bool> IsRoomNameUniqueAsync(string name, int? excludeId = null);
         Task<List<Room>> GetAvailableRoomsInTime(DateOnly date, TimeOnly startTime, TimeOnly endTime);
+
+        Task<List<LessonDate>> GetRoomScheduleAsync(int id);
     }
 }

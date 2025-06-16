@@ -5,6 +5,7 @@ import { Button } from "primereact/button";
 import { Group, Title } from "@mantine/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import AffectedClassTable from "./AffectedDataTableComponent";
 
 const OffDateDetailsPage = () => {
   let emptyOffDate = {
@@ -53,7 +54,7 @@ const OffDateDetailsPage = () => {
 
       </div>
       <div className="row">
-        <Title size='xl' mt={30}>Off Date's Inforation</Title>
+        <Title size='xl' mt={30}>Off Date's Information</Title>
         <Group className="m-3">
           <div className="row flex w-full">
             <div className="w-1/4 font-semibold">Reason for Leave :</div>
@@ -73,7 +74,7 @@ const OffDateDetailsPage = () => {
       <div className="row">
         <Title size='xl' mt={50}>Off Date's Affected Class</Title>
         <Group>
-
+            <AffectedClassTable offDateId={id} />
         </Group>
       </div>
     </div>

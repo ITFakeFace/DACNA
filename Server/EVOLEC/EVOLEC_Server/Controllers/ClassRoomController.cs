@@ -125,14 +125,6 @@ namespace EVOLEC_Server.Controllers
                             }
 
                         });
-                     default:
-                        return BadRequest(new ResponseEntity<object>
-                        {
-                            Status = false,
-                            ResponseCode = 400,
-                            StatusMessage = "Success",
-                            Data = null!
-                        });
                 }
 
             }

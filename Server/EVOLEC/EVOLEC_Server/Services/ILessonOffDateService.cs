@@ -12,5 +12,6 @@ namespace EVOLEC_Server.Services
         Task<bool> UpdateAsync(LessonOffDateUpdateDto updateDto); // Đã thay đổi
         Task<bool> DeleteAsync(int lessonDateId, int offDateId);
         Task<List<LessonDate>?> HandleHolidays(List<LessonDate> lessonDates);
-    }
+        Task<List<ClassRoomAffectedDto>> GetClassRoomAffectedByOffDateId(int offDateId);
+        }
 }

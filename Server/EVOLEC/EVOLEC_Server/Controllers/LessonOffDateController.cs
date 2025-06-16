@@ -29,8 +29,8 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = true,
                     ResponseCode = 200,
-                    StatusMessage = "Lấy thông tin thành công",
-                    Data = new { result }
+                    StatusMessage = "Success",
+                    Data =  result
                 });
             }
             catch (Exception ex)
@@ -74,8 +74,8 @@ namespace EVOLEC_Server.Controllers
         [HttpGet("offdate/{offDateId}")]
         public async Task<IActionResult> GetAllByOffDateId(int offDateId)
         {
-            //try
-            //{
+            try
+            {
                 var result = await _lessonOffDateService.GetAllByOffDateIdAsync(offDateId);
                 return Ok(new ResponseEntity<object>
                 {
@@ -84,17 +84,17 @@ namespace EVOLEC_Server.Controllers
                     StatusMessage = "Success",
                     Data = result
                 });
-            //}
-            //catch (Exception ex)
-            //{
-            //    return StatusCode(500, new ResponseEntity<object>
-            //    {
-            //        Status = false,
-            //        ResponseCode = 500,
-            //        StatusMessage = "Undefined Error",
-            //        Data = null
-            //    });
-            //}
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseEntity<object>
+                {
+                    Status = false,
+                    ResponseCode = 500,
+                    StatusMessage = "Undefined Error",
+                    Data = null
+                });
+            }
         }
 
         [HttpPost]
@@ -203,30 +203,40 @@ namespace EVOLEC_Server.Controllers
             }
         }
 
-        //[HttpGet("offdate/{offdateId}")]
-        //public async Task<IActionResult> GetLessonOffDatesByOffDateID(int classRoomId)
-        //{
-        //    try
-        //    {
-        //        var result = await _lessonOffDateService.GetLessonOffDatesByOffDateIDAsync(classRoomId);
-        //        return Ok(new ResponseEntity<object>
-        //        {
-        //            Status = true,
-        //            ResponseCode = 200,
-        //            StatusMessage = "Successfull",
-        //            Data = result
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new ResponseEntity<object>
-        //        {
-        //            Status = false,
-        //            ResponseCode = 500,
-        //            StatusMessage = "Undefined Error",
-        //            Data = null
-        //        });
-        //    }
-        //}
+        [HttpGet("affected/{id}")]
+        public async Task<IActionResult> GetClassAffectedByOffDateId(int id)
+        {
+            //try
+            //{
+            //    var result = await _lessonOffDateService.GetClassRoomAffectedByOffDateId(id);
+            //    return Ok(new ResponseEntity<object>
+            //    {
+            //        Status = true,
+            //        ResponseCode = 200,
+            //        StatusMessage = "Success",
+            //        Data = result
+            //    });
+            //}
+            //catch (Exception ex)
+            //{
+            //    return StatusCode(500, new ResponseEntity<object>
+            //    {
+            //        Status = false,
+            //        ResponseCode = 500,
+            //        StatusMessage = "Undefined Error",
+            //        Data = null
+            //    });
+
+            //}
+
+            var result = await _lessonOffDateService.GetClassRoomAffectedByOffDateId(id);
+            return Ok(new ResponseEntity<object>
+            {
+                Status = true,
+                ResponseCode = 200,
+                StatusMessage = "Success",
+                Data = result
+            });
+        }
     }
 }

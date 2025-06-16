@@ -133,6 +133,13 @@ namespace EVOLEC_Server.Services
 
             return lessonDates;
         }
+        public async Task<List<ClassRoomAffectedDto>> GetClassRoomAffectedByOffDateId(int offDateId)
+        {
+            var lessonOffDates = await _repository.GetLessonOffDatesWithDetailsByOffDateId(offDateId);
+
+            return _mapper.Map<List<ClassRoomAffectedDto>>(lessonOffDates);
+        }
+
 
     }
 }

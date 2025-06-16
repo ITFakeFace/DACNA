@@ -1,4 +1,4 @@
-﻿using EVOLEC_Server.Models;
+using EVOLEC_Server.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EVOLEC_Server.Repositories
@@ -96,6 +96,21 @@ namespace EVOLEC_Server.Repositories
                 // Lưu thay đổi vào cơ sở dữ liệu
                 await _ctx.SaveChangesAsync();
             }
+        }
+
+        public async Task<List<LessonOffDate>> GetLessonOffDatesWithDetailsByOffDateId(int offDateId)
+        {
+            return await _ctx.LessonOffDates
+                .Include(l => l.LessonDate)
+                    .ThenInclude(ld => ld.Lesson)
+                .Include(l=> l.LessonDate)
+                        .ThenInclude(ld => ld.ClassRoom)
+                        .ThenInclude(cr => cr.Course)
+                .Include(l => l.LessonDate.Teacher)
+                .Include(l => l.LessonDate.Room)
+
+                .Where(lod => lod.OffDateId == offDateId)
+                .ToListAsync();
         }
     }
 }

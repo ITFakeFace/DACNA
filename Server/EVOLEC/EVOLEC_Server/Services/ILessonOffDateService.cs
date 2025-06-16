@@ -1,4 +1,4 @@
-﻿using EVOLEC_Server.Dtos;
+using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
 
 namespace EVOLEC_Server.Services
@@ -7,10 +7,11 @@ namespace EVOLEC_Server.Services
     {
         Task<LessonOffDateDto> GetAsync(int lessonDateId, int offDateId);
         Task<IEnumerable<LessonOffDateDto>> GetAllAsync();
-        Task<IEnumerable<LessonOffDateDto>> GetAllByOffDateIdAsync(int offDateId);
+        Task<lessonOffDateClassResp> GetAllByOffDateIdAsync(int offDateId);
         Task<LessonOffDateDto> CreateAsync(LessonOffDateCreateDto createDto);
         Task<bool> UpdateAsync(LessonOffDateUpdateDto updateDto); // Đã thay đổi
         Task<bool> DeleteAsync(int lessonDateId, int offDateId);
         Task<List<LessonDate>?> HandleHolidays(List<LessonDate> lessonDates);
-    }
+        Task<List<ClassRoomAffectedDto>> GetClassRoomAffectedByOffDateId(int offDateId);
+        }
 }

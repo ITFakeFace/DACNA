@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Notification, TextInput } from '@mantine/core';
 import { Dropdown } from 'primereact/dropdown';
-import { postRequest, getRequest } from '../../services/APIService';
+import { postRequest, getRequest, putRequest } from '../../services/APIService';
 import { getUserIdFromToken, getUsernameFromToken } from '../../services/authService';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const EnrollmentsCreateForm = () => {
+  const navigate = useNavigate();
+  const { id } = useParams(); // Lấy id từ params URL nếu có, giúp phân biệt giữa tạo mới và sửa
+
   const [students, setStudents] = useState([]);
   const [classrooms, setClassrooms] = useState([]);
   const [studentId, setStudentId] = useState('');
@@ -14,7 +18,8 @@ const EnrollmentsCreateForm = () => {
   const [loading, setLoading] = useState(false);
 
   const creatorId = getUserIdFromToken(localStorage.getItem('token'));  // Lấy Creator ID từ Token
-  const creatorName= getUsernameFromToken(localStorage.getItem('token'));
+  const creatorName = getUsernameFromToken(localStorage.getItem('token'));
+
   // Fetch dữ liệu Student và Classroom
   useEffect(() => {
     const fetchStudents = async () => {
@@ -30,29 +35,44 @@ const EnrollmentsCreateForm = () => {
 
     const fetchClassrooms = async () => {
       const res = await getRequest('/ClassRoom');
-      console.log("ClassRoom")
-     
       if (res.Status) {
-        console.log(res.Data.$values)
         const data = res.Data.$values.map((room) => ({
-         "label":room.$id  +" - "+ room.Course.Name,   // Hiển thị classroom id
-          value: room.Id,     // Giá trị là classRoomId
+          label: room.$id + ' - ' + room.Course.Name,  // Hiển thị classroom id
+          value: room.Id,           // Giá trị là classRoomId
         }));
-        console.log("Data: ")
-        console.log(data)
         setClassrooms(data);
       }
-      
     };
 
     fetchStudents();
     fetchClassrooms();
-  }, []);
+
+    if (id) {
+      // Nếu có id, gọi API để lấy dữ liệu enrollment hiện tại
+      fetchEnrollmentData(id);
+    }
+  }, [id]);
+
+  // Fetch dữ liệu Enrollment khi cập nhật
+  const fetchEnrollmentData = async (id) => {
+    try {
+      const res = await getRequest(`/enrollment/${id}`);
+      console.log(res)
+      if (res.status) {
+        const enrollment = res.data;
+        setStudentId(enrollment.studentId);
+        setClassRoomId(enrollment.classRoomId);
+        setEnrollDate(enrollment.enrollDate);
+      }
+    } catch (error) {
+      console.error('Error fetching enrollment:', error);
+    }
+  };
 
   // Xử lý khi submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Kiểm tra các trường bắt buộc
     if (!studentId || !classRoomId || !creatorId || !enrollDate) {
       setFeedback({ type: 'error', message: 'All fields are required!' });
@@ -70,11 +90,19 @@ const EnrollmentsCreateForm = () => {
     };
 
     try {
-      const res = await postRequest('/enrollment/create', payload); // Gọi API để tạo enrollment
-      if (res.status) {
-        setFeedback({ type: 'success', message: 'Enrollment created successfully!' });
+      let res;
+      if (id) {
+        // Nếu có id, gọi API PUT để cập nhật
+        res = await putRequest(`/enrollment/update/${id}`, payload);
       } else {
-        setFeedback({ type: 'error', message: 'Failed to create enrollment' });
+        // Nếu không có id, gọi API POST để tạo mới
+        res = await postRequest('/enrollment/create', payload);
+      }
+
+      if (res.status) {
+        setFeedback({ type: 'success', message: 'Enrollment created/updated successfully!' });
+      } else {
+        setFeedback({ type: 'error', message: 'Failed to create/update enrollment' });
       }
     } catch (error) {
       console.error('Error:', error);
@@ -86,16 +114,17 @@ const EnrollmentsCreateForm = () => {
 
   return (
     <div style={{ maxWidth: '400px', margin: 'auto' }}>
-          {/* Back Button */}
-        <Button
-          type="button"
-          onClick={() => navigate("/enrollment-staff/enrollments/")} // Quay lại trang trước đó
-          variant="outline"
-          fullWidth
-          style={{ marginTop: '10px' }}
-        >
-          Back
-        </Button>
+      {/* Back Button */}
+      <Button
+        type="button"
+        onClick={() => navigate("/enrollment-staff/enrollments/")} // Quay lại trang danh sách
+        variant="outline"
+        fullWidth
+        style={{ marginTop: '10px' }}
+      >
+        Back
+      </Button>
+
       <form onSubmit={handleSubmit}>
         {feedback && (
           <Notification
@@ -153,7 +182,7 @@ const EnrollmentsCreateForm = () => {
 
         {/* Submit Button */}
         <Button type="submit" loading={loading} fullWidth>
-          Create Enrollment
+          {id ? 'Update Enrollment' : 'Create Enrollment'}
         </Button>
       </form>
     </div>

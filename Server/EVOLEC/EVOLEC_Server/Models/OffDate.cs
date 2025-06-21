@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EVOLEC_Server.Models
 {
@@ -19,6 +20,8 @@ namespace EVOLEC_Server.Models
         public int Status { get; set; }
 
         public string? TeacherId { get; set; }
+
+        [ForeignKey("TeacherId")]
         public ApplicationUser? Teacher { get; set; }
 
         public ICollection<LessonOffDate> LessonOffDates { get; set; } = new List<LessonOffDate>();

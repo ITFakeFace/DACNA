@@ -87,9 +87,9 @@ const GeneralLayout = () => {
                 {logged ?
                   <>
                     <UserButton /> /
-                    <UnstyledButton type='button' onClick={() => logout()}> Đăng xuất</UnstyledButton>
+                    <UnstyledButton type='button' onClick={() => logout()}> Sign Out</UnstyledButton>
                   </>
-                  : <UnstyledButton type='button' onClick={() => navigate('/login')}>Đăng nhập</UnstyledButton>}
+                  : <UnstyledButton type='button' onClick={() => navigate('/login')}>Sign In</UnstyledButton>}
               </Group>
             </Group>
           </Group>

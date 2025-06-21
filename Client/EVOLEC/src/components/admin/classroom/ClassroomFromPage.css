@@ -1,17 +1,41 @@
-/* Tạo class tùy chỉnh cho TextInput disabled */
-.custom-disabled-input .mantine-TextInput-input:disabled {
-  background-color: #ffffff; /* Màu nền nhạt cho disabled */
-  color: #000; /* Màu chữ */
-  border: 1px solid #ccc; /* Border nhạt */
-  cursor: not-allowed; /* Chỉ báo rằng trường không thể chỉnh sửa */
-  
+
+.classroom-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.custom-disabled-input .mantine-TextInput-input {
-  transition: background-color 0.3s ease;
+/* Áp dụng cho các trường trong form */
+.classroom-form .p-field {
+  display: flex;
+  flex-direction: column;
 }
 
-.custom-disabled-input .mantine-TextInput-input:focus {
-  outline: none;
-  box-shadow: none;
+.classroom-form .p-field label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.classroom-form .p-dropdown {
+  width: 100% !important;
+}
+
+.classroom-form .form-control,
+.classroom-form .react-datepicker-wrapper,
+.classroom-form .react-datepicker__input-container input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Vùng hiển thị username */
+.classroom-form .custom-disabled-input input {
+  background-color: #f1f3f5 !important;
+  color: #495057 !important;
+  cursor: not-allowed;
+}
+
+/* Nút tạo/lưu */
+.classroom-form button[type="submit"] {
+  margin-top: 1rem;
 }

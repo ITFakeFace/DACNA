@@ -28,28 +28,44 @@ namespace EVOLEC_Server.Services
                     ApplicationUser? teacher1 = await _userRepository.FindById(dto.Teacher1Id);
                     if (teacher1 == null)
                     {
-                        return -1; // TeacherID1 not exist
+                        return -1; // Teacher1Id không tồn tại
                     }
+
                     ApplicationUser? teacher2 = await _userRepository.FindById(dto.Teacher2Id);
                     if (teacher2 == null)
                     {
-                        return -2;// TeacherID2 not exits
+                        return -2; // Teacher2Id không tồn tại
                     }
                 }
+
                 var entity = _mapper.Map<ClassRoom>(dto);
                 ClassRoom addedClassroom = await _repository.AddClassRoomAsync(entity);
-                int classRoomId = addedClassroom.Id;
-                if (!await _lessonDateService.AddLessonDatesToClassRoom(addedClassroom))
+
+                int lessonResult = await _lessonDateService.AddLessonDatesToClassRoom(addedClassroom);
+                if (lessonResult != 1)
                 {
-                    return 2;// cannot create lesson dates for this class room
+                    return HandleAddLessonDatesResult(lessonResult); // Trả về mã lỗi tương ứng
                 }
 
-                return classRoomId;
+                return addedClassroom.Id;
             }
             catch (Exception ex)
             {
+                return -3; // Exception không xác định
+            }
+        }
 
-                return -3;
+        private int HandleAddLessonDatesResult(int resultCode)
+        {
+            switch (resultCode)
+            {
+                case 0:
+                    return -4; // Không có LessonDate sau khi xử lý ngày nghỉ
+                case -2:
+                    return -5; // Không thể gán giáo viên
+                case -1:
+                default:
+                    return -6; // Lỗi không xác định trong AddLessonDatesToClassRoom
             }
         }
 
@@ -109,6 +125,7 @@ namespace EVOLEC_Server.Services
                 bool IsShiftHasValue = classRoom.Shift.HasValue;
                 bool IsStartDateHasValue = classRoom.StartDate.HasValue;
                 await _repository.UpdateClassRoomAsync(classRoom);
+                
                 if (IsShiftHasValue && IsStartDateHasValue) { return 1; }
                 ;
                 if (!IsShiftHasValue) { return 2; }

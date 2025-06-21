@@ -85,7 +85,7 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = false,
                     ResponseCode = 400,
-                    StatusMessage = "Dữ liệu đầu vào không hợp lệ",
+                    StatusMessage = "Invalid input data",
                     Data = errors
                 });
             }
@@ -95,77 +95,73 @@ namespace EVOLEC_Server.Controllers
             if (result > 0)
             {
                 bool isCreateLessonDate = (request.Shift.HasValue && !request.StartDate.ToString().IsNullOrEmpty());
-                switch (result)
+                return Ok(new ResponseEntity<object>
                 {
-                    case 2:
-                        return Ok(new ResponseEntity<object>
-                        {
-
-                            Status = true,
-                            ResponseCode = isCreateLessonDate ? 200 : 201,
-                            StatusMessage = "Create LessonDate Failed. There is a lessonDate not having teacher or ClassRoom",
-                            Data = new
-                            {
-                                Id = result
-                            }
-
-                        });
-                    default:
-                        return Ok(new ResponseEntity<object>
-                        {
-
-                            Status = true,
-                            ResponseCode = isCreateLessonDate ? 200 : 201,
-                            StatusMessage = isCreateLessonDate
-                    ? "Tạo lớp học thành công"
-                    : "Vui lòng nhập ca học và ngày học để tạo lessonDate",
-                            Data = new
-                            {
-                                Id = result
-                            }
-
-                        });
-                }
-
+                    Status = true,
+                    ResponseCode = isCreateLessonDate ? 200 : 201,
+                    StatusMessage = isCreateLessonDate
+                        ? "Class created successfully"
+                        : "Class created without lesson dates",
+                    Data = new { Id = result }
+                });
             }
             else
             {
-                switch (result)
+                return result switch
                 {
-                    case -1:
-                        return BadRequest(new ResponseEntity<object>
-                        {
-                            Status = false,
-                            ResponseCode = 400,
-                            StatusMessage = "TeacherID1 not found",
-                            Data = null!
-                        });
-                    case -2:
-                        return BadRequest(new ResponseEntity<object>
-                        {
-                            Status = false,
-                            ResponseCode = 400,
-                            StatusMessage = "TeacherID2 not found",
-                            Data = null!
-                        });
-                    default:
-                        return BadRequest(new ResponseEntity<object>
-                        {
-                            Status = false,
-                            ResponseCode = 400,
-                            StatusMessage = "Unidentified error",
-                            Data = null!
-                        });
-                }
+                    -1 => BadRequest(new ResponseEntity<object>
+                    {
+                        Status = false,
+                        ResponseCode = 400,
+                        StatusMessage = "Teacher1 not found",
+                        Data = null!
+                    }),
+                    -2 => BadRequest(new ResponseEntity<object>
+                    {
+                        Status = false,
+                        ResponseCode = 400,
+                        StatusMessage = "Teacher2 not found",
+                        Data = null!
+                    }),
+                    -3 => StatusCode(500, new ResponseEntity<object>
+                    {
+                        Status = false,
+                        ResponseCode = 500,
+                        StatusMessage = "Server error",
+                        Data = null!
+                    }),
+                    -4 => BadRequest(new ResponseEntity<object>
+                    {
+                        Status = false,
+                        ResponseCode = 400,
+                        StatusMessage = "No valid lesson dates",
+                        Data = null!
+                    }),
+                    -5 => BadRequest(new ResponseEntity<object>
+                    {
+                        Status = false,
+                        ResponseCode = 400,
+                        StatusMessage = "Cannot assign teacher",
+                        Data = null!
+                    }),
+                    -6 => StatusCode(500, new ResponseEntity<object>
+                    {
+                        Status = false,
+                        ResponseCode = 500,
+                        StatusMessage = "Unknown lesson date error",
+                        Data = null!
+                    }),
+                    _ => StatusCode(500, new ResponseEntity<object>
+                    {
+                        Status = false,
+                        ResponseCode = 500,
+                        StatusMessage = "Unknown error",
+                        Data = null!
+                    })
+                };
             }
-            return BadRequest(new ResponseEntity<object>
-            {
-                Status = false,
-                ResponseCode = 400,
-                StatusMessage = "Unidentified error",
-                Data = null!
-            });
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] ClassRoomUpdateDto classRoom)

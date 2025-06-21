@@ -31,6 +31,7 @@ import StudentLessonDateDetails from "./components/student/lesson-date/StudentLe
 import TeacherDashboard from "./components/teacher/dashboard/TeacherDashboard";
 import TeacherLessonDateDetails from "./components/teacher/lesson-date/TeacherLessonDateDetails";
 import LessonDateDetailsPage from "./components/admin/lesson-date/LessonDateDetailsPage";
+import AccountDetailsPage from "./components/authentication/admin/AccountDetailsPage";
 
 function Dashboard() {
   return <h2>Dashboard Page</h2>;
@@ -63,6 +64,7 @@ export default function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="settings" element={<Settings />} />
             <Route path="accounts" element={<AccountListPage />} />
+            <Route path="accounts/:id" element={<AccountDetailsPage />} />
             <Route path="accounts/create" element={<AccountFormPage />} />
             <Route path="accounts/update/:id" element={<AccountFormPage />} />
             <Route path="courses" element={<CourseListPage />} />

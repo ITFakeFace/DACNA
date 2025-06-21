@@ -4,8 +4,9 @@ import { Tag } from "primereact/tag";
 import { useEffect, useState } from "react";
 import { getRequest } from "../../services/APIService";
 import { DataTable } from "primereact/datatable";
+import { formatDate } from "../../utils/dateUtil";
 
-const StudentTable = ({ classroomId }) => {
+const StudentTable = ({ title, classroomId }) => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lesson, setLesson] = useState(null);
@@ -40,10 +41,7 @@ const StudentTable = ({ classroomId }) => {
         return <Tag severity='secondary'>Undefined</Tag>
     }
   };
-  function formatDate(dateString) {
-    const [year, month, day] = dateString.split("-");
-    return `${day}-${month}-${year}`;
-  }
+
   // Date of Birth Render & Event
   const dobBodyTemplate = (rowData) => {
     return formatDate(rowData.dob);
@@ -53,8 +51,8 @@ const StudentTable = ({ classroomId }) => {
     return (<></>);
   }
   return (
-    <div>
-      <div className="w-full font-bold text-4xl text-center">Student List</div>
+    <div className="mt-10">
+      <div className="w-full font-semibold text-4xl text-center mb-5">{title ?? "Student List"}</div>
       {
         loading
           ? <Loader />
@@ -65,7 +63,6 @@ const StudentTable = ({ classroomId }) => {
             rows={10}
             loading={loading}
             dataKey="id"
-            header={tableHeader}
             emptyMessage="No students found."
           >
             <Column header="Fullname" field="fullname" sortable style={{ minWidth: '15rem' }} />

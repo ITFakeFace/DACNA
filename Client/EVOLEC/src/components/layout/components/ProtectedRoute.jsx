@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { getRoleFromToken, isTokenValid } from "../../../services/authService";
 
 export default function ProtectedRoute({ requiredRole }) {

@@ -1,3 +1,4 @@
+using AutoMapper;
 using EVOLEC_Server.CustomException;
 using EVOLEC_Server.Dtos;
 using EVOLEC_Server.Models;
@@ -10,11 +11,13 @@ namespace EVOLEC_Server.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository, UserManager<ApplicationUser> userManager)
+        public UserService(IUserRepository userRepository, UserManager<ApplicationUser> userManager, IMapper mapper)
         {
             _userRepository = userRepository;
             _userManager = userManager;
+            _mapper = mapper;
         }
 
         // Tạo người dùng mới
@@ -131,6 +134,52 @@ namespace EVOLEC_Server.Services
             if (date.HasValue && time.HasValue)
                 return new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, time.Value.Hour, time.Value.Minute, 0);
             return null;
+        }
+
+        public async Task<IEnumerable<ClassRoomDTO>> GetStudyClassRoom(string studentId)
+        {
+            var _classes = await _userRepository.GetStudyClassRoom(studentId);
+
+            var classRoomDtos = _classes.Select(classRoom => new ClassRoomDTO
+            {
+                Id = classRoom.Id,
+                Teacher1 = classRoom.Teacher1 != null ? _mapper.Map<ShortInformationTeacher>(classRoom.Teacher1) : null,
+                Teacher2 = _mapper.Map<ShortInformationTeacher>(classRoom.Teacher2),
+                Creator = _mapper.Map<ShortInformationTeacher>(classRoom.Creator),
+
+                Course = _mapper.Map<CourseDto>(classRoom.Course),
+
+                // Ánh xạ các trườg khác
+                StartDate = classRoom.StartDate,
+                EndDate = classRoom.EndDate,
+                Status = classRoom.Status,
+                Shift = classRoom.Shift
+            }).ToList();
+
+            return classRoomDtos;
+        }
+
+        public async Task<IEnumerable<ClassRoomDTO>> GetTeachClassRoom(string teacherId)
+        {
+            var _classes = await _userRepository.GetTeachClassRoom(teacherId);
+
+            var classRoomDtos = _classes.Select(classRoom => new ClassRoomDTO
+            {
+                Id = classRoom.Id,
+                Teacher1 = classRoom.Teacher1 != null ? _mapper.Map<ShortInformationTeacher>(classRoom.Teacher1) : null,
+                Teacher2 = _mapper.Map<ShortInformationTeacher>(classRoom.Teacher2),
+                Creator = _mapper.Map<ShortInformationTeacher>(classRoom.Creator),
+
+                Course = _mapper.Map<CourseDto>(classRoom.Course),
+
+                // Ánh xạ các trườg khác
+                StartDate = classRoom.StartDate,
+                EndDate = classRoom.EndDate,
+                Status = classRoom.Status,
+                Shift = classRoom.Shift
+            }).ToList();
+
+            return classRoomDtos;
         }
     }
 }

@@ -26,7 +26,7 @@ const AdminLayout = () => {
       layout="alt"
       // header={{ height: 60 }}
       footer={{ height: 60 }}
-      navbar={{ width: navOpened ? 300 : 75, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+      navbar={{ width: navOpened ? 300 : 75, collapsed: { mobile: !opened } }}
       //aside={{ width: 300, breakpoint: 'md', collapsed: { desktop: false, mobile: true } }}
       padding="md"
     >

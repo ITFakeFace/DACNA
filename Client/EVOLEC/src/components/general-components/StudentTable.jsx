@@ -50,6 +50,7 @@ const StudentTable = ({ title, classroomId }) => {
   const tableHeader = () => {
     return (<></>);
   }
+
   return (
     <div className="mt-10">
       <div className="w-full font-semibold text-4xl text-center mb-5">{title ?? "Student List"}</div>

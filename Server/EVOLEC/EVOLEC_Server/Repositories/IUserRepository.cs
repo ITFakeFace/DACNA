@@ -15,5 +15,8 @@ namespace EVOLEC_Server.Repositories
         Task<List<ApplicationUser>> GetUsersByRoleAsync(string roleName);
         Task<List<LessonDate>> GetStudyingLessonDate(string studentId);
         Task<List<LessonDate>> GetTeachingLessonDate(string teacherId);
+        Task<List<ClassRoom>> GetStudyClassRoom(string studentId);
+        Task<List<ClassRoom>> GetTeachClassRoom(string teacherId);
+
     }
 }

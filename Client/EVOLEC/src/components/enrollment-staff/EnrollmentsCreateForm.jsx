@@ -4,10 +4,12 @@ import { Dropdown } from 'primereact/dropdown';
 import { postRequest, getRequest, putRequest } from '../../services/APIService';
 import { getUserIdFromToken, getUsernameFromToken } from '../../services/authService';
 import { useNavigate, useParams } from 'react-router-dom';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const EnrollmentsCreateForm = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // Lấy id từ params URL nếu có, giúp phân biệt giữa tạo mới và sửa
+  const { id } = useParams();
 
   const [students, setStudents] = useState([]);
   const [classrooms, setClassrooms] = useState([]);
@@ -17,17 +19,16 @@ const EnrollmentsCreateForm = () => {
   const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const creatorId = getUserIdFromToken(localStorage.getItem('token'));  // Lấy Creator ID từ Token
+  const creatorId = getUserIdFromToken(localStorage.getItem('token'));
   const creatorName = getUsernameFromToken(localStorage.getItem('token'));
 
-  // Fetch dữ liệu Student và Classroom
   useEffect(() => {
     const fetchStudents = async () => {
       const res = await getRequest('/user/students');
       if (res.status) {
         const data = res.data.map((student) => ({
-          label: student.fullname, // Hiển thị tên đầy đủ
-          value: student.id,       // Giá trị là studentId
+          label: student.fullname,
+          value: student.id,
         }));
         setStudents(data);
       }
@@ -37,8 +38,8 @@ const EnrollmentsCreateForm = () => {
       const res = await getRequest('/ClassRoom');
       if (res.Status) {
         const data = res.Data.$values.map((room) => ({
-          label: room.$id + ' - ' + room.Course.Name,  // Hiển thị classroom id
-          value: room.Id,           // Giá trị là classRoomId
+          label: room.$id + ' - ' + room.Course.Name,
+          value: room.Id,
         }));
         setClassrooms(data);
       }
@@ -48,16 +49,13 @@ const EnrollmentsCreateForm = () => {
     fetchClassrooms();
 
     if (id) {
-      // Nếu có id, gọi API để lấy dữ liệu enrollment hiện tại
       fetchEnrollmentData(id);
     }
   }, [id]);
 
-  // Fetch dữ liệu Enrollment khi cập nhật
   const fetchEnrollmentData = async (id) => {
     try {
       const res = await getRequest(`/enrollment/${id}`);
-      console.log(res)
       if (res.status) {
         const enrollment = res.data;
         setStudentId(enrollment.studentId);
@@ -69,11 +67,9 @@ const EnrollmentsCreateForm = () => {
     }
   };
 
-  // Xử lý khi submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra các trường bắt buộc
     if (!studentId || !classRoomId || !creatorId || !enrollDate) {
       setFeedback({ type: 'error', message: 'All fields are required!' });
       return;
@@ -86,16 +82,14 @@ const EnrollmentsCreateForm = () => {
       classRoomId,
       creatorId,
       enrollDate,
-      status: 1,  // Status mặc định là 1 (Active)
+      status: 1,
     };
 
     try {
       let res;
       if (id) {
-        // Nếu có id, gọi API PUT để cập nhật
         res = await putRequest(`/enrollment/update/${id}`, payload);
       } else {
-        // Nếu không có id, gọi API POST để tạo mới
         res = await postRequest('/enrollment/create', payload);
       }
 
@@ -113,17 +107,34 @@ const EnrollmentsCreateForm = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: 'auto' }}>
+    <div
+      style={{
+        maxWidth: '600px',
+        margin: '40px auto',
+        padding: '32px',
+        backgroundColor: '#fff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+      }}
+    >
       {/* Back Button */}
-      <Button
-        type="button"
-        onClick={() => navigate("/enrollment-staff/enrollments/")} // Quay lại trang danh sách
-        variant="outline"
-        fullWidth
-        style={{ marginTop: '10px' }}
+      <button
+        onClick={() => navigate('/enrollment-staff/enrollments/')}
+        style={{
+          background: 'none',
+          border: 'none',
+          color: '#1f2937',
+          fontWeight: 600,
+          fontSize: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          cursor: 'pointer',
+          marginBottom: '24px',
+        }}
       >
-        Back
-      </Button>
+        <FontAwesomeIcon icon={faArrowLeft} />
+        <span style={{ marginLeft: '10px' }}>Back</span>
+      </button>
 
       <form onSubmit={handleSubmit}>
         {feedback && (
@@ -131,56 +142,67 @@ const EnrollmentsCreateForm = () => {
             color={feedback.type === 'success' ? 'teal' : 'red'}
             title={feedback.type === 'success' ? 'Success' : 'Error'}
             disallowClose
+            style={{ marginBottom: '20px' }}
           >
             {feedback.message}
           </Notification>
         )}
 
-        {/* Dropdown for Student */}
-        <div className="p-field mb-3">
-          <label>Student</label>
+        {/* Student Dropdown */}
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Student</label>
           <Dropdown
             value={studentId}
             options={students}
-            onChange={(e) => setStudentId(e.value)} // Set studentId khi thay đổi
+            onChange={(e) => setStudentId(e.value)}
             placeholder="Select Student"
             filter
             showClear
+            style={{ width: '100%' }}
           />
         </div>
 
-        {/* Dropdown for Classroom */}
-        <div className="p-field mb-3">
-          <label>Classroom</label>
+        {/* Classroom Dropdown */}
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Classroom</label>
           <Dropdown
             value={classRoomId}
             options={classrooms}
-            onChange={(e) => setClassRoomId(e.value)} // Set classRoomId khi thay đổi
+            onChange={(e) => setClassRoomId(e.value)}
             placeholder="Select Classroom"
             filter
             showClear
+            style={{ width: '100%' }}
           />
         </div>
 
-        {/* Creator Id */}
-        <TextInput
-          label="Creator"
-          value={creatorName}
-          disabled
-          className="custom-disabled-input select-none mb-3"
-        />
+        {/* Creator Display */}
+        <div style={{ marginBottom: '20px' }}>
+          <TextInput
+            label="Creator"
+            value={creatorName}
+            disabled
+            styles={{
+              input: {
+                backgroundColor: '#f9fafb',
+                cursor: 'not-allowed',
+              },
+            }}
+          />
+        </div>
 
-        {/* Enroll Date */}
-        <TextInput
-          label="Enrollment Date"
-          type="date"
-          value={enrollDate}
-          onChange={(e) => setEnrollDate(e.target.value)} // Set enrollDate khi thay đổi
-          required
-          className="mb-3"
-        />
+        {/* Enrollment Date */}
+        <div style={{ marginBottom: '20px' }}>
+          <TextInput
+            label="Enrollment Date"
+            type="date"
+            value={enrollDate}
+            onChange={(e) => setEnrollDate(e.target.value)}
+            required
+          />
+        </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <Button type="submit" loading={loading} fullWidth>
           {id ? 'Update Enrollment' : 'Create Enrollment'}
         </Button>

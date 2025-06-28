@@ -36,6 +36,7 @@ useEffect(() => {
       const res = await getRequest(`/classroom/${id}`);
       if (res.status) {
         const data = res.data;
+        console.log(data);
         setClassroom({
           id: data.id,
           course: data.course ?? { id: '', name: '(Undefined)' },

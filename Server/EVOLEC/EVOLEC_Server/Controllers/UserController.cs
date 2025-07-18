@@ -311,6 +311,31 @@ namespace EVOLEC_Server.Controllers
                 });
             }
         }
+        [HttpGet("study-classrooms/{studentId}")]
+        public async Task<IActionResult> GetStudyClassRooms(string studentId)
+        {
+            var result = await _userService.GetStudyClassRoom(studentId);
+            return Ok(new ResponseEntity<IEnumerable<ClassRoomDTO>>
+            {
+                Status = true,
+                ResponseCode = 200,
+                StatusMessage = "",
+                Data = result,
+            });
+        }
+
+        [HttpGet("teach-classrooms/{teacherId}")]
+        public async Task<IActionResult> GetTeachClassRooms(string teacherId)
+        {
+            var result = await _userService.GetTeachClassRoom(teacherId);
+            return Ok(new ResponseEntity<IEnumerable<ClassRoomDTO>>
+            {
+                Status = true,
+                ResponseCode = 200,
+                StatusMessage = "",
+                Data = result,
+            });
+        }
 
         [HttpGet("studying-lesson-dates/{studentId}")]
         public async Task<IActionResult> GetStudyingLessonDates(string studentId)

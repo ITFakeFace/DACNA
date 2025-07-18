@@ -15,5 +15,7 @@ namespace EVOLEC_Server.Services
         Task<bool> ToggleStatus(string userId, bool status);
         Task<List<LessonDateScheduleDto>> GetStudyingLessonDatesAsync(string studentId);
         Task<List<LessonDateScheduleDto>> GetTeachingLessonDatesAsync(string teacherId);
+        Task<IEnumerable<ClassRoomDTO>> GetStudyClassRoom(string studentId);
+        Task<IEnumerable<ClassRoomDTO>> GetTeachClassRoom(string teacherId);
     }
 }

@@ -115,34 +115,38 @@ namespace EVOLEC_Server.Services
             return lessonDateDtos;
         }
        public async Task<int> AddLessonDatesToClassRoom(ClassRoom addedClassroom)
-{
-    try
-    {
-        List<LessonDate>? lessonDates = await _lessonDateRepository.AddLessonDateByClassRoom(addedClassroom)!;
-        List<LessonDate>? tmplessonDates = await _lessonOffDateService.HandleHolidays(lessonDates);
+       {
+            try
+            {
+                List<LessonDate>? lessonDates = await _lessonDateRepository.AddLessonDateByClassRoom(addedClassroom)!;
+                if(lessonDates.IsNullOrEmpty())
+                {
+                    return -3; // Không có buổi học nào được tạo
+                }
+                List<LessonDate>? tmplessonDates = await _lessonOffDateService.HandleHolidays(lessonDates);
 
-        if (tmplessonDates.IsNullOrEmpty())
-        {
-            await _lessonDateRepository.DeleteLessonDatesAsync(lessonDates);
-            return 0; // Không có buổi học hợp lệ sau khi xử lý ngày nghỉ
-        }
+                if (tmplessonDates.IsNullOrEmpty())
+                {
+                    await _lessonDateRepository.DeleteLessonDatesAsync(lessonDates);
+                    return 0; // Không có buổi học hợp lệ sau khi xử lý ngày nghỉ
+                }
 
-        lessonDates = await _lessonDateRepository.AssignTeacherToLessonDateInitFunc(
-            tmplessonDates, (int)addedClassroom.Shift!, lessonDates[0].ClassRoom);
+                lessonDates = await _lessonDateRepository.AssignTeacherToLessonDateInitFunc(
+                    tmplessonDates, (int)addedClassroom.Shift!, lessonDates[0].ClassRoom);
 
-        if (lessonDates.IsNullOrEmpty())
-        {
-            return -2; // Không thể gán giáo viên
-        }
+                if (lessonDates.IsNullOrEmpty())
+                {
+                    return -2; // Không thể gán giáo viên
+                }
 
-        return 1; // Thành công
-    }
-    catch (Exception ex)
-    {
-        await _lessonDateRepository.DeleteLessonDatesAsync(addedClassroom.LessonDates);
-        return -1; // Lỗi không xác định
-    }
-}
+                return 1; // Thành công
+            }
+            catch (Exception ex)
+            {
+                await _lessonDateRepository.DeleteLessonDatesAsync(addedClassroom.LessonDates);
+                return -1; // Lỗi không xác định
+            }
+       }
 
 
     }

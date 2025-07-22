@@ -395,6 +395,7 @@ const LessonDateListComponent = ({ classroomId }) => {
         rows={10}
         rowsPerPageOptions={[5, 10, 25]}
         header={header}
+        emptyMessage="No lesson dates found."
       >
         <Column selectionMode="multiple" headerStyle={{ width: "3rem" }} />
         <Column field="teacherName" header="Teacher" sortable />

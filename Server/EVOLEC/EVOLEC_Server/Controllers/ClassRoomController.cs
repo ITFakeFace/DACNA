@@ -92,18 +92,37 @@ namespace EVOLEC_Server.Controllers
 
             var result = await _classRoomService.CreateAsync(request);
 
-            if (result > 0)
+            if (result > 0 || result ==-4 || result ==-5 || result ==-6)
             {
                 bool isCreateLessonDate = (request.Shift.HasValue && !request.StartDate.ToString().IsNullOrEmpty());
-                return Ok(new ResponseEntity<object>
+                switch (result)
                 {
-                    Status = true,
-                    ResponseCode = isCreateLessonDate ? 200 : 201,
-                    StatusMessage = isCreateLessonDate
-                        ? "Class created successfully"
-                        : "Class created without lesson dates",
-                    Data = new { Id = result }
-                });
+                    case -4:
+                        return Ok(new ResponseEntity<string>
+                        {
+                            Status = true,
+                            ResponseCode = 201,
+                            StatusMessage =  "Classroom created successfully but cannot create lesson dates Lesson Not Found",
+                            Data = null
+                        });
+                    case -5:
+                        return Ok(new ResponseEntity<string>
+                        {
+                            Status = true,
+                            ResponseCode = 201,
+                            StatusMessage = "Classroom created successfully  but cannot create lesson dates Including Lessondate cannot assign teacher",
+                            Data = null
+                        });
+                  
+                    default:
+                        return Ok(new ResponseEntity<string>
+                        {
+                            Status = true,
+                            ResponseCode = 200,
+                            StatusMessage = "Classroom created successfully but cannot create lesson dates",
+                            Data = null
+                        });
+                }
             }
             else
             {

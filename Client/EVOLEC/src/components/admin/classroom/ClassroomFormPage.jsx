@@ -156,7 +156,12 @@ const ClassroomFormPage = () => {
         result = await postRequest('/classroom/create', payload);
       }
       if (result.status) {
-        setFeedback({ type: 'success', message: result.statusMessage });
+        if (result.ResponseCode === 200) {
+          setFeedback({ type: 'success', message: result.statusMessage });
+        }
+        else{
+          setFeedback({ type: 'warn', message: result.statusMessage });
+        }
         setTimeout(() => {
           navigate("/admin/classrooms");
           window.location.reload();
@@ -188,15 +193,23 @@ const ClassroomFormPage = () => {
 
       <Box maw={600} mx="auto">
         {feedback && (
-          <Notification
-            icon={feedback.type === 'success' ? <IconCheck size={18} /> : <IconX size={18} />}
-            color={feedback.type === 'success' ? 'teal' : 'red'}
-            title={feedback.type === 'success' ? 'Success' : 'Failed'}
-            onClose={() => setFeedback(null)}
-            mb="md"
-          >
-            {feedback.message}
-          </Notification>
+            <Notification
+              icon={
+                feedback.type === 'success' ? (
+                  <IconCheck size={18} />
+                ) : feedback.type === 'warning' ? ( // Added warning condition
+                  <IconAlertTriangle size={18} /> // You'll need to import IconAlertTriangle
+                ) : (
+                  <IconX size={18} />
+                )
+              }
+              color={feedback.type === 'success' ? 'teal' : feedback.type === 'warning' ? 'yellow' : 'red'} // Added warning color
+              title={feedback.type === 'success' ? 'Success' : feedback.type === 'warning' ? 'Warning' : 'Failed'} // Added warning title
+              onClose={() => setFeedback(null)}
+              mb="md"
+            >
+              {feedback.message}
+            </Notification>
         )}
 
         {/* <form onSubmit={handleSubmit} className='flex flex-col gap-5'> */}

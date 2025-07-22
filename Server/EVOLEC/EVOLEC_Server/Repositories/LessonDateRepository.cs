@@ -72,7 +72,7 @@ namespace EVOLEC_Server.Repositories
 
         public async Task<List<LessonDate>>? AddLessonDateByClassRoom(ClassRoom classRoom)
         {
-            if (classRoom.Course.Lessons.Count == 0)
+            if (classRoom.Course.Lessons.Count == 0 ||!classRoom.StartDate.HasValue)
                 return null!;
 
             List<Lesson> lessons = classRoom.Course.Lessons.ToList();

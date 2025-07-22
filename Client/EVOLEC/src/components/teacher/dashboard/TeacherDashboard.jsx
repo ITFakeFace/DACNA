@@ -16,6 +16,7 @@ const TeacherDashboard = () => {
       var result = await getRequest(`/user/teaching-lesson-dates/${uid}`);
       if (result.status && result.status == true) {
         setEvents(result.data);
+        console.log(result.data);
         console.log("FetchEvents: Fetch events successfully")
       }
       console.log(events);
@@ -28,7 +29,8 @@ const TeacherDashboard = () => {
     fetchEvents();
   }, [])
   const handleEventClick = (info) => {
-    navigate(`/teacher/lesson-date/${info.event.extendedProps.lessonId}`)
+    console.log(info)
+    navigate(`/teacher/lesson-date/${info.event.id}`)
   };
   const eventContentTemplate = (info) => {
     return (

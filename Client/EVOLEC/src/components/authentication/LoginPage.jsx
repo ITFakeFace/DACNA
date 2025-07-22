@@ -18,6 +18,7 @@ const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -37,7 +38,7 @@ const LoginPage = () => {
       window.location.replace("/");  // replacing navigate + reload by replace
     } catch (error) {
       setEmailError(" ");
-      setPasswordError("Email hoặc mật khẩu không chính xác");
+      setPasswordError("Email or password is not match");
       console.error(error);
     }
   };
@@ -67,7 +68,7 @@ const LoginPage = () => {
           <PasswordInput
             id="inp-password"
             size="lg"
-            label="Mật khẩu"
+            label="Password"
             description="Enter your password"
             placeholder="Enter password"
             type="password"

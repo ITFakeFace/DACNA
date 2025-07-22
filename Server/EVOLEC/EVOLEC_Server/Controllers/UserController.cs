@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace EVOLEC_Server.Controllers
 {
@@ -36,10 +37,11 @@ namespace EVOLEC_Server.Controllers
         // Lấy tất cả người dùng
         [Authorize] // Chỉ admin mới có quyền truy cập
         [HttpGet]
-        public async Task<IActionResult> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers([FromQuery] bool? enable)
         {
-            Console.WriteLine("\n\nRun GetAllUsers\n\n");
-            var users = await _userService.FindAll();
+            Console.WriteLine($"\n\nRun GetAllUsers (enable={enable})\n\n");
+
+            var users = await _userService.FindAll(enable);
             var results = new List<UserDto>();
 
             foreach (var user in users)
@@ -56,10 +58,11 @@ namespace EVOLEC_Server.Controllers
                     Dob = user.Dob,
                     Gender = user.Gender,
                     Address = user.Address,
-                    Role = roles.FirstOrDefault() ?? "", // hoặc join nhiều role nếu cần
+                    Role = roles.FirstOrDefault() ?? "",
                     Lockout = user.LockoutEnd?.UtcDateTime
                 });
             }
+
             return Ok(new ResponseEntity<List<UserDto>>
             {
                 Status = true,
@@ -69,11 +72,10 @@ namespace EVOLEC_Server.Controllers
             });
         }
 
-
         [HttpGet("teachers")]
-        public async Task<IActionResult> GetAllTeachers()
+        public async Task<IActionResult> GetAllTeachers([FromQuery] bool? enable)
         {
-            var users = await _userService.GetTeachersAsync();
+            var users = await _userService.GetTeachersAsync(enable);
             var results = new List<ShortInformationTeacher>();
             foreach (var user in users)
             {
@@ -98,9 +100,9 @@ namespace EVOLEC_Server.Controllers
             });
         }
         [HttpGet("students")]
-        public async Task<IActionResult> GetAllStudents()
+        public async Task<IActionResult> GetAllStudents([FromQuery] bool? enable)
         {
-            var users = await _userService.GetStudentsAsync();
+            var users = await _userService.GetStudentsAsync(enable);
             var results = new List<ShortInfomationStudent>();
             foreach (var user in users)
             {
@@ -137,8 +139,8 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = false,
                     ResponseCode = 404,
-                    StatusMessage = "Không tìm thấy tài khoản",
-                    Data = "Không tìm thấy tài khoản"
+                    StatusMessage = "Cannot find account",
+                    Data = "Cannot find account"
                 });
             }
             var roles = await _userManager.GetRolesAsync(user);
@@ -171,6 +173,47 @@ namespace EVOLEC_Server.Controllers
         public async Task<IActionResult> CreateUser([FromBody] UserCreateDto model)
         {
             Console.WriteLine("Creating User");
+            var users = await _userService.FindAll();
+            if (users.Any(u => u.Email == model.Email))
+            {
+                return BadRequest(new ResponseEntity<string>
+                {
+                    Status = false,
+                    ResponseCode = 401,
+                    StatusMessage = "Email existed",
+                    Data = "Email existed"
+                });
+            }
+            if (users.Any(u => u.UserName == model.UserName))
+            {
+                return BadRequest(new ResponseEntity<string>
+                {
+                    Status = false,
+                    ResponseCode = 401,
+                    StatusMessage = "Username existed",
+                    Data = "Username existed"
+                });
+            }
+            if (users.Any(u => u.PID == model.PID))
+            {
+                return BadRequest(new ResponseEntity<string>
+                {
+                    Status = false,
+                    ResponseCode = 401,
+                    StatusMessage = "Personal ID existed",
+                    Data = "Personal ID existed"
+                });
+            }
+            if (Regex.IsMatch(model.UserName, @"[^a-zA-Z0-9_]"))
+            {
+                return BadRequest(new ResponseEntity<string>
+                {
+                    Status = false,
+                    ResponseCode = 401,
+                    StatusMessage = "Invalid Username",
+                    Data = "Invalid Username: No special characters or spaces allowed"
+                });
+            }
             var result = await _userService.Create(model);
             if (!result)
             {
@@ -178,16 +221,16 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = false,
                     ResponseCode = 400,
-                    StatusMessage = "Không thể tạo user",
-                    Data = "Không thể tạo user"
+                    StatusMessage = "Failed to create user",
+                    Data = "Failed to create user"
                 });
             }
             return CreatedAtAction(nameof(GetUserById), new { id = model.UserName }, new ResponseEntity<string>
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Tạo user thành công",
-                Data = "Tạo user thành công"
+                StatusMessage = "User successfully created",
+                Data = "User successfully created"
             });
         }
 
@@ -206,8 +249,8 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = false,
                     ResponseCode = 401,
-                    StatusMessage = "Không xác thực được người dùng",
-                    Data = "Không có quyền cập nhật"
+                    StatusMessage = "Cannot find User",
+                    Data = "Cannot find User"
                 });
             }
 
@@ -224,8 +267,8 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = false,
                     ResponseCode = 400,
-                    StatusMessage = "Cập nhật thất bại",
-                    Data = "Cập nhật tài khoản thất bại"
+                    StatusMessage = "Failed to Update",
+                    Data = "Failed to Update"
                 });
             }
 
@@ -243,6 +286,18 @@ namespace EVOLEC_Server.Controllers
         [Authorize(Roles = "ADMIN")] // Chỉ admin mới có quyền xóa người dùng
         public async Task<IActionResult> DeleteUser(string id)
         {
+            var user = await _userService.FindById(id);
+            if (user.StudentEnrollments.Any() || user.CreatedEnrollments.Any() || user.TeachedDates.Any())
+            {
+                await ToggleBan(id, false);
+                return BadRequest(new ResponseEntity<string>
+                {
+                    Status = false,
+                    ResponseCode = 400,
+                    StatusMessage = "Failed to delete old user, disable instead",
+                    Data = "Failed to delete old user"
+                });
+            }
             var result = await _userService.Delete(id);
             if (!result)
             {
@@ -250,7 +305,7 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = false,
                     ResponseCode = 404,
-                    StatusMessage = "Không tìm thấy tài khoản",
+                    StatusMessage = "Cannot find account",
                     Data = null
                 });
             }
@@ -258,7 +313,7 @@ namespace EVOLEC_Server.Controllers
             {
                 Status = true,
                 ResponseCode = 200,
-                StatusMessage = "Xóa tài khoản thành công",
+                StatusMessage = "Delete Successfully",
                 Data = null
             });
         }
@@ -277,7 +332,7 @@ namespace EVOLEC_Server.Controllers
                     {
                         Status = false,
                         ResponseCode = 400,
-                        StatusMessage = "Không thể tìm thấy tài khoản hoặc cập nhật thất bại",
+                        StatusMessage = "Cannot find account or delete failed",
                         Data = null
                     });
                 }
@@ -286,7 +341,7 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = true,
                     ResponseCode = 200,
-                    StatusMessage = !enable ? "Khóa tài khoản thành công" : "Gỡ khóa tài khoản thành công",
+                    StatusMessage = !enable ? "Lock Sucessfully" : "Unlock Successfully",
                     Data = null
                 });
             }
@@ -306,7 +361,7 @@ namespace EVOLEC_Server.Controllers
                 {
                     Status = false,
                     ResponseCode = 500,
-                    StatusMessage = "Lỗi không xác định xảy ra",
+                    StatusMessage = "Unidentified Error",
                     Data = ex.Message
                 });
             }

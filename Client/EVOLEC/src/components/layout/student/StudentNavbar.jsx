@@ -18,7 +18,7 @@ const StudentNavbar = ({ isOpened, setOpened }) => {
         isOpened={isOpened}
         url={`${pathRoot}/dashboard`}
       ></NavItem>
-       <NavItem
+      <NavItem
         icon={<FontAwesomeIcon icon={faHome} />}
         title="Profile"
         isOpened={isOpened}

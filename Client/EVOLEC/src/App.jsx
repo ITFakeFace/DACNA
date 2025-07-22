@@ -35,6 +35,10 @@ import AccountDetailsPage from "./components/authentication/admin/AccountDetails
 import AcademicAdminCourseListPage from "./components/academic-admin/course/AcademicAdminCourseListPage";
 import AcademicAdminCourseDetailsPage from "./components/academic-admin/course/AcademicAdminCourseDetailsPage";
 import AcademicAdminCourseFormPage from "./components/academic-admin/course/AcademicAdminCourseFormPage";
+import TeacherProfile from "./components/teacher/profile/TeacherProfile";
+import AdminDashboard from "./components/admin/dashboard/AdminDashboard";
+import AdminEnrollmentsListPage from "./components/admin/enrollment/Admin_EnrollmentsListPage";
+import AdminEnrollmentsCreateForm from "./components/admin/enrollment/Admin_EnrollmentsCreateForm";
 
 function Dashboard() {
   return <h2>Dashboard Page</h2>;
@@ -64,7 +68,7 @@ export default function App() {
         {/* Admin Routes */}
         <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
           <Route path="/admin" element={<AdminLayout />}>
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="settings" element={<Settings />} />
 
             <Route path="accounts" element={<AccountListPage />} />
@@ -87,6 +91,10 @@ export default function App() {
             <Route path="rooms" element={<RoomListPage />} />
             <Route path="rooms/:id" element={<RoomDetailsPage />} />
             <Route path="lesson-dates/:id" element={<LessonDateDetailsPage />} />
+
+            <Route path="enrollments" element={<AdminEnrollmentsListPage />} />
+            <Route path="enrollments/create" element={<AdminEnrollmentsCreateForm />} />
+            <Route path="enrollments/update/:id" element={<AdminEnrollmentsCreateForm />} />
           </Route>
         </Route>
 
@@ -116,6 +124,7 @@ export default function App() {
           <Route path="/teacher" element={<TeacherLayout />}>
             <Route path="" element={<TeacherDashboard />} />
             <Route path="dashboard" element={<TeacherDashboard />} />
+            <Route path="profile" element={<TeacherProfile />} />
             <Route path="lesson-date/:id" element={<TeacherLessonDateDetails />} />
           </Route>
         </Route>

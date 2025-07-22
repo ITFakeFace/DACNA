@@ -27,7 +27,7 @@ const StudentDashboard = () => {
   }, [])
   const handleEventClick = (info) => {
     //alert(`Bạn đã nhấn vào sự kiện: ${info.event.title}\nThời gian: ${info.event.start.toLocaleString()}`);
-    navigate(`/student/lesson-date/${info.event.extendedProps.lessonId}`)
+    navigate(`/student/lesson-date/${info.event.id}`)
   };
   const eventContentTemplate = (info) => {
     return (

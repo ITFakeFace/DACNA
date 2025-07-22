@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Title } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-import { getRequest } from '../../services/APIService';
+import { getRequest } from '../../../services/APIService';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -12,7 +12,7 @@ import { InputIcon } from 'primereact/inputicon';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 // import './EnrollmentsListPage.css';
 
-const EnrollmentsListPage = () => {
+const AdminEnrollmentsListPage = () => {
   const navigate = useNavigate();
 
   const [enrollments, setEnrollments] = useState([]);
@@ -70,11 +70,10 @@ const EnrollmentsListPage = () => {
   };
 
   const actionBodyTemplate = (rowData) => {
-    console.log(rowData);
     return (
       <>
         <Button icon="pi pi-pencil" rounded outlined className="mr-2" severity="success"
-          onClick={() => navigate(`/enrollment-staff/enrollments/update/${rowData.enrollmentId}`)} />
+          onClick={() => navigate(`/admin/enrollments/update/${rowData.id}`)} />
         <Button icon="pi pi-trash" rounded outlined severity="danger"
           onClick={() => confirmDelete(rowData)} />
       </>
@@ -121,7 +120,7 @@ const EnrollmentsListPage = () => {
     <div className="container">
       <Title mb={20}>Enrollments List</Title>
       <div>
-        <Button onClick={() => navigate("/enrollment-staff/enrollments/create")}>Create New Enrollment</Button>
+        <Button onClick={() => navigate("/admin/enrollments/create")}>Create New Enrollment</Button>
       </div>
 
       <DataTable
@@ -167,4 +166,4 @@ const EnrollmentsListPage = () => {
   );
 };
 
-export default EnrollmentsListPage;
+export default AdminEnrollmentsListPage;

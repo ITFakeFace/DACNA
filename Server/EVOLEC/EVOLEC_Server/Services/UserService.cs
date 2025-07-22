@@ -33,9 +33,9 @@ namespace EVOLEC_Server.Services
         }
 
         // Lấy tất cả người dùng
-        public async Task<List<ApplicationUser>> FindAll()
+        public async Task<List<ApplicationUser>> FindAll(bool? enable = null)
         {
-            return await _userRepository.FindAll();
+            return await _userRepository.FindAll(enable);
         }
 
         // Tìm người dùng theo Id
@@ -65,15 +65,14 @@ namespace EVOLEC_Server.Services
             return await _userRepository.ToggleStatus(userId, isEnable);
         }
 
-        public async Task<List<ApplicationUser>> GetTeachersAsync()
+        public async Task<List<ApplicationUser>> GetTeachersAsync(bool? enable = null)
         {
-            // Lấy user có role "teacher"
-            return await _userRepository.GetUsersByRoleAsync("teacher");
+            return await _userRepository.GetUsersByRoleAsync("teacher", enable);
         }
-        public async Task<List<ApplicationUser>> GetStudentsAsync()
+
+        public async Task<List<ApplicationUser>> GetStudentsAsync(bool? enable = null)
         {
-            // Lấy user có role "student"
-            return await _userRepository.GetUsersByRoleAsync("student");
+            return await _userRepository.GetUsersByRoleAsync("student", enable);
         }
 
         public async Task<List<DateOnly>> GetTeacherTeachDayAsync(string id)

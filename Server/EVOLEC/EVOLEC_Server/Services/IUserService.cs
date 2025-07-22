@@ -5,10 +5,10 @@ namespace EVOLEC_Server.Services
 {
     public interface IUserService
     {
-        Task<List<ApplicationUser>> FindAll();
+        Task<List<ApplicationUser>> FindAll(bool? enable = null);
         Task<ApplicationUser?> FindById(string id);
-        Task<List<ApplicationUser?>> GetTeachersAsync();
-        Task<List<ApplicationUser?>> GetStudentsAsync();
+        Task<List<ApplicationUser?>> GetTeachersAsync(bool? enable = null);
+        Task<List<ApplicationUser?>> GetStudentsAsync(bool? enable = null);
         Task<bool> Create(UserCreateDto model);
         Task<bool> Update(string userId, UserUpdateDto model);
         Task<bool> Delete(string userId);

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, LoadingOverlay, Title } from '@mantine/core';
-import DataTable from 'react-data-table-component'; // Import react-data-table-component
-import { getRequest } from '../../../services/APIService';
+import { LoadingOverlay, Title } from '@mantine/core';
+import { Button } from 'primereact/button';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 import { useNavigate } from 'react-router-dom';
+import { getRequest } from '../../../services/APIService';
 import './CourseListPage.css';
 
 const CourseListPage = () => {
@@ -12,7 +14,7 @@ const CourseListPage = () => {
 
   const fetchCourses = async () => {
     try {
-      const data = await getRequest("/course"); // Gọi API lấy danh sách khóa học
+      const data = await getRequest("/course");
       if (data.status) {
         setCourses(data.data);
       }
@@ -20,7 +22,7 @@ const CourseListPage = () => {
       console.error("Error fetching courses:", error);
     }
   };
-  // Fetch courses data when component mounts
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -31,83 +33,71 @@ const CourseListPage = () => {
         console.error(error);
       }
     };
-
     fetchData();
   }, []);
 
+  // Custom render functions
+  const statusBodyTemplate = (rowData) => {
+    return (
+      <Button
+        label={rowData.status === 1 ? 'Active' : 'Inactive'}
+        className={`p-button-sm ${rowData.status === 1 ? 'p-button-success' : 'p-button-danger'}`}
+        disabled
+      />
+    );
+  };
 
-  const columns = [
-    { name: 'Course Name', selector: row => row.name, sortable: true },
-    { name: 'Band Score', selector: row => row.bandScore, sortable: true, center: true },
-    { name: 'Pass Score', selector: row => row.passScore, sortable: true, center: true },
-    { name: 'Full Score', selector: row => row.fullScore, sortable: true, center: true },
-    {
-      name: 'Status',
-      selector: row => {
-        return row.status === 1
-          ? <Button color='green'>Active</Button>
-          : <Button color='red'>Inactive</Button>;
-      },
-      sortable: true,
-      center: true,
-    },
-    {
-      name: '',
-      selector: (row) => {
-        return (
-          <div className="flex gap-2 justify-center">
-            <Button size="xs"
-              onClick={() => navigate(`${row.id}`)}
-            >
-              Details
-            </Button>
-            <Button size="xs" className="!bg-cyan-500"
-              onClick={() => navigate(`update/${row.id}`)}
-            >
-              Edit
-            </Button>
-            <Button size="xs" color="red"
-            >
-              Delete
-            </Button>
-          </div>
-        );
-      },
-      sortable: false,
-      center: true,
-      minWidth: '280px',
-    },
-  ];
-
-  const tableCustomStyles = {
-    headCells: {
-      style: {
-        fontSize: '16px',
-        fontWeight: 'bold',
-        paddingLeft: '0 8px',
-        justifyContent: 'center',
-      },
-    },
+  const actionsBodyTemplate = (rowData) => {
+    return (
+      <div className="flex gap-2 justify-center">
+        <Button
+          label="Details"
+          className="p-button-sm"
+          onClick={() => navigate(`${rowData.id}`)}
+        />
+        <Button
+          label="Edit"
+          className="p-button-sm p-button-info"
+          onClick={() => navigate(`update/${rowData.id}`)}
+        />
+        <Button
+          label="Delete"
+          className="p-button-sm p-button-danger"
+        />
+      </div>
+    );
   };
 
   return (
     <div className="container">
       <Title mb={20}>List of Courses</Title>
-      <div>
-        <Button onClick={() => navigate("/admin/courses/create")}>Create new Course</Button>
+      <div className="mb-4">
+        <Button onClick={() => navigate("/admin/courses/create")}>
+          Create new Course
+        </Button>
       </div>
-      {loading ? <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} /> :
-        <DataTable
-          className='w-full data-table'
-          columns={columns}   // Cập nhật lại cách khai báo cột
-          data={courses}      // Dữ liệu sẽ là `courses`
-          pagination           // Bật phân trang
-          highlightOnHover     // Hiển thị hiệu ứng hover
-          responsive           // Đảm bảo responsive cho màn hình nhỏ
-          fixedHeader          // Đảm bảo header cố định
-          customStyles={tableCustomStyles}
-        />}
 
+      {loading ? (
+        <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
+      ) : (
+        <DataTable
+          value={courses}
+          paginator
+          rows={10}
+          className="p-datatable-sm w-full"
+          stripedRows
+          scrollable
+          scrollHeight="400px"
+        >
+          <Column field="id" header="Course ID" sortable />
+          <Column field="name" header="Course Name" sortable />
+          <Column field="bandScore" header="Band Score" sortable style={{ textAlign: 'center' }} />
+          <Column field="passScore" header="Pass Score" sortable style={{ textAlign: 'center' }} />
+          <Column field="fullScore" header="Full Score" sortable style={{ textAlign: 'center' }} />
+          <Column header="Status" body={statusBodyTemplate} style={{ textAlign: 'center' }} alignHeader="center" />
+          <Column header="Actions" body={actionsBodyTemplate} style={{ minWidth: '280px', textAlign: 'center' }} alignHeader="center" />
+        </DataTable>
+      )}
     </div>
   );
 };

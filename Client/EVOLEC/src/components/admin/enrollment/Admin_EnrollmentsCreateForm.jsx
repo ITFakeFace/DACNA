@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Notification, TextInput } from '@mantine/core';
 import { Dropdown } from 'primereact/dropdown';
-import { postRequest, getRequest, putRequest } from '../../services/APIService';
-import { getUserIdFromToken, getUsernameFromToken } from '../../services/authService';
+// import { postRequest, getRequest, putRequest } from '../../../services/APIService';
+// import { getUserIdFromToken, getUsernameFromToken } from '../../../services/authService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getUserIdFromToken, getUsernameFromToken } from '../../../services/authService';
+import { getRequest, postRequest, putRequest } from '../../../services/APIService';
 
-const EnrollmentsCreateForm = () => {
+const AdminEnrollmentsCreateForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -57,7 +59,6 @@ const EnrollmentsCreateForm = () => {
     try {
       const res = await getRequest(`/enrollment/${id}`);
       if (res.status) {
-        console.log(res.data)
         const enrollment = res.data;
         setStudentId(enrollment.studentId);
         setClassRoomId(enrollment.classRoomId);
@@ -120,7 +121,7 @@ const EnrollmentsCreateForm = () => {
     >
       {/* Back Button */}
       <button
-        onClick={() => navigate('/enrollment-staff/enrollments/')}
+        onClick={() => navigate('/admin/enrollments/')}
         style={{
           background: 'none',
           border: 'none',
@@ -212,4 +213,4 @@ const EnrollmentsCreateForm = () => {
   );
 };
 
-export default EnrollmentsCreateForm;
+export default AdminEnrollmentsCreateForm;

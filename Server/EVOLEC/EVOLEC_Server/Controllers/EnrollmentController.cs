@@ -48,6 +48,46 @@ namespace EVOLEC_Server.Controllers
             }
         }
 
+        // Get enrollment by ID
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetEnrollmentById(int id)
+        {
+            try
+            {
+                var enrollment = await _enrollmentService.GetEnrollmentByIdAsync(id);
+
+                if (enrollment == null)
+                {
+                    return NotFound(new ResponseEntity<string>
+                    {
+                        Status = false,
+                        ResponseCode = 404,
+                        StatusMessage = "Enrollment not found",
+                        Data = null
+                    });
+                }
+
+                return Ok(new ResponseEntity<Enrollment>
+                {
+                    Status = true,
+                    ResponseCode = 200,
+                    StatusMessage = "Success",
+                    Data = enrollment
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseEntity<string>
+                {
+                    Status = false,
+                    ResponseCode = 500,
+                    StatusMessage = "Undefined Error",
+                    Data = ex.Message
+                });
+            }
+        }
+
+
         [HttpPost("create")]
         public async Task<IActionResult> CreateEnrollment([FromBody] EnrollmentCreateDTO request)
         {

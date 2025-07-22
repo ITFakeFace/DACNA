@@ -8,7 +8,7 @@ import { useDisclosure } from "@mantine/hooks";
 const StudentLayout = () => {
   const [opened, { toggle }] = useDisclosure();
   const [navOpened, setNavOpened] = useState(true);
-  useEffect(()=>{
+  useEffect(() => {
     console.log(1)
   })
   return (
@@ -33,7 +33,9 @@ const StudentLayout = () => {
         <Outlet />
       </AppShell.Main>
       {/* <AppShell.Aside p="md">Aside</AppShell.Aside> */}
-      <AppShell.Footer p="md">Footer</AppShell.Footer>
+      <AppShell.Footer p="md">
+        <p>&copy; {new Date().getFullYear()} EVOLEC. All rights reserved.</p>
+      </AppShell.Footer>
     </AppShell>
   )
 };

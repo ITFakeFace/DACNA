@@ -36,7 +36,7 @@ const AdminNavbar = ({ isOpened, setOpened }) => {
       ></NavItem>
       <NavItem
         icon={<FontAwesomeIcon icon={faSchool} />}
-        title="classroom"
+        title="Classrooms"
         isOpened={isOpened}
         url={`${pathRoot}/classrooms`}
       ></NavItem>
@@ -52,9 +52,12 @@ const AdminNavbar = ({ isOpened, setOpened }) => {
         isOpened={isOpened}
         url={`${pathRoot}/off-dates`}
       ></NavItem>
-
-    
-
+      <NavItem
+        icon={<FontAwesomeIcon icon={faUser} />}
+        title="Enrollment"
+        isOpened={isOpened}
+        url={`${pathRoot}/enrollments`}
+      ></NavItem>
     </NavbarTemplate>
   )
 };

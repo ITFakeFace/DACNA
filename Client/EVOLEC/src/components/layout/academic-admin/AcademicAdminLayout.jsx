@@ -11,18 +11,18 @@ const AcademicAdminLayout = () => {
   return (
     <AppShell
       layout="alt"
-      header={{ height: 60 }}
+      // header={{ height: 60 }}
       footer={{ height: 60 }}
       navbar={{ width: navOpened ? 300 : 75, breakpoint: 'sm', collapsed: { mobile: !opened } }}
       //aside={{ width: 300, breakpoint: 'md', collapsed: { desktop: false, mobile: true } }}
       padding="md"
     >
-      <AppShell.Header>
+      {/* <AppShell.Header>
         <Group h="100%" px="md">
           <Burger onClick={toggle} hiddenFrom="sm" size="sm" />
           <MantineLogo size={30} />
         </Group>
-      </AppShell.Header>
+      </AppShell.Header> */}
       <AppShell.Navbar>
         <AcademicAdminNavbar isOpened={navOpened} setOpened={setNavOpened} />
       </AppShell.Navbar>
@@ -30,8 +30,9 @@ const AcademicAdminLayout = () => {
         <Outlet />
       </AppShell.Main>
       {/* <AppShell.Aside p="md">Aside</AppShell.Aside> */}
-      <AppShell.Footer p="md">Footer</AppShell.Footer>
-
+      <AppShell.Footer p="md">
+        <p>&copy; {new Date().getFullYear()} EVOLEC. All rights reserved.</p>
+      </AppShell.Footer>
     </AppShell>
   )
 };

@@ -121,9 +121,9 @@ const ClassroomListPage = () => {
 
   return (
     <div className="container">
-      <Title mb={20}>Classroom List</Title>
+      <Title mb={20}>Class List</Title>
       <div>
-        <Button onClick={() => navigate("/admin/classrooms/create")}>Create new Classroom</Button>
+        <Button onClick={() => navigate("/admin/classrooms/create")}>Create new Class</Button>
       </div>
       <DataTable
         className="w-full"
@@ -136,7 +136,7 @@ const ClassroomListPage = () => {
         filters={filters}
         globalFilterFields={['Id', 'Course.Name', 'Teacher1.Username', 'Teacher2.Username']}
         header={renderTableHeader()}
-        emptyMessage="No classrooms found."
+        emptyMessage="No classes found."
         onFilter={(e) => setFilters(e.filters)}
       >
         <Column header="Classroom ID" field="Id" filter sortable style={{ minWidth: '10rem' }} />

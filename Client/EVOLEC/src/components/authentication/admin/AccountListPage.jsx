@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Loader, LoadingOverlay, Title, UnstyledButton } from '@mantine/core';
-import { getRequest, putRequest } from '../../../services/APIService';
+import { deleteRequest, getRequest, putRequest } from '../../../services/APIService';
 import './AccountListPage.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DataTable } from 'primereact/datatable';
@@ -15,6 +15,8 @@ import { Tag } from 'primereact/tag';
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
 import { MultiSelect } from 'primereact/multiselect';
+import { Toast } from 'primereact/toast';
+import { addToast } from '../../../utils/toastUtil';
 
 const AccountListPage = () => {
   const emptyUser = {
@@ -40,10 +42,7 @@ const AccountListPage = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const shouldRefresh = queryParams.get('refresh') === 'true';
-  const [status] = useState([
-    { name: 'Inactive', value: 0 },
-    { name: 'Active', value: 1 },
-  ]);
+  const toast = useRef();
   const [statuses] = useState(['Inactive', 'Active', 'Undefined']);
   const [genders] = useState([
     { name: 'Female', value: 0, color: '!bg-female' },
@@ -65,11 +64,6 @@ const AccountListPage = () => {
     if (status == "Active") return 'success';
     if (status == "Inactive") return 'danger';
     return 'secondary';
-  };
-  const getStatusName = (lockout) => {
-    if (lockout == null || lockout == false) return 'Active';
-    if (lockout == true) return 'Inactive';
-    return 'Undefined';
   };
   useEffect(() => {
     const fetchUsers = async () => {
@@ -135,12 +129,15 @@ const AccountListPage = () => {
   };
   const renderTableHeader = () => {
     return (
-      <div className="flex justify-content-between">
+      <div className="flex justify-content-between gap-3">
         <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined onClick={clearFilter} />
         <IconField iconPosition="left">
           <InputIcon className="pi pi-search" />
           <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
         </IconField>
+        <Button onClick={() => navigate("/admin/accounts/create")}>
+          <i className='pi pi-plus' />
+        </Button>
       </div>
     );
   };
@@ -226,11 +223,15 @@ const AccountListPage = () => {
               : user
           )
         );
-
+        addToast(toast, "Success", "Ban/Unban user successfully", "success", 3000);
         console.log("userStatusOnClick: Successfully ban/unban user");
+      } else {
+        addToast(toast, "Error", `Failed to ban user: ${result.statusMessage}`, "danger", 3000);
       }
     } catch (ex) {
-      console.error("userStatusOnClick: Error when ban user", ex);
+      console.error("userStatusOnClick: Error when ban user", ex.response.data.statusMessage);
+      addToast(toast, "Error", `Failed to ban user: ${ex.response.data.statusMessage}`, "error", 3000);
+      console.log(ex)
     }
   };
 
@@ -247,15 +248,35 @@ const AccountListPage = () => {
   const statusItemTemplate = (option) => {
     return <Button severity={getStatusSeverity(option)}>{option}</Button>;
   };
-  const deleteUserClick = () => {
+
+  const deleteUser = async () => {
+    try {
+      const res = await deleteRequest(`/User/${user.id}`); // POST
+      if (res.status && res.status == true) {
+        addToast(toast, "Success", "Delete user successfully", "success", 3000);
+        console.log("Success deleted!");
+        return res;
+      } else if (res.status && res.status == false) {
+        addToast(toast, "Error", `Failed to delete user: ${res.statusMessage}`, "danger", 3000);
+      }
+      return null;
+    } catch (ex) {
+      console.error("deleteUser: Error when delete user", ex.response.data.statusMessage);
+    }
+  }
+
+  const deleteUserClick = async () => {
     let _users = users.filter((val) => val.id !== user.id);
     var res = deleteUser();
-    if (res.status == true) {
+    console.log(res);
+    if (res) {
+      console.log("Success deleted");
       setUsers(_users);
       setDeleteUserDialog(false);
       setUser(emptyUser);
     }
   };
+
   const confirmDeleteUser = (user) => {
     setUser(user);
     setDeleteUserDialog(true);
@@ -310,10 +331,8 @@ const AccountListPage = () => {
 
   return (
     <div className="container">
+      <Toast ref={toast} />
       <Title mb={20}>List of Accounts</Title>
-      <div>
-        <Button onClick={() => navigate("/admin/accounts/create")}>Create new Account</Button>
-      </div>
       {
         loading
           ? <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
@@ -349,6 +368,7 @@ const AccountListPage = () => {
             ></Column>
           </DataTable>
       }
+
       <Dialog
         visible={deleteUserDialog}
         style={{ width: '32rem' }}

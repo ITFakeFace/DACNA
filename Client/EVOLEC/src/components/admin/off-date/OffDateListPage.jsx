@@ -450,7 +450,7 @@ const OffDateListPage = () => {
           header={header}
         >
           <Column selectionMode="single" exportable={false}></Column>
-          <Column field="id" header="Id" sortable style={{ minWidth: '12rem' }}></Column>
+          <Column field="id" header="Id" sortable align="center"></Column>
           <Column field="name" header="Name" sortable style={{ minWidth: '16rem' }}></Column>
           <Column field="fromDate" header="From Date" sortable filterField="fromDate" dataType="date" style={{ minWidth: '12rem' }} body={fromDateBodyTemplate}
             filter filterElement={fromDateFilterTemplate}
@@ -491,7 +491,7 @@ const OffDateListPage = () => {
           <InputText id="name" value={offDate.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={submitted && !offDate.name ? 'p-invalid' : ''} />
           {submitted && !offDate.name && <small className="p-error">Name is required.</small>}
         </div>
-        <div className="field">
+        {/* <div className="field">
           <label htmlFor="teachers" className="font-bold">
             Off Teacher
           </label>
@@ -507,7 +507,7 @@ const OffDateListPage = () => {
             />
             <Button label="Unselect" className="w-1/4" onClick={(e) => clearTeacher(e)}></Button>
           </div>
-        </div>
+        </div> */}
         <div className="field">
           <label htmlFor="fromDate" className="font-bold">
             From Date

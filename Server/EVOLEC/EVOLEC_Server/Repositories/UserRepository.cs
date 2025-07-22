@@ -17,9 +17,16 @@ namespace EVOLEC_Server.Repositories
             _env = env;
             _userManager = userManager;
         }
-        public async Task<List<ApplicationUser>> FindAll()
+        public async Task<List<ApplicationUser>> FindAll(bool? enable = null)
         {
-            return await _ctx.Users.ToListAsync();
+            var query = _ctx.Users.AsQueryable();
+
+            if (enable == true)
+            {
+                query = query.Where(u => u.LockoutEnd == null);
+            }
+
+            return await query.ToListAsync();
         }
 
         public Task<ApplicationUser?> FindById(string id)
@@ -54,14 +61,16 @@ namespace EVOLEC_Server.Repositories
         public async Task<bool> Delete(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
-            if (user != null && (await _userManager.DeleteAsync(user)).Succeeded)
-            {
-                return true;
-            }
-            return false;
+            // Xoá tất cả các quan hệ trước
+            var userRoles = await _ctx.UserRoles
+                .Where(ur => ur.UserId == userId)
+                .ToListAsync();
+            _ctx.UserRoles.RemoveRange(userRoles);
+
+            var result = await _userManager.DeleteAsync(user);
+            return result.Succeeded;
         }
 
-        [HttpGet]
         public async Task<bool> ToggleStatus(string userId, bool isEnable)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -117,12 +126,18 @@ namespace EVOLEC_Server.Repositories
             }
             return false;
         }
-        public async Task<List<ApplicationUser>> GetUsersByRoleAsync(string roleName)
+        public async Task<List<ApplicationUser>> GetUsersByRoleAsync(string roleName, bool? enable = null)
         {
-            // Lấy danh sách user có role chỉ định (ví dụ "teacher")
             var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
+
+            if (enable == true)
+            {
+                usersInRole = usersInRole.Where(u => u.LockoutEnd == null).ToList();
+            }
+
             return usersInRole.ToList();
         }
+
 
         public async Task<List<LessonDate>> GetStudyingLessonDate(string studentId)
         {

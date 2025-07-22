@@ -16,8 +16,8 @@ import { deleteRequest, getRequest, postRequest, putRequest } from "../../../ser
 const RoomListPage = () => {
   let emptyRoom = {
     id: null,
-    name: '',
-    address: '',
+    name: null,
+    address: null,
     status: null,
   }
   const [room, setRoom] = useState(emptyRoom);
@@ -144,6 +144,10 @@ const RoomListPage = () => {
   };
   const saveRoom = async () => {
     setSubmitted(true);
+    if (!room.name || !room.address || !room.status) {
+      console.log("Cannot empty:")
+      return;
+    }
     // validation
     if (room.name.trim()) {
 

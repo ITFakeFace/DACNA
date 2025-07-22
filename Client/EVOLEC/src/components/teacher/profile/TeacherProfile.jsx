@@ -14,50 +14,50 @@ import {
   GraduationCap,
   BookOpen
 } from "lucide-react";
-import { useParams } from "react-router-dom";
-import { getRequest, putRequest } from "../../../services/APIService";
-import { Button } from "primereact/button";
+import { getRequest } from "../../../services/APIService";
+import { getUserIdFromToken } from "../../../services/authService";
 
-const AccountDetailsPage = () => {
-  const { id } = useParams();
+const TeacherProfile = () => {
   const [copied, setCopied] = useState(false);
-  const fetchUser = async () => {
-    try {
-      // console.log(userId);
-      const res = await getRequest(`/user/${id}`); // Sửa đường dẫn API lấy user theo ID
-      console.log(res)
-      if (res.status && res.data) {
-        setUser({
-          fullName: res.data.fullname || '',
-          dob: res.data.dob || '',
-          email: res.data.email || '',
-          phoneNumber: res.data.phoneNumber || '',
-          pid: res.data.pid || '',
-          address: res.data.address || '',
-          gender: res.data.gender || '',
-          role: res.data.role || '',
-          userName: res.data.userName || '',
-          lockout: res.data.lockout || '',
-          id: res.data.id || '',
-          Password: null,
-          ConfirmPassword: null
-        });
-
-      } else {
-        toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'Failed to get profile data' });
-      }
-    } catch (error) {
-      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to get profile data' });
-      console.error(error);
-    }
-  };
-
+  const userId = getUserIdFromToken(localStorage.getItem('token'));
   useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        console.log("Day la Password")
+        localStorage.getItem('password')
+        // console.log(userId);
+        const res = await getRequest(`/user/${userId}`); // Sửa đường dẫn API lấy user theo ID
+        console.log(res)
+        if (res.status && res.data) {
+          setUser({
+            fullName: res.data.fullname || '',
+            dob: res.data.dob || '',
+            email: res.data.email || '',
+            phoneNumber: res.data.phoneNumber || '',
+            pid: res.data.pid || '',
+            address: res.data.address || '',
+            gender: res.data.gender || '',
+            role: res.data.role || '',
+            userName: res.data.userName || '',
+            lockout: res.data.lockout || '',
+            id: res.data.id || '',
+            Password: null,
+            ConfirmPassword: null
+          });
 
-    if (id) {
-      fetchUser();
+        } else {
+          toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'Failed to get profile data' });
+        }
+      } catch (error) {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to get profile data' });
+        console.error(error);
+      }
+    };
+
+    if (userId) {
+      fetchProfile();
     }
-  }, [id]);
+  }, [userId]);
   // Mock user data for demonstration
   const [user, setUser] = useState({
     id: "usr_123456789",
@@ -72,19 +72,6 @@ const AccountDetailsPage = () => {
     role: "STUDENT",
     lockout: false
   });
-
-  const userStatusOnClick = async (user, enable) => {
-    try {
-      console.log(`/user/ban/${user?.id}?enable=${enable}`);
-      var result = await putRequest(`/user/ban/${user?.id}?enable=${enable}`);
-      if (result.status && result.status == true) {
-        fetchUser();
-        console.log("userStatusOnClick: Successfully ban/unban user");
-      }
-    } catch (ex) {
-      console.log("userStatusOnClick: Failed to ban/unban user: ", ex);
-    }
-  }
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
@@ -207,7 +194,6 @@ const AccountDetailsPage = () => {
       </div>
     );
   };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -217,13 +203,6 @@ const AccountDetailsPage = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Account Details</h1>
               <p className="text-gray-600 mt-1">Manage user information and permissions</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button className="!text-xl" severity="info" onClick={() => navigate(`/admin/accounts/update/${user?.id}`)}><i className="pi pi-pencil" /></Button>
-              {user?.role != "ADMIN" && (user?.lockout ?
-                <Button className="!text-xl h-fit" severity="success" onClick={() => userStatusOnClick(user, true)}><i className="pi pi-unlock" /></Button> :
-                <Button className="!text-xl h-fit" severity="danger" onClick={() => userStatusOnClick(user, false)}><i className="pi pi-lock" /></Button>)
-              }
             </div>
           </div>
         </div>
@@ -340,13 +319,13 @@ const AccountDetailsPage = () => {
 
         {/* Classes Section */}
         {/* {(user?.role === "STUDENT" || user?.role === "TEACHER") && (
-          <div className="mt-8">
-            <ClassesSection />
-          </div>
-        )} */}
+            <div className="mt-8">
+              <ClassesSection />
+            </div>
+          )} */}
       </div>
     </div>
   );
 };
 
-export default AccountDetailsPage;
+export default TeacherProfile;

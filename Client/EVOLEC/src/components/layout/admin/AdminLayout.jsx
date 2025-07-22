@@ -43,7 +43,9 @@ const AdminLayout = () => {
         <Outlet />
       </AppShell.Main>
       {/* <AppShell.Aside p="md">Aside</AppShell.Aside> */}
-      <AppShell.Footer p="md">Footer</AppShell.Footer>
+      <AppShell.Footer p="md">
+        <p>&copy; {new Date().getFullYear()} EVOLEC. All rights reserved.</p>
+      </AppShell.Footer>
     </AppShell>
   );
 }

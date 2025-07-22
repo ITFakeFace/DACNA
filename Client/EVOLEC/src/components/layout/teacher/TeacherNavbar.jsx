@@ -18,6 +18,12 @@ const TeacherNavbar = ({ isOpened, setOpened }) => {
         isOpened={isOpened}
         url={`${pathRoot}/dashboard`}
       ></NavItem>
+      <NavItem
+        icon={<FontAwesomeIcon icon={faHome} />}
+        title="Profile"
+        isOpened={isOpened}
+        url={`${pathRoot}/profile`}
+      ></NavItem>
     </NavbarTemplate>
   )
 };

@@ -31,13 +31,13 @@ const ClassroomFormPage = () => {
     endDate: null,
     status: 'Active',
     shift: '',
-    RoomId:'',
+    RoomId: '',
   });
 
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const res = await getRequest("/user/teachers");
+        const res = await getRequest("/user/teachers?enable=true");
         if (res.status) {
           setTeachers(res.data);
         } else {
@@ -145,7 +145,7 @@ const ClassroomFormPage = () => {
       startDate: form.startDate ? form.startDate.toISOString().split('T')[0] : null,
       status: 1,
       shift: form.shift,
-      RoomId:form.RoomId,
+      RoomId: form.RoomId,
     };
     console.log(payload)
     try {
@@ -177,7 +177,7 @@ const ClassroomFormPage = () => {
           className='!bg-transparent !text-black'
           size='xl'
           p='xs'
-          onClick={() => window.location.replace("/admin/classrooms")}
+          onClick={() => navigate("/admin/classrooms")}
         >
           <FontAwesomeIcon icon={faArrowLeft} />
         </Button>
